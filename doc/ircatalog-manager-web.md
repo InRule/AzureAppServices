@@ -16,9 +16,9 @@ az webapp deployment source config-zip --name WEB_APP_NAME --resource-group RESO
 Update the CatalogServiceUri with the [az webapp config appsettings command](https://docs.microsoft.com/en-us/cli/azure/webapp/config/appsettings?view=azure-cli-latest)
 
 ```powershell
-# Example az webapp config appsettings set --name WebCatManTest --resource-group lkonopka --setting InRule.Catalog.Uri=https://catalogsvctest.azurewebsites.net
+# Example az webapp config appsettings set --name WebCatManTest --resource-group lkonopka --setting InRule.Catalog.Uri=https://catalogsvctest.azurewebsites.net\service.svc
 
-az webapp config appsettings set --name WEB_APP_NAME --resource-group RESOURCE_GROUP_NAME --setting InRule.Catalog.Uri=CATALOG_URI
+az webapp config appsettings set --name WEB_APP_NAME --resource-group RESOURCE_GROUP_NAME --setting InRule.Catalog.Uri=CATALOG_URI\service.svc
 ```
 
 ## Verify Successful Deployment
