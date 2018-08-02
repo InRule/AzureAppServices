@@ -7,6 +7,8 @@ InRule _for Microsoft Azure_ allows you to run [irCatalog](https://www.inrule.co
 
 Before you get started, you'll need the make sure you have the following:
 
+* Knowledge and familiarity with Microsoft Azure, specifically around [Azure Resource Management](https://docs.microsoft.com/en-us/azure/azure-resource-manager/), [Azure App Service Web Apps](https://docs.microsoft.com/en-us/azure/app-service/), and [Azure SQL Databases](https://docs.microsoft.com/en-us/azure/sql-database/).
+
 * A Microsoft Azure Subscription. If you do not have an Azure subscription, create a [free account](https://azure.microsoft.com/en-us/free/) before you begin.
 
 * A valid InRule license file, usually named `InRuleLicense.xml`. If you do not have a valid InRule license file for InRule _for Microsoft Azure_, please contact [Support](mailto:support@inrule.com?subject=InRule®%20for%20Microsoft%20Azure%20-%20App%20Service%20Web%20Apps).
@@ -17,7 +19,14 @@ Before you get started, you'll need the make sure you have the following:
 
 # irServer Rule Execution Service
 
-Deployment instructions for the irServer Rule Exection Service can be found [here](doc/irserver-rule-execution-service.md).
+With irServer® Rule Execution Service, you can call business rules from a variety of systems including J2EE applications, BPM processes and ESB orchestrations. Execute any rules stored in irCatalog or in the App Service Web App itself. Access is available via REST or SOAP.
+
+* [Deployment](doc/irserver-rule-execution-service.md)
+* [Execution of Rules](doc/irserver-rule-execution-service.md#execution-of-rules)
+* [SDK Developer Guide](https://support.inrule.com/help/irSDKHelp50/index.html?irsoa_-_rules_as_services.htm)
+
+
+
 
 
 
