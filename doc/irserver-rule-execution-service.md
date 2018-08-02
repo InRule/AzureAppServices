@@ -134,18 +134,20 @@ This example assumes the following:
 
 ### Provide irCatalog on each request
 
+This allows providing the irCatalog instance in the request and irServer Rule Execution Service will retrieve the specified rule application from that irCatalog instance.
 ```powershell
 Invoke-RestMethod -Method 'Post' -ContentType 'application/json' -Headers @{"Accept"="application/json"} -Uri https://contoso-execution-prod-wa.azurewebsites.net/HttpService.svc/ApplyRules -Body '{"RuleApp":{"Password":"examplePassword","RepositoryRuleAppRevisionSpec":{"RuleApplicationName":"ChicagoFoodTaxGenerator"},"RepositoryServiceUri":"https://contoso-catalog-prod-wa.azurewebsites.net/Service.svc","UserName":"exampleUsername"},"EntityState":"{\"IsPlaceforEating\":true,\"ZIPCode\":\"60661\",\"OrderItems\":[{\"ItemType\":\"PreparedHot\",\"ItemCost\":7.0},{\"ItemType\":\"SyrupSoftDrink\",\"ItemCost\":1.5}]}","EntityName":"Order"}'
 ```
 
 ### Provide a default irCatalog
+A default irCatalog instance can be configured so irServer Rule Execution Service will use that catalog if you do not want to pass in its url for each request.
 
-Configure
+First, configure the appropriate application setting for the Azure App Service Web App:
 ```powershell
 az webapp config appsettings set --name contoso-execution-prod-wa --resource-group inrule-prod-rg --settings inrule:runtime:service:catalog:catalogServiceUri="https://contoso-catalog-prod-wa.azurewebsites.net/Service.svc"
 ```
 
-Perform request
+Then call ApplyRules on your irServer Rule Execution Service instance:
 ```powershell
 Invoke-RestMethod -Method 'Post' -ContentType 'application/json' -Headers @{"Accept"="application/json"} -Uri https://contoso-execution-prod-wa.azurewebsites.net/HttpService.svc/ApplyRules -Body '{"RuleApp":{"Password":"examplePassword","RepositoryRuleAppRevisionSpec":{"RuleApplicationName":"ChicagoFoodTaxGenerator"},"UserName":"exampleUsername"},"EntityState":"{\"IsPlaceforEating\":true,\"ZIPCode\":\"60661\",\"OrderItems\":[{\"ItemType\":\"PreparedHot\",\"ItemCost\":7.0},{\"ItemType\":\"SyrupSoftDrink\",\"ItemCost\":1.5}]}","EntityName":"Order"}'
 ```
