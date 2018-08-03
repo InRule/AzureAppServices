@@ -1,5 +1,7 @@
 irCatalog Service
 ====
+irCatalog® is a business rule management tool that provides centralized management of rules to ensure the integrity of business rules, keep everyone working on the latest version of rules, and promote sharing of common rules across customers, processes or applications.
+
 If you have not done so already, please read the [prerequisites](../README.md#prerequisites) before you get started.
 
 ## Sign in to Azure
