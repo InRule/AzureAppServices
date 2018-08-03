@@ -34,7 +34,7 @@ az sql server create --location LOCATION --resource-group RESOURCE_GROUP_NAME --
 ## Create Database
 Create the [Azure SQL Server Database](https://docs.microsoft.com/en-us/azure/sql-database/sql-database-single-databases-manage) with the [az sql db create](https://docs.microsoft.com/en-us/cli/azure/sql/db?view=azure-cli-latest#az-sql-db-create) command:
 ```powershell
-# Example: az sql db create --name ircatalog-database --server ircatalog-server --resource-group ehertlein --service-objective S0
+# Example: az sql db create --name ircatalog-database --server ircatalog-server --resource-group inrule-prod-rg
 az sql db create --name DATABASE_NAME --server SERVER_NAME --resource-group RESOURCE_GROUP_NAME
 ```
 
