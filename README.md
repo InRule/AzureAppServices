@@ -29,14 +29,14 @@ With irServer® Rule Execution Service, you can call business rules from a varie
 
 irCatalog® is a business rule management tool that provides centralized management of rules to ensure the integrity of business rules, keep everyone working on the latest version of rules, and promote sharing of common rules across customers, processes or applications.
 
-* [Database Deployment](doc/ircatalog-database.md)
-* [Web App Deployment](doc/ircatalog.md)
+* [Database Deployment](doc/ircatalog.md)
+* [Web App Deployment](doc/ircatalog#web-app-deployment.md)
 
 # irCatalog Manager
 
 The Catalog Manager is a stand-alone web application that provides an administrative interface to an irCatalog repository.  It is used to manage and migrate Rule Applications across an organization's various staging environments including production. It also provides an interface for managing users, roles, and permissions.
 
-* [Web App Deployment](doc/ircatalog-manager-web.md)
+* [Web App Deployment](doc/ircatalog-manager.md)
 
 
 

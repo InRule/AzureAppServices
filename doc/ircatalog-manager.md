@@ -8,7 +8,7 @@ If you have not done so already, please read the [prerequisites](../README.md#pr
 
 ## Getting started
 
-Before creating and deploying the irCatalog Manager package, the follow the steps below to log into Azure and set up the initial resources:
+Before creating and deploying the irCatalog Manager package, follow the steps below to log into Azure and set up the initial resources:
 
 * [Sign in to Azure](deployment-getting-started.md#sign-in-to-azure)
 * [Set active subscription](deployment-getting-started.md#set-active-subscription)
