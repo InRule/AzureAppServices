@@ -25,6 +25,12 @@ With irServer® Rule Execution Service, you can call business rules from a varie
 * [Execution of Rules](doc/irserver-rule-execution-service.md#execution-of-rules)
 * [SDK Developer Guide](https://support.inrule.com/help/irSDKHelp50/index.html?irsoa_-_rules_as_services.htm)
 
+# irCatalog Manager
+
+The Catalog Manager is a stand-alone web application that provides an administrative interface to an irCatalog repository.  It is used to manage and migrate Rule Applications across an organization's various staging environments including production. It also provides an interface for managing users, roles, and permissions.
+
+* [Deployment](doc/ircatalog-manager-web.md)
+
 
 
 
