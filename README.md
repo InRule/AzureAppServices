@@ -27,7 +27,7 @@ With irServer® Rule Execution Service, you can call business rules from a varie
 
 # irCatalog Database
 
-* [Deployment](doc/ircatalog.database.md)
+* [Deployment](doc/ircatalog-database.md)
 
 
 
