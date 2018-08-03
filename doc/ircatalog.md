@@ -1,4 +1,4 @@
-irCatalog Service
+irCatalog
 ====
 irCatalog® is a business rule management tool that provides centralized management of rules to ensure the integrity of business rules, keep everyone working on the latest version of rules, and promote sharing of common rules across customers, processes or applications.
 
@@ -23,14 +23,14 @@ az webapp create --name WEB_APP_NAME --plan APP_SERVICE_PLAN_NAME --resource-gro
 ```
 
 ## Deploy package
-First, [download](https://github.com/InRule/AzureAppServices/releases/latest) the latest irCatalog Service package (`InRule.Catalog.Service.zip`) from GitHub. Then [deploy the zip file](https://docs.microsoft.com/en-us/azure/app-service/app-service-deploy-zip) package to the Web App with the [az webapp deployment source](https://docs.microsoft.com/en-us/cli/azure/webapp/deployment/source#az-webapp-deployment-source-config-zip) command:
+First, [download](https://github.com/InRule/AzureAppServices/releases/latest) the latest irCatalog package (`InRule.Catalog.Service.zip`) from GitHub. Then [deploy the zip file](https://docs.microsoft.com/en-us/azure/app-service/app-service-deploy-zip) package to the Web App with the [az webapp deployment source](https://docs.microsoft.com/en-us/cli/azure/webapp/deployment/source#az-webapp-deployment-source-config-zip) command:
 ```powershell
 # Example: az webapp deployment source config-zip --name contoso-catalog-prod-wa --resource-group inrule-prod-rg --src InRule.Catalog.Service.zip
 az webapp deployment source config-zip --name WEB_APP_NAME --resource-group RESOURCE_GROUP_NAME --src FILE_PATH
 ```
 
 ## Upload valid license file
-In order for irCatalog Service to properly function, a valid license file must be uploaded to the web app. The simpliest way to upload the license file is via FTP.
+In order for irCatalog Service to properly function, a valid license file must be uploaded to the web app. The simplest way to upload the license file is via FTP.
 
 First, retrieve the FTP deployment profile (url and credentials) with the [az webapp deployment list-publishing-profiles](https://docs.microsoft.com/en-us/cli/azure/webapp/deployment#az-webapp-deployment-list-publishing-profiles) command and put the values into a variable:
 ```powershell
@@ -45,7 +45,7 @@ $client = New-Object System.Net.WebClient;$client.Credentials = New-Object Syste
 ```
 
 ## Change the connection string
-The irCatalog Service now needs to be configured to point to a valid irCatalog database that has been previously created.
+The irCatalog application now needs to be configured to point to a valid irCatalog database that has been previously created.
 ```powershell
 # Example: az webapp config appsettings set --name contoso-catalog-prod-wa --resource-group inrule-prod-rg --settings inrule:repository:service:connectionString="Server=tcp:ircatalog-server.database.windows.net,1433;Initial Catalog=ircatalog-database;Persist Security Info=False;User ID=admin;Password=%14TVpB*g$4b;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30";
 az webapp config appsettings set --name WEB_APP_NAME --resource-group RESOURCE_GROUP_NAME --settings inrule:repository:service:connectionString="Server=tcp:SERVER_NAME.windows.net,1433;Initial Catalog=DATABASE_NAME;Persist Security Info=False;User ID=USER_NAME;Password=USER_PASSWORD;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30";
