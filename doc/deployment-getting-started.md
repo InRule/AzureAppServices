@@ -1,3 +1,6 @@
+Getting Started
+====
+
 ## Sign in to Azure
 First, [open a PowerShell prompt](https://docs.microsoft.com/en-us/powershell/scripting/setup/starting-windows-powershell) and use the Azure CLI to [sign in](https://docs.microsoft.com/en-us/cli/azure/authenticate-azure-cli) to your Azure subscription:
 ```powershell
