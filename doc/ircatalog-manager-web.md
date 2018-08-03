@@ -2,6 +2,8 @@ irCatalog Manager
 ===
 The Catalog Manager is a stand-alone web application that provides an administrative interface to an irCatalog repository.  It is used to manage and migrate Rule Applications across an organization's various staging environments including production. It also provides an interface for managing users, roles, and permissions.
 
+If you have not done so already, please read the [prerequisites](../README.md#prerequisites) before you get started.
+
 # Deployment
 
 ## Sign in to Azure
