@@ -26,11 +26,14 @@ With irServer® Rule Execution Service, you can call business rules from a varie
 * [SDK Developer Guide](https://support.inrule.com/help/irSDKHelp50/index.html?irsoa_-_rules_as_services.htm)
 
 # irCatalog Service
+
 irCatalog® is a business rule management tool that provides centralized management of rules to ensure the integrity of business rules, keep everyone working on the latest version of rules, and promote sharing of common rules across customers, processes or applications.
 
 * [Deployment](doc/ircatalog-service.md)
 
+# irCatalog Database
 
+* [Deployment](doc/ircatalog-database.md)
 
 
 
