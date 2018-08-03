@@ -1,12 +1,12 @@
-## Create Web App for Catalog Manager
-Create the [Azure App Service Web App](https://docs.microsoft.com/en-us/azure/app-service/app-service-web-overview) for irServer Rule Execution Service with the [az webapp create](https://docs.microsoft.com/en-us/cli/azure/webapp#az-webapp-create) command:
+## Create Web App for Web Catalog Manager
+Create the [Azure App Service Web App](https://docs.microsoft.com/en-us/azure/app-service/app-service-web-overview) for the Web Catalog Manager with the [az webapp create](https://docs.microsoft.com/en-us/cli/azure/webapp#az-webapp-create) command:
 ```powershell
 # Example: az webapp create --name contoso-execution-prod-wa --plan inrule-prod-sp --resource-group inrule-prod-rg
 az webapp create --name WEB_APP_NAME --plan APP_SERVICE_PLAN_NAME --resource-group RESOURCE_GROUP_NAME
 ```
 
 ## Deploy package
-First, [download](https://github.com/InRule/AzureAppServices/releases/latest) the latest irServer Rule Execution Service package (`InRule.Runtime.Service.zip`) from GitHub. Then [deploy the zip file](https://docs.microsoft.com/en-us/azure/app-service/app-service-deploy-zip) package to the Web App with the [az webapp deployment source](https://docs.microsoft.com/en-us/cli/azure/webapp/deployment/source#az-webapp-deployment-source-config-zip) command:
+First, [download]() the latest Catalog Manager package (`InRule.Catalog.Manager.Web.zip`) from GitHub. Then [deploy the zip file](https://docs.microsoft.com/en-us/azure/app-service/app-service-deploy-zip) package to the Web App with the [az webapp deployment source](https://docs.microsoft.com/en-us/cli/azure/webapp/deployment/source#az-webapp-deployment-source-config-zip) command:
 ```powershell
 # Example: az webapp deployment source config-zip --name contoso-execution-prod-wa --resource-group inrule-prod-rg --src InRule.Catalog.Manager.Web.zip
 az webapp deployment source config-zip --name WEB_APP_NAME --resource-group RESOURCE_GROUP_NAME --src FILE_PATH
