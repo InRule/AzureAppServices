@@ -18,7 +18,7 @@ az account set --subscription SUBSCRIPTION_NAME
 ```
 
 ## Create resource group
-Create the resouce group that will contain the InRule-related Azure resources with the [az group create](https://docs.microsoft.com/en-us/cli/azure/group#az-group-create) command:
+Create the resource group that will contain the InRule-related Azure resources with the [az group create](https://docs.microsoft.com/en-us/cli/azure/group#az-group-create) command:
 ```powershell
 # Example: az group create --name inrule-prod-rg --location eastus
 az group create --name RESOURCE_GROUP_NAME --location LOCATION
@@ -61,9 +61,9 @@ Then run the included executable to deploy the initial irCatalog database schema
 .\InRule.Catalog.Service.Database.exe
 ```
 
-## (Optional) Remove Firewall Rule 
+## (Optional) Remove Firewall Rule
 While not required, the firewall rule that was added earlier may be removed with the [az sql server firewall-rule delete](https://docs.microsoft.com/en-us/cli/azure/sql/server/firewall-rule?view=azure-cli-latest#az-sql-server-firewall-rule-delete) command:
 ```powershell
-# Example: az sql server firewall-rule delete --name myLocalMachine --server ircatalog-server --resource-group inrule-prod-rg 
+# Example: az sql server firewall-rule delete --name myLocalMachine --server ircatalog-server --resource-group inrule-prod-rg
 az sql server firewall-rule delete --name FIREWALL_RULE_NAME --server SERVER_NAME --resource-group RESOURCE_GROUP_NAME
 ```
