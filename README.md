@@ -30,7 +30,7 @@ With irServer® Rule Execution Service, you can call business rules from a varie
 irCatalog® is a business rule management tool that provides centralized management of rules to ensure the integrity of business rules, keep everyone working on the latest version of rules, and promote sharing of common rules across customers, processes or applications.
 
 * [Database Deployment](doc/ircatalog.md)
-* [Web App Deployment](doc/ircatalog#web-app-deployment.md)
+* [Web App Deployment](doc/ircatalog.md#web-app-deployment)
 
 # irCatalog Manager
 
