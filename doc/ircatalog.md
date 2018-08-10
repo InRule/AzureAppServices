@@ -30,7 +30,15 @@ Create the [Azure SQL Server Database](https://docs.microsoft.com/en-us/azure/sq
 az sql db create --name DATABASE_NAME --server SERVER_NAME --resource-group RESOURCE_GROUP_NAME
 ```
 
-## Allow Access via Firewall Rule
+## Allow irCatalog Server Access via Firewall Rule
+In order to allow the irCatalog Server access to the database, a firewall rule must be added to allow your Azure services access to the Azure SQL Server.
+
+Create a rule in the firewall to allow you to access the newly created database with the [az sql server firewall-rule create](https://docs.microsoft.com/en-us/cli/azure/sql/server/firewall-rule?view=azure-cli-latest#az-sql-server-firewall-rule-create) command:
+```powershell
+# Example: az sql server firewall-rule create --name AllowAllWindowsAzureIps --server ircatalog-server --resource-group inrule-prod-rg --start-ip-address 0.0.0.0 --end-ip-address 0.0.0.0
+az sql server firewall-rule create --name AllowAllWindowsAzureIps --server SERVER_NAME --resource-group RESOURCE_GROUP_NAME --start-ip-address 0.0.0.0 --end-ip-address 0.0.0.0
+```
+## Allow Your Local Machine Access via Firewall Rule
 In order to run the catalog database install/upgrade application, a firewall rule must be added to allow your local machine access to the Azure SQL Server.
 
 Create a rule in the firewall to allow you to access the newly created database with the [az sql server firewall-rule create](https://docs.microsoft.com/en-us/cli/azure/sql/server/firewall-rule?view=azure-cli-latest#az-sql-server-firewall-rule-create) command:
