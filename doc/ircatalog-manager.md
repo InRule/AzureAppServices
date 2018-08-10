@@ -15,6 +15,8 @@ Before creating and deploying the irCatalog Manager package, follow the steps be
 * [Create resource group](deployment-getting-started.md#create-resource-group)
 * [Create App Service plan](deployment-getting-started.md#create-app-service-plan)
 
+Also, make sure that you have successfully deployed [irCatalog](https://github.com/InRule/AzureAppServices/#ircatalog).
+
 ## Create Web App
 Create the [Azure App Service Web App](https://docs.microsoft.com/en-us/azure/app-service/app-service-web-overview) for irCatalog Manager with the [az webapp create](https://docs.microsoft.com/en-us/cli/azure/webapp#az-webapp-create) command:
 ```powershell
