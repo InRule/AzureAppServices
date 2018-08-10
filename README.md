@@ -25,7 +25,9 @@ With irServer® Rule Execution Service, you can call business rules from a varie
 * [Execution of Rules](doc/irserver-rule-execution-service.md#execution-of-rules)
 * [SDK Developer Guide](https://support.inrule.com/help/irSDKHelp50/index.html?irsoa_-_rules_as_services.htm)
 
+# irCatalog Database
 
+* [Deployment](doc/ircatalog-database.md)
 
 
 
