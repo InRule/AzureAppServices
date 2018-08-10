@@ -31,7 +31,7 @@ az sql db create --name DATABASE_NAME --server SERVER_NAME --resource-group RESO
 ```
 
 ## Allow irCatalog Server Access via Firewall Rule
-In order to allow the irCatalog Server access to the database, a firewall rule must be added to allow your Azure services access to the Azure SQL Server.
+In order to allow the irCatalog Server access to the database, a firewall rule must be added to allow Azure services access to the Azure SQL Server.
 
 Create a rule in the firewall to allow you to access the newly created database with the [az sql server firewall-rule create](https://docs.microsoft.com/en-us/cli/azure/sql/server/firewall-rule?view=azure-cli-latest#az-sql-server-firewall-rule-create) command:
 ```powershell
