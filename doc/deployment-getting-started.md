@@ -15,7 +15,7 @@ az account set --subscription SUBSCRIPTION_NAME
 ```
 
 ## Create resource group
-Create the resource group that will contain the InRule-related Azure resources with the [az group create](https://docs.microsoft.com/en-us/cli/azure/group#az-group-create) command:
+Create the resource group (one resource group per environment is suggested) that will contain the InRule-related Azure resources with the [az group create](https://docs.microsoft.com/en-us/cli/azure/group#az-group-create) command:
 ```powershell
 # Example: az group create --name inrule-prod-rg --location eastus
 az group create --name RESOURCE_GROUP_NAME --location LOCATION
