@@ -5,7 +5,7 @@ You can retrieve the logs from your individual InRule App Service Web Apps via t
 
 ## Getting started
 
-Before creating and deploying the irCatalog database package, follow the steps below to log into Azure:
+Before retrieving Web App logs, follow the steps below to log into Azure:
 
 * [Sign in to Azure](deployment-getting-started.md#sign-in-to-azure)
 * [Set active subscription](deployment-getting-started.md#set-active-subscription)
