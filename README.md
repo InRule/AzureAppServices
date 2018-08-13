@@ -21,13 +21,23 @@ Before you get started, you'll need the make sure you have the following:
 
 With irServer® Rule Execution Service, you can call business rules from a variety of systems including J2EE applications, BPM processes and ESB orchestrations. Execute any rules stored in irCatalog or in the App Service Web App itself. Access is available via REST or SOAP.
 
-* [Deployment](doc/irserver-rule-execution-service.md)
+* [Web App Deployment](doc/irserver-rule-execution-service.md)
 * [Execution of Rules](doc/irserver-rule-execution-service.md#execution-of-rules)
 * [SDK Developer Guide](https://support.inrule.com/help/irSDKHelp50/index.html?irsoa_-_rules_as_services.htm)
 
-# irCatalog Database
+# irCatalog
 
-* [Deployment](doc/ircatalog-database.md)
+irCatalog® is a business rule management tool that provides centralized management of rules to ensure the integrity of business rules, keep everyone working on the latest version of rules, and promote sharing of common rules across customers, processes or applications.
+
+* [Database Deployment](doc/ircatalog.md)
+* [Web App Deployment](doc/ircatalog.md#web-app-deployment)
+
+# irCatalog Manager
+
+The Catalog Manager is a stand-alone web application that provides an administrative interface to an irCatalog repository.  It is used to manage and migrate Rule Applications across an organization's various staging environments including production. It also provides an interface for managing users, roles, and permissions.
+
+* [Web App Deployment](doc/ircatalog-manager.md)
+
 
 
 

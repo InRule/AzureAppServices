@@ -6,32 +6,14 @@ If you have not done so already, please read the [prerequisites](../README.md#pr
 
 # Deployment
 
-## Sign in to Azure
-First, [open a PowerShell prompt](https://docs.microsoft.com/en-us/powershell/scripting/setup/starting-windows-powershell) and use the Azure CLI to [sign in](https://docs.microsoft.com/en-us/cli/azure/authenticate-azure-cli) to your Azure subscription:
-```powershell
-az login
-```
+## Getting started
 
-## Set active subscription
-If your Azure account has access to multiple subscriptions, you will need to [set your active subscription](https://docs.microsoft.com/en-us/cli/azure/account#az-account-set) to where you create your Azure resources:
-```powershell
-# Example: az account set --subscription "Contoso Subscription 1"
-az account set --subscription SUBSCRIPTION_NAME
-```
+Before creating and deploying the irServer Rule Execution Service package, follow the steps below to log into Azure and set up the initial resources:
 
-## Create resource group
-Create the resource group that will contain the InRule-related Azure resources with the [az group create](https://docs.microsoft.com/en-us/cli/azure/group#az-group-create) command:
-```powershell
-# Example: az group create --name inrule-prod-rg --location eastus
-az group create --name RESOURCE_GROUP_NAME --location LOCATION
-```
-
-## Create App Service plan
-Create the [App Service plan](https://docs.microsoft.com/en-us/azure/app-service/azure-web-sites-web-hosting-plans-in-depth-overview) that will host the InRule-related web apps with the [az appservice plan create](https://docs.microsoft.com/en-us/cli/azure/appservice/plan#az-appservice-plan-create) command:
-```powershell
-# Example: az appservice plan create --name inrule-prod-sp --resource-group inrule-prod-rg --location eastus
-az appservice plan create --name APP_SERVICE_PLAN_NAME --resource-group RESOURCE_GROUP_NAME --location LOCATION
-```
+* [Sign in to Azure](deployment-getting-started.md#sign-in-to-azure)
+* [Set active subscription](deployment-getting-started.md#set-active-subscription)
+* [Create resource group](deployment-getting-started.md#create-resource-group)
+* [Create App Service plan](deployment-getting-started.md#create-app-service-plan)
 
 ## Create Web App
 Create the [Azure App Service Web App](https://docs.microsoft.com/en-us/azure/app-service/app-service-web-overview) for irServer Rule Execution Service with the [az webapp create](https://docs.microsoft.com/en-us/cli/azure/webapp#az-webapp-create) command:
