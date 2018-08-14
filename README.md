@@ -38,6 +38,11 @@ The Catalog Manager is a stand-alone web application that provides an administra
 
 * [Web App Deployment](doc/ircatalog-manager.md)
 
+# Log retrieval
+Once Web Apps have been deployed, their individual log files can be retrieved.
+
+* [Web App log retrieval](doc/webapp-log-retrieval.md)
+
 
 
 
