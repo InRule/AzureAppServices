@@ -17,8 +17,8 @@ az account set --subscription SUBSCRIPTION_NAME
 ```
 
 ## Retrieve logs from desired Web App
-Retrieve a zip file of logs from a specified Web App, with the [az webapp log download](https://docs.microsoft.com/en-us/cli/azure/webapp/log?view=azure-cli-latest#az-webapp-log-download) command:
+Retrieve a zip file of logs from a specified Web App with the [az webapp log download](https://docs.microsoft.com/en-us/cli/azure/webapp/log?view=azure-cli-latest#az-webapp-log-download) command:
 ```powershell
-#Example az webapp log download --name ircatalog-server --resource-group inrule-prod-rg
-az webapp log download --name WEB_APP_NAME --resource-group RESOURCE_GROUP 
+# Example az webapp log download --name contoso-catalog-prod-wa --resource-group inrule-prod-rg
+az webapp log download --name WEB_APP_NAME --resource-group RESOURCE_GROUP
 ```

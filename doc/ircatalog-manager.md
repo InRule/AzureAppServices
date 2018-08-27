@@ -58,9 +58,9 @@ az webapp config appsettings set --name WEB_APP_NAME --resource-group RESOURCE_G
 ```
 
 ## Verify successful deployment
-Verify your deployment is successfully configured by visiting irCatalog Manager in your browser by using the [az webapp browse](https://docs.microsoft.com/en-us/cli/azure/webapp?view=azure-cli-latest#az-webapp-browse) command and logging in:
+Verify your deployment is successfully configured by visiting irCatalog Manager in your browser with the [az webapp browse](https://docs.microsoft.com/en-us/cli/azure/webapp?view=azure-cli-latest#az-webapp-browse) command and logging in:
 ```powershell
-# Example: az webapp browse --name catalogmanager --resource-group inrule-prod-rg
+# Example: az webapp browse --name contoso-catalogmgr-prod-wa --resource-group inrule-prod-rg
 az webapp browse --name WEB_APP_NAME --resource-group RESOURCE_GROUP_NAME
 ```
 
