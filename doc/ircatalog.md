@@ -8,25 +8,37 @@ If you have not done so already, please read the [prerequisites](../README.md#pr
 
 irCatalog supports both Microsoft SQL Server (which includes Azure SQL Databases) and Oracle Database.  This section explains how to provision a new Microsoft Azure SQL Database for irCatalog. If you have an existing database, you may skip to the the [Web App Deployment](#web-app-deployment) section.
 
-## Getting started
+## Sign in to Azure
+First, [open a PowerShell prompt](https://docs.microsoft.com/en-us/powershell/scripting/setup/starting-windows-powershell) and use the Azure CLI to [sign in](https://docs.microsoft.com/en-us/cli/azure/authenticate-azure-cli) to your Azure subscription:
+```powershell
+az login
+```
 
-Before creating and deploying the irCatalog database package, follow the steps below to log into Azure and set up the initial resources:
+## Set active subscription
+If your Azure account has access to multiple subscriptions, you will need to [set your active subscription](https://docs.microsoft.com/en-us/cli/azure/account#az-account-set) to where you create your Azure resources:
+```powershell
+# Example: az account set --subscription "Contoso Subscription 1"
+az account set --subscription SUBSCRIPTION_NAME
+```
 
-* [Sign in to Azure](deployment-getting-started.md#sign-in-to-azure)
-* [Set active subscription](deployment-getting-started.md#set-active-subscription)
-* [Create resource group](deployment-getting-started.md#create-resource-group)
+## Create resource group
+Create the resource group (one resource group per environment is typical) that will contain the InRule-related Azure resources with the [az group create](https://docs.microsoft.com/en-us/cli/azure/group#az-group-create) command:
+```powershell
+# Example: az group create --name inrule-prod-rg --location eastus
+az group create --name RESOURCE_GROUP_NAME --location LOCATION
+```
 
 ## Create Database Server
 Create the [Azure SQL Server](https://docs.microsoft.com/en-us/azure/sql-database/sql-database-logical-servers) with the [az sql server create](https://docs.microsoft.com/en-us/cli/azure/sql/server?view=azure-cli-latest#az-sql-server-create) command:
 ```powershell
-# Example: az sql server create --location eastus --resource-group inrule-prod-rg --name ircatalog-server --admin-user admin --admin-password %14TVpB*g$4b
-az sql server create --location LOCATION --resource-group RESOURCE_GROUP_NAME --name SERVER_NAME --admin-user ADMIN_USER_NAME --admin-password ADMIN_USER_PASSWORD
+# Example: az sql server create --name contoso-catalog-prod-sql --resource-group inrule-prod-rg --location eastus --admin-user admin --admin-password %14TVpB*g$4b
+az sql server create --name SERVER_NAME --resource-group RESOURCE_GROUP_NAME --location LOCATION --admin-user ADMIN_USER_NAME --admin-password ADMIN_USER_PASSWORD
 ```
 
 ## Create Database
 Create the [Azure SQL Server Database](https://docs.microsoft.com/en-us/azure/sql-database/sql-database-single-databases-manage) with the [az sql db create](https://docs.microsoft.com/en-us/cli/azure/sql/db?view=azure-cli-latest#az-sql-db-create) command:
 ```powershell
-# Example: az sql db create --name ircatalog-database --server ircatalog-server --resource-group inrule-prod-rg
+# Example: az sql db create --name catalog-prod-db --server contoso-catalog-prod-sql --resource-group inrule-prod-rg
 az sql db create --name DATABASE_NAME --server SERVER_NAME --resource-group RESOURCE_GROUP_NAME
 ```
 
@@ -35,15 +47,15 @@ In order to allow the irCatalog Server access to the database, a firewall rule m
 
 Create a rule in the firewall to allow you to access the newly created database with the [az sql server firewall-rule create](https://docs.microsoft.com/en-us/cli/azure/sql/server/firewall-rule?view=azure-cli-latest#az-sql-server-firewall-rule-create) command:
 ```powershell
-# Example: az sql server firewall-rule create --name AllowAllWindowsAzureIps --server ircatalog-server --resource-group inrule-prod-rg --start-ip-address 0.0.0.0 --end-ip-address 0.0.0.0
+# Example: az sql server firewall-rule create --name AllowAllWindowsAzureIps --server contoso-catalog-prod-sql --resource-group inrule-prod-rg --start-ip-address 0.0.0.0 --end-ip-address 0.0.0.0
 az sql server firewall-rule create --name AllowAllWindowsAzureIps --server SERVER_NAME --resource-group RESOURCE_GROUP_NAME --start-ip-address 0.0.0.0 --end-ip-address 0.0.0.0
 ```
 ## Allow Your Local Machine Access via Firewall Rule
-In order to run the catalog database install/upgrade application, a firewall rule must be added to allow your local machine access to the Azure SQL Server.
+In order to run the catalog database install/upgrade application, a firewall rule must be added to allow your local machine access to the Azure SQL Server. One way to find your external IP address would be to use [Google](https://www.google.com/search?q=what+is+my+ip).
 
 Create a rule in the firewall to allow you to access the newly created database with the [az sql server firewall-rule create](https://docs.microsoft.com/en-us/cli/azure/sql/server/firewall-rule?view=azure-cli-latest#az-sql-server-firewall-rule-create) command:
 ```powershell
-# Example: az sql server firewall-rule create --name myLocalMachine --server ircatalog-server --resource-group inrule-prod-rg --start-ip-address 1.2.3.4 --end-ip-address 1.2.3.4
+# Example: az sql server firewall-rule create --name myLocalMachine --server contoso-catalog-prod-sql --resource-group inrule-prod-rg --start-ip-address 1.2.3.4 --end-ip-address 1.2.3.4
 az sql server firewall-rule create --name FIREWALL_RULE_NAME --server SERVER_NAME --resource-group RESOURCE_GROUP_NAME --start-ip-address MY_EXTERNAL_IP --end-ip-address MY_EXTERNAL_IP
 ```
 
@@ -52,7 +64,7 @@ First, [download](https://github.com/InRule/AzureAppServices/releases/latest) th
 
 Update the `appsettings.json` found in the newly unzipped directory with the connection string for your database. Be sure to set a valid user name and password. You can retrieve the connection string with the [az sql db show-connection-string](https://docs.microsoft.com/en-us/cli/azure/sql/db?view=azure-cli-latest#az-sql-db-show-connection-string) command:
 ```powershell
-# Example: az sql db show-connection-string --server ircatalog-server --name ircatalog-database --client ado.net
+# Example: az sql db show-connection-string --server contoso-catalog-prod-sql --name catalog-prod-db --client ado.net
 az sql db show-connection-string --server SERVER_NAME --name DATABASE_NAME --client ado.net
 ```
 
@@ -64,20 +76,38 @@ Then run the included executable to deploy the initial irCatalog database schema
 ## (Optional) Remove Local Machine Firewall Rule
 While not required, the local machine firewall rule that was added earlier may be removed with the [az sql server firewall-rule delete](https://docs.microsoft.com/en-us/cli/azure/sql/server/firewall-rule?view=azure-cli-latest#az-sql-server-firewall-rule-delete) command:
 ```powershell
-# Example: az sql server firewall-rule delete --name myLocalMachine --server ircatalog-server --resource-group inrule-prod-rg
+# Example: az sql server firewall-rule delete --name myLocalMachine --server contoso-catalog-prod-sql --resource-group inrule-prod-rg
 az sql server firewall-rule delete --name FIREWALL_RULE_NAME --server SERVER_NAME --resource-group RESOURCE_GROUP_NAME
 ```
 
 # Web App Deployment
 
-## Getting started
+## Sign in to Azure
+First, [open a PowerShell prompt](https://docs.microsoft.com/en-us/powershell/scripting/setup/starting-windows-powershell) and use the Azure CLI to [sign in](https://docs.microsoft.com/en-us/cli/azure/authenticate-azure-cli) to your Azure subscription:
+```powershell
+az login
+```
 
-Before creating and deploying the irCatalog package, follow the steps below to log into Azure and set up the initial resources:
+## Set active subscription
+If your Azure account has access to multiple subscriptions, you will need to [set your active subscription](https://docs.microsoft.com/en-us/cli/azure/account#az-account-set) to where you create your Azure resources:
+```powershell
+# Example: az account set --subscription "Contoso Subscription 1"
+az account set --subscription SUBSCRIPTION_NAME
+```
 
-* [Sign in to Azure](deployment-getting-started.md#sign-in-to-azure)
-* [Set active subscription](deployment-getting-started.md#set-active-subscription)
-* [Create resource group](deployment-getting-started.md#create-resource-group)
-* [Create App Service plan](deployment-getting-started.md#create-app-service-plan)
+## Create resource group
+Create the resource group (one resource group per environment is typical) that will contain the InRule-related Azure resources with the [az group create](https://docs.microsoft.com/en-us/cli/azure/group#az-group-create) command:
+```powershell
+# Example: az group create --name inrule-prod-rg --location eastus
+az group create --name RESOURCE_GROUP_NAME --location LOCATION
+```
+
+## Create App Service plan
+Create the [App Service plan](https://docs.microsoft.com/en-us/azure/app-service/azure-web-sites-web-hosting-plans-in-depth-overview) that will host the InRule-related web apps with the [az appservice plan create](https://docs.microsoft.com/en-us/cli/azure/appservice/plan#az-appservice-plan-create) command:
+```powershell
+# Example: az appservice plan create --name inrule-prod-sp --resource-group inrule-prod-rg --location eastus
+az appservice plan create --name APP_SERVICE_PLAN_NAME --resource-group RESOURCE_GROUP_NAME --location LOCATION
+```
 
 ## Create Web App
 Create the [Azure App Service Web App](https://docs.microsoft.com/en-us/azure/app-service/app-service-web-overview) for the Catalog Service with the [az webapp create](https://docs.microsoft.com/en-us/cli/azure/webapp#az-webapp-create) command:
@@ -111,7 +141,7 @@ $client = New-Object System.Net.WebClient;$client.Credentials = New-Object Syste
 ## Change the connection string
 The irCatalog application now needs to be configured to point to your irCatalog database.
 ```powershell
-# Example: az webapp config appsettings set --name contoso-catalog-prod-wa --resource-group inrule-prod-rg --settings inrule:repository:service:connectionString="Server=tcp:ircatalog-server.database.windows.net,1433;Initial Catalog=ircatalog-database;Persist Security Info=False;User ID=admin;Password=%14TVpB*g$4b;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30";
+# Example: az webapp config appsettings set --name contoso-catalog-prod-wa --resource-group inrule-prod-rg --settings inrule:repository:service:connectionString="Server=tcp:contoso-catalog-prod-sql.database.windows.net,1433;Initial Catalog=catalog-prod-db;Persist Security Info=False;User ID=admin;Password=%14TVpB*g$4b;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30";
 az webapp config appsettings set --name WEB_APP_NAME --resource-group RESOURCE_GROUP_NAME --settings inrule:repository:service:connectionString="Server=tcp:SERVER_NAME.database.windows.net,1433;Initial Catalog=DATABASE_NAME;Persist Security Info=False;User ID=USER_NAME;Password=USER_PASSWORD;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30";
 ```
 

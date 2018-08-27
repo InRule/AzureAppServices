@@ -6,16 +6,35 @@ If you have not done so already, please read the [prerequisites](../README.md#pr
 
 # Deployment
 
-## Getting started
+## Deploy irCatalog
+In order to use irCatalog Manager, make sure that you have successfully deployed [irCatalog](./ircatalog.md).
 
-Before creating and deploying the irCatalog Manager package, follow the steps below to log into Azure and set up the initial resources:
+## Sign in to Azure
+First, [open a PowerShell prompt](https://docs.microsoft.com/en-us/powershell/scripting/setup/starting-windows-powershell) and use the Azure CLI to [sign in](https://docs.microsoft.com/en-us/cli/azure/authenticate-azure-cli) to your Azure subscription:
+```powershell
+az login
+```
 
-* [Sign in to Azure](deployment-getting-started.md#sign-in-to-azure)
-* [Set active subscription](deployment-getting-started.md#set-active-subscription)
-* [Create resource group](deployment-getting-started.md#create-resource-group)
-* [Create App Service plan](deployment-getting-started.md#create-app-service-plan)
+## Set active subscription
+If your Azure account has access to multiple subscriptions, you will need to [set your active subscription](https://docs.microsoft.com/en-us/cli/azure/account#az-account-set) to where you create your Azure resources:
+```powershell
+# Example: az account set --subscription "Contoso Subscription 1"
+az account set --subscription SUBSCRIPTION_NAME
+```
 
-Also, make sure that you have successfully deployed [irCatalog](../README.md#ircatalog).
+## Create resource group
+Create the resource group (one resource group per environment is typical) that will contain the InRule-related Azure resources with the [az group create](https://docs.microsoft.com/en-us/cli/azure/group#az-group-create) command:
+```powershell
+# Example: az group create --name inrule-prod-rg --location eastus
+az group create --name RESOURCE_GROUP_NAME --location LOCATION
+```
+
+## Create App Service plan
+Create the [App Service plan](https://docs.microsoft.com/en-us/azure/app-service/azure-web-sites-web-hosting-plans-in-depth-overview) that will host the InRule-related web apps with the [az appservice plan create](https://docs.microsoft.com/en-us/cli/azure/appservice/plan#az-appservice-plan-create) command:
+```powershell
+# Example: az appservice plan create --name inrule-prod-sp --resource-group inrule-prod-rg --location eastus
+az appservice plan create --name APP_SERVICE_PLAN_NAME --resource-group RESOURCE_GROUP_NAME --location LOCATION
+```
 
 ## Create Web App
 Create the [Azure App Service Web App](https://docs.microsoft.com/en-us/azure/app-service/app-service-web-overview) for irCatalog Manager with the [az webapp create](https://docs.microsoft.com/en-us/cli/azure/webapp#az-webapp-create) command:
@@ -39,9 +58,9 @@ az webapp config appsettings set --name WEB_APP_NAME --resource-group RESOURCE_G
 ```
 
 ## Verify successful deployment
-Verify your deployment is successfully configured by visiting irCatalog Manager in your browser by using the [az webapp browse](https://docs.microsoft.com/en-us/cli/azure/webapp?view=azure-cli-latest#az-webapp-browse) command and logging in:
+Verify your deployment is successfully configured by visiting irCatalog Manager in your browser with the [az webapp browse](https://docs.microsoft.com/en-us/cli/azure/webapp?view=azure-cli-latest#az-webapp-browse) command and logging in:
 ```powershell
-# Example: az webapp browse --name catalogmanager --resource-group inrule-prod-rg
+# Example: az webapp browse --name contoso-catalogmgr-prod-wa --resource-group inrule-prod-rg
 az webapp browse --name WEB_APP_NAME --resource-group RESOURCE_GROUP_NAME
 ```
 
