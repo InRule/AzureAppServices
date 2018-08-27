@@ -51,7 +51,7 @@ Create a rule in the firewall to allow you to access the newly created database 
 az sql server firewall-rule create --name AllowAllWindowsAzureIps --server SERVER_NAME --resource-group RESOURCE_GROUP_NAME --start-ip-address 0.0.0.0 --end-ip-address 0.0.0.0
 ```
 ## Allow Your Local Machine Access via Firewall Rule
-In order to run the catalog database install/upgrade application, a firewall rule must be added to allow your local machine access to the Azure SQL Server. One way to find your IP address would be to use [Google](https://www.google.com/search?q=what+is+my+ip) which should display it.
+In order to run the catalog database install/upgrade application, a firewall rule must be added to allow your local machine access to the Azure SQL Server. One way to find your external IP address would be to use [Google](https://www.google.com/search?q=what+is+my+ip).
 
 Create a rule in the firewall to allow you to access the newly created database with the [az sql server firewall-rule create](https://docs.microsoft.com/en-us/cli/azure/sql/server/firewall-rule?view=azure-cli-latest#az-sql-server-firewall-rule-create) command:
 ```powershell
