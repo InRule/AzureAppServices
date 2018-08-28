@@ -17,14 +17,6 @@ Before you get started, you'll need the make sure you have the following:
 
 * [PowerShell](https://docs.microsoft.com/en-us/powershell/scripting/powershell-scripting) version 3.0 or later is installed. To see which version you have, run `$PSVersionTable.PSVersion.ToString()` command in your PowerShell terminal window.
 
-# irServer Rule Execution Service
-
-With irServer® Rule Execution Service, you can call business rules from a variety of systems including J2EE applications, BPM processes and ESB orchestrations. Execute any rules stored in irCatalog or in the App Service Web App itself. Access is available via REST or SOAP.
-
-* [Web App Deployment](doc/irserver-rule-execution-service.md)
-* [Execution of Rules](doc/irserver-rule-execution-service.md#execution-of-rules)
-* [SDK Developer Guide](https://support.inrule.com/help/irSDKHelp50/index.html?irsoa_-_rules_as_services.htm)
-
 # irCatalog
 
 irCatalog® is a business rule management tool that provides centralized management of rules to ensure the integrity of business rules, keep everyone working on the latest version of rules, and promote sharing of common rules across customers, processes or applications.
@@ -37,6 +29,14 @@ irCatalog® is a business rule management tool that provides centralized managem
 The Catalog Manager is a stand-alone web application that provides an administrative interface to an irCatalog repository.  It is used to manage and migrate Rule Applications across an organization's various staging environments including production. It also provides an interface for managing users, roles, and permissions.
 
 * [Web App Deployment](doc/ircatalog-manager.md)
+
+# irServer Rule Execution Service
+
+With irServer® Rule Execution Service, you can call business rules from a variety of systems including J2EE applications, BPM processes and ESB orchestrations. Execute any rules stored in irCatalog or in the App Service Web App itself. Access is available via REST or SOAP.
+
+* [Web App Deployment](doc/irserver-rule-execution-service.md)
+* [Execution of Rules](doc/irserver-rule-execution-service.md#execution-of-rules)
+* [SDK Developer Guide](https://support.inrule.com/help/irSDKHelp50/index.html?irsoa_-_rules_as_services.htm)
 
 # Log retrieval
 Once Web Apps have been deployed, their individual log files can be retrieved.
