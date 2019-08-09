@@ -2,13 +2,15 @@ irServer Rule Execution Service Arm Template Deployment
 ====
 In this section we will be deploying the irServer Rule Execution Service.  This will create the Rule Execution app services.  To make this process easier, we'll be using an Azure Resource Manager (ARM) template, which allows us to deploy and configure all the Azure resources needed.
 
-The arm template can be downloaded [here](https://urlhere.com) and will be needed to continue with this deployment option.
+If you have not done so already, please read the [prerequisites](../README.md#prerequisites) before you get started.
+
+The arm template can be downloaded [here](https://github.com/InRule/AzureAppServices/releases/latest/download/InRule.Runtime.Service.json) and the parameters file [here](https://github.com/InRule/AzureAppServices/releases/latest/download/InRule.Runtime.Service.parameters.json). Both will be needed to continue with this deployment option.
 
 # Update the template parameters
 
 Before deploying the ARM template, we need to define certain parameters.
 
-Locate the _InRule.Runtime.Service.parameters.json_ file in the _FolderName_ file you dowloaded above.
+Locate the _InRule.Runtime.Service.parameters.json_ file downloaded above.
 
 Open the file with your text editor of choice and edit the parametes listed below:
 
