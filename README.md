@@ -17,24 +17,39 @@ Before you get started, you'll need the make sure you have the following:
 
 * [PowerShell](https://docs.microsoft.com/en-us/powershell/scripting/powershell-scripting) version 3.0 or later is installed. To see which version you have, run `$PSVersionTable.PSVersion.ToString()` command in your PowerShell terminal window.
 
-# irCatalog
+# irCatalog and irCatalog Manager
 
 irCatalog® is a business rule management tool that provides centralized management of rules to ensure the integrity of business rules, keep everyone working on the latest version of rules, and promote sharing of common rules across customers, processes or applications.
 
+The Catalog Manager is a stand-alone web application that provides an administrative interface to an irCatalog repository. It is used to manage and migrate Rule Applications across an organization's various staging environments including production. It also provides an interface for managing users, roles, and permissions.
+
+There are two options for deploying the Catalog and Catalog Manager, deploying with an Azure Resource Manager Template or deploying resources individually via the Azure CLI. Both options will deploy the same set of resources, but the ARM template deploys them all in a single step.
+
+#### Deploying via Azure Resource Manager Template:
+
+* [ARM Template Deployment](doc/ircatalog-arm-template-deployment.md)
+
+#### Deploying with manual steps:
+
 * [Database Deployment](doc/ircatalog.md)
 * [Web App Deployment](doc/ircatalog.md#web-app-deployment)
-
-# irCatalog Manager
-
-The Catalog Manager is a stand-alone web application that provides an administrative interface to an irCatalog repository.  It is used to manage and migrate Rule Applications across an organization's various staging environments including production. It also provides an interface for managing users, roles, and permissions.
-
 * [Web App Deployment](doc/ircatalog-manager.md)
 
 # irServer Rule Execution Service
 
 With irServer® Rule Execution Service, you can call business rules from a variety of systems including J2EE applications, BPM processes and ESB orchestrations. Execute any rules stored in irCatalog or in the App Service Web App itself. Access is available via REST or SOAP.
 
+There are two options for deploying the Execution Service, deploying with an Azure Resource Manager Template or deploying resource individually via the Azure CLI. Both options will deploy the same set of resources, but the ARM template deploys them all in a single step.
+
+#### Deploying via Azure Resource Manager Template:
+
+* [ARM Template Deployment](doc/irserver-arm-template-deployment.md)
+
+#### Deploying with manual steps:
+
 * [Web App Deployment](doc/irserver-rule-execution-service.md)
+
+For more information on rules execution, refer to the following links:
 * [Execution of Rules](doc/irserver-rule-execution-service.md#execution-of-rules)
 * [SDK Developer Guide](https://support.inrule.com/help/irSDKHelp50/index.html?irsoa_-_rules_as_services.htm)
 
