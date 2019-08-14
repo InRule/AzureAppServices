@@ -58,10 +58,10 @@ az group deployment create -g RESOURCE_GROUP_NAME --template-file .\InRule.Catal
 ```
 
 ## Allow Your Local Machine Access via Firewall Rule
-You'll need to temporarily allow access to your local machine to deploy the schema and data for the database. This step can be found in the web app deployment guide [Web App Deployment](ircatalog.md##allow-your-local-machine-access-via-firewall-rule)
+You'll need to temporarily allow access to your local machine to deploy the schema and data for the database. This step can be found in the web app deployment guide [Web App Deployment](ircatalog.md#allow-ircatalog-server-access-via-firewall-rule)
 
 ## Deploy the irCatalog Database
-After opening the firewall, you'll need to use the provided tool to setup the database. This step can be found in the web app deployment guide [Web App Deployment](ircatalog.md##Deploy-the-irCatalog-Database)
+After opening the firewall, you'll need to use the provided tool to setup the database. This step can be found in the web app deployment guide [Web App Deployment](ircatalog.md#deploy-the-ircatalog-database)
 
 ## Upload valid license file
 In order for irCatalog Service to properly function, a valid license file must be uploaded to the web app. The simplest way to upload the license file is via FTP.
