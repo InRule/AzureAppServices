@@ -10,7 +10,7 @@ The arm template can be downloaded [here](https://github.com/InRule/AzureAppServ
 
 Before deploying the ARM template, we need to define certain parameters.
 
-Locate the _InRule.Catalog.Service.parameters.json_ file in the _FolderName_ file you dowloaded above.
+Locate the _InRule.Catalog.Service.parameters.json_ file in the file you dowloaded above.
 
 Open the file with your text editor of choice and edit the parametes listed below:
 
