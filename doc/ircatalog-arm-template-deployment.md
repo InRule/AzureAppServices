@@ -4,7 +4,7 @@ In this section we will be deploying the irCatalog® as well as the irCatalog Ma
 
 If you have not done so already, please read the [prerequisites](../README.md#prerequisites) before you get started.
 
-The arm template can be downloaded [here](https://github.com/InRule/AzureAppServices/releases/latest/download/InRule.Catalog.Service.json) and the parameters file [here](https://github.com/InRule/AzureAppServices/releases/latest/download/InRule.Catalog.Service.parameters.json). Both will be needed to continue with this deployment option.
+The arm template can be downloaded [here](../InRule.Catalog.Service.json) and the parameters file [here](../InRule.Catalog.Service.parameters.json). Both will be needed to continue with this deployment option.
 
 # Update the template parameters
 
