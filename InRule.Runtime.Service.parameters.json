@@ -1,0 +1,11 @@
+{
+  "executionServiceName": {
+    "value": "{inruleRuntimeAppService}"
+  },
+  "executionServicePlanSkuName": {
+    "value": "B1"
+  },
+  "catalogUri": {
+    "value": "https://{catalogAppService}/Service.svc"
+  }
+}

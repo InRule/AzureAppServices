@@ -1,0 +1,29 @@
+{
+  "catalogServiceName": {
+    "value": "{catalogAppService}"
+  },
+  "catalogManagerServiceName": {
+    "value": "{catalogManagerAppService}"
+  },
+  "catalogServicePlanSkuName": {
+    "value": "B1"
+  },
+  "catalogSqlServerName": {
+    "value": "{catalogSqlDbServerName}"
+  },
+  "catalogSqlServerUsername": {
+    "value": "{sqlDbServerUser}"
+  },
+  "catalogSqlServerPassword": {
+    "value": "{sqlDbServerPassword}"
+  },
+  "catalogSqlDbName": {
+    "value": "{catalogSqlDbName}"
+  },
+  "catalogSqlDbEdition": {
+    "value": "Basic"
+  },
+  "catalogSqlDbPerformanceLevel": {
+    "value": "Basic"
+  }
+}
