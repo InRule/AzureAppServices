@@ -32,8 +32,8 @@ There are two options for deploying the Catalog and Catalog Manager, deploying w
 #### Deploying with manual steps:
 
 * [Database Deployment](doc/ircatalog.md)
-* [Web App Deployment](doc/ircatalog.md#web-app-deployment)
-* [Web App Deployment](doc/ircatalog-manager.md)
+* [irCatalog Web App Deployment](doc/ircatalog.md#web-app-deployment)
+* [irCatalog Manager Web App Deployment](doc/ircatalog-manager.md)
 
 # irServer Rule Execution Service
 
@@ -47,7 +47,7 @@ There are two options for deploying the Execution Service, deploying with an Azu
 
 #### Deploying with manual steps:
 
-* [Web App Deployment](doc/irserver-rule-execution-service.md)
+* [irServer Web App Deployment](doc/irserver-rule-execution-service.md)
 
 For more information on rules execution, refer to the following links:
 * [Execution of Rules](doc/irserver-rule-execution-service.md#execution-of-rules)

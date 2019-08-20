@@ -14,12 +14,12 @@ Locate the _InRule.Runtime.Service.parameters.json_ file downloaded above.
 
 Open the file with your text editor of choice and edit the parametes listed below:
 
-#### InRule.Catalog.Service.parameters.json
-| Parameter | Description |
-| --------- | ----------- |
-| executionServiceName | Provide a name for the Azure App Service that the execution service will run on. |
-| executionServicePlanSkuName | Describes runtime services plan's pricing tier and capacity. [Plan Details](https://azure.microsoft.com/en-us/pricing/details/app-service/)|
-| catalogUri | Provide the uri for the catalog service. |
+#### InRule.Runtime.Service.parameters.json
+| Parameter | Example Values | Description |
+| --------- | -------------- | ----------- |
+| executionServiceName | inruleRuntimeAppService | Provide a name for the Azure App Service that the execution service will run on. |
+| executionServicePlanSkuName | B1 | Describes runtime services plan's pricing tier and capacity. [Plan Details](https://azure.microsoft.com/en-us/pricing/details/app-service/)|
+| catalogUri | https://{catalogAppService}/Service.svc | Provide the uri for the catalog service. |
 
 # Deploy ARM Template with Azure CLI
 
@@ -52,32 +52,7 @@ az group deployment create -g RESOURCE_GROUP_NAME --template-file .\InRule.Runti
 ```
 
 ## Verify with apply rules
-As a final verification that irServer Rule Execution Service is properly functioning, a REST call can be made to ApplyRules on the InvoiceSample rule application.
-
-First, force the use of TLS 1.2. Otherwise the subsequent `Invoke-RestMethod` call will not work.
-```powershell
-[Net.ServicePointManager]::SecurityProtocol=[Net.SecurityProtocolType]::Tls12
-```
-
-Then call ApplyRules on your irServer Rule Execution Service instance:
-```powershell
-# Example: Invoke-RestMethod -Method 'Post' -ContentType 'application/json' -Headers @{"Accept"="application/json"} -Uri https://contoso-execution-prod-wa.azurewebsites.net/HttpService.svc/ApplyRules -Body '{"RuleApp":{"FileName":"InvoiceSample.ruleappx"},"EntityState":"{\"CustID\":\"1\",\"LineItems\":[]}","EntityName":"Invoice"}'
-Invoke-RestMethod -Method 'Post' -ContentType 'application/json' -Headers @{"Accept"="application/json"} -Uri https://WEB_APP_NAME.azurewebsites.net/HttpService.svc/ApplyRules -Body '{"RuleApp":{"FileName":"InvoiceSample.ruleappx"},"EntityState":"{\"CustID\":\"1\",\"LineItems\":[]}","EntityName":"Invoice"}'
-```
-
-If ApplyRules was successful, you should see the following result:
-```
-ActiveNotifications : {}
-ActiveValidations   : {}
-EntityState         : {"CustID":1,"CustName":"Alfred Futterkiste","SubTotal":0.0,"Tax":0.00,"Total":0.00}
-HasRuntimeErrors    : False
-Overrides           :
-Parameters          :
-RequestId           : 00000000-0000-0000-0000-000000000000
-RuleExecutionLog    :
-RuleSessionState    :
-SessionId           : 1ac58648-9c3a-4d79-83c5-2c31d2eb32d7
-```
+Follow the setps to verify rules in the [irServer Web App Deployment](irserver-rule-execution-service.md#verify-with-apply-rules)
 
 # Execution of Rules
-Follow the setps for executing rules in the [Web App Deployment](irserver-rule-execution-service.md#execution-of-rules)
+Follow the setps for executing rules in the [irServer Web App Deployment](irserver-rule-execution-service.md#execution-of-rules)

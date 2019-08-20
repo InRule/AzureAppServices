@@ -15,17 +15,17 @@ Locate the _InRule.Catalog.Service.parameters.json_ file you dowloaded above.
 Open the file with your text editor of choice and edit the parametes listed below:
 
 #### InRule.Catalog.Service.parameters.json
-| Parameter | Description |
-| --------- | ----------- |
-| catalogServiceName | Provide a name for the Azure App Service that the catalog service will run on. |
-| catalogManagerServiceName | Provide a name for the Azure App Service that the catalog manager service will run on. |
-| catalogServicePlanSkuName | Describes catalog services plan's pricing tier and capacity. [Plan Details](https://azure.microsoft.com/en-us/pricing/details/app-service/)|
-| catalogSqlServerName | The server name for the Azure SQL server used to host the irCatalog database(s). |
-| catalogSqlServerUsername | The server admin username for the Azure SQL server used to host the irCatalog database(s). |
-| catalogSqlServerPassword | The server admin password for the Azure SQL server used to host the irCatalog database(s). |
-| catalogSqlDbName | The name for the irCatalog database. |
-| catalogSqlDbEdition | The Azure SQL database edition used for the irCatalog database. Use Basic for less demanding workloads, Standard for most production workloads, and Premium for IO-intensive workloads. |
-| catalogSqlDbPerformanceLevel | The Azure SQL database performance level for the irCatalog. These correspond to the specific Azure SQL database edition. |
+| Parameter | Example Values | Description |
+| --------- | ------------- | ----------- |
+| catalogServiceName | catalogAppService | Provide a name for the Azure App Service that the catalog service will run on. |
+| catalogManagerServiceName | catalogManagerAppService | Provide a name for the Azure App Service that the catalog manager service will run on. |
+| catalogServicePlanSkuName | B1 | Describes catalog services plan's pricing tier and capacity. [Plan Details](https://azure.microsoft.com/en-us/pricing/details/app-service/)|
+| catalogSqlServerName | catalogSqlDbServerName | The server name for the Azure SQL server used to host the irCatalog database(s). |
+| catalogSqlServerUsername | sqlDbServerUser | The server admin username for the Azure SQL server used to host the irCatalog database(s). |
+| catalogSqlServerPassword | sqlDbServerPassword | The server admin password for the Azure SQL server used to host the irCatalog database(s). |
+| catalogSqlDbName | catalogSqlDbName | The name for the irCatalog database. |
+| catalogSqlDbEdition | Basic | The Azure SQL database edition used for the irCatalog database. Use Basic for less demanding workloads, Standard for most production workloads, and Premium for IO-intensive workloads. |
+| catalogSqlDbPerformanceLevel | Basic | The Azure SQL database performance level for the irCatalog. These correspond to the specific Azure SQL database edition. |
 
 # Deploy ARM Template with Azure CLI
 
@@ -58,10 +58,10 @@ az group deployment create -g RESOURCE_GROUP_NAME --template-file .\InRule.Catal
 ```
 
 ## Allow Your Local Machine Access via Firewall Rule
-You'll need to temporarily allow access to your local machine to deploy the schema and data for the database. This step can be found in the web app deployment guide [Web App Deployment](ircatalog.md#allow-ircatalog-server-access-via-firewall-rule)
+You'll need to temporarily allow access to your local machine to deploy the schema and data for the database. This step can be found in the irCatalog web app deployment guide [irCatalog Web App Deployment](ircatalog.md#allow-ircatalog-server-access-via-firewall-rule)
 
 ## Deploy the irCatalog Database
-After opening the firewall, you'll need to use the provided tool to setup the database. This step can be found in the web app deployment guide [Web App Deployment](ircatalog.md#deploy-the-ircatalog-database)
+After opening the firewall, you'll need to use the provided tool to setup the database. This step can be found in the irCatalog web app deployment guide [irCatalog Web App Deployment](ircatalog.md#deploy-the-ircatalog-database)
 
 ## Upload valid license file
 In order for irCatalog Service to properly function, a valid license file must be uploaded to the web app. The simplest way to upload the license file is via FTP.
