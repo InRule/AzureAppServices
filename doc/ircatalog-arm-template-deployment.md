@@ -20,7 +20,7 @@ Open the file with your text editor of choice and edit the parametes listed belo
 | catalogServiceName | catalogAppService | Provide a name for the Azure App Service that the catalog service will run on. |
 | catalogManagerServiceName | catalogManagerAppService | Provide a name for the Azure App Service that the catalog manager service will run on. |
 | catalogServicePlanSkuName | B1 | Describes catalog services plan's pricing tier and capacity. [Plan Details](https://azure.microsoft.com/en-us/pricing/details/app-service/)|
-| catalogSqlServerName | catalogSqlDbServerName | The server name for the Azure SQL server used to host the irCatalog database(s). |
+| catalogSqlServerName | catalogsqldbservername | The server name for the Azure SQL server used to host the irCatalog database(s). |
 | catalogSqlServerUsername | sqlDbServerUser | The server admin username for the Azure SQL server used to host the irCatalog database(s). |
 | catalogSqlServerPassword | sqlDbServerPassword | The server admin password for the Azure SQL server used to host the irCatalog database(s). |
 | catalogSqlDbName | catalogSqlDbName | The name for the irCatalog database. |

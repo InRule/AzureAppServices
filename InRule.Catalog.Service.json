@@ -90,8 +90,7 @@
       }
     },
     "inRuleVersion": {
-      "type": "string",
-      "defaultValue": "5.4.1"
+      "type": "string"      
     },
     "packageUri": {
       "type": "string",

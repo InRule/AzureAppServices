@@ -9,7 +9,7 @@
     "value": "B1"
   },
   "catalogSqlServerName": {
-    "value": "{catalogSqlDbServerName}"
+    "value": "{catalogsqldbservername}"
   },
   "catalogSqlServerUsername": {
     "value": "{sqlDbServerUser}"
