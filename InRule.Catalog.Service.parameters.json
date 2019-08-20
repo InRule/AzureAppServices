@@ -25,5 +25,8 @@
   },
   "catalogSqlDbPerformanceLevel": {
     "value": "Basic"
+  },
+  "inRuleVersion": {
+    "value": "5.4.1"
   }
 }

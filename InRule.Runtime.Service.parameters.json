@@ -7,5 +7,8 @@
   },
   "catalogUri": {
     "value": "https://{catalogAppService}/Service.svc"
+  },
+  "inRuleVersion": {
+    "value": "5.4.1"
   }
 }
