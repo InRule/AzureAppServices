@@ -103,7 +103,9 @@
             "[concat('Microsoft.Web/sites/', parameters('executionServiceName'))]"
           ],
           "properties": {
-            "inrule:runtime:service:catalog:catalogServiceUri": "[parameters('catalogUri')]"
+            "inrule:runtime:service:catalog:catalogServiceUri": "[parameters('catalogUri')]",
+            "inrule:repository:licensing:licenseFolder": "D:\\home\\site\\wwwroot",
+            "inrule:logging:level": "Warn"
           }
         }
       ]

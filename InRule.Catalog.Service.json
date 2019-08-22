@@ -156,7 +156,9 @@
             "[concat('Microsoft.Web/sites/', parameters('catalogServiceName'))]"
           ],
           "properties": {
-            "inrule:repository:service:connectionString": "[concat('Server=tcp:', reference(concat('Microsoft.Sql/servers/', parameters('catalogSqlServerName'))).fullyQualifiedDomainName, ',1433;Database=', parameters('catalogSqlDbName'), ';User Id=', parameters('catalogSqlServerUsername'), ';Password=', parameters('catalogSqlServerPassword'), ';')]"
+            "inrule:repository:service:connectionString": "[concat('Server=tcp:', reference(concat('Microsoft.Sql/servers/', parameters('catalogSqlServerName'))).fullyQualifiedDomainName, ',1433;Database=', parameters('catalogSqlDbName'), ';User Id=', parameters('catalogSqlServerUsername'), ';Password=', parameters('catalogSqlServerPassword'), ';')]",
+            "inrule:repository:licensing:licenseFolder": "D:\\home\\site\\wwwroot",
+            "inrule:logging:level": "Warn"
           }
         }
       ]
