@@ -21,6 +21,7 @@ Open the file with your text editor of choice and edit the parametes listed belo
 | executionServicePlanSkuName | B1 | Describes runtime services plan's pricing tier and capacity. [Plan Details](https://azure.microsoft.com/en-us/pricing/details/app-service/)|
 | catalogUri | https://{catalogAppService}/Service.svc | Provide the uri for the catalog service. |
 | inRuleVersion | 5.4.1 | Provide the inRule version you wish to deploy, default value is the latest inRule version. |
+| executionServicePlanName | inruleExecutionServicePlan | The name for the app Service Plan.  Leave blank for the value to be derived as `executionServiceName` + `Plan`|
 
 # Deploy ARM Template with Azure CLI
 
