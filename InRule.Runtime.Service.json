@@ -49,17 +49,18 @@
     }
   },
   "variables": {
-    "use32Bit": "[or(equals(parameters('executionServicePlanSkuName'), 'F1'), equals(parameters('executionServicePlanSkuName'), 'D1'))]"
+    "use32Bit": "[or(equals(parameters('executionServicePlanSkuName'), 'F1'), equals(parameters('executionServicePlanSkuName'), 'D1'))]",
+    "executionServicePlanName": "[if(empty(parameters('executionServicePlanName')), concat(parameters('executionServicePlanName'),'Plan'), parameters('executionServicePlanName'))]"
   },
   "resources": [
     {
       "condition": "[parameters('createExecutionServicePlan')]",
-      "name": "[parameters('executionServicePlanName')]",
+      "name": "[variables('executionServicePlanName')]",
       "type": "Microsoft.Web/serverfarms",
       "apiVersion": "2016-09-01",
       "location": "[resourceGroup().location]",
       "properties": {
-        "name": "[parameters('executionServicePlanName')]"
+        "name": "[variables('executionServicePlanName')]"
       },
       "sku": {
         "name": "[parameters('executionServicePlanSkuName')]"
@@ -71,13 +72,13 @@
       "apiVersion": "2016-08-01",
       "location": "[resourceGroup().location]",
       "dependsOn": [
-        "[resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', parameters('executionServicePlanName'))]"
+        "[resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', variables('executionServicePlanName'))]"
       ],
       "tags": {
-        "[concat('hidden-related:', resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', parameters('executionServicePlanName')))]": "Resource"
+        "[concat('hidden-related:', resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', variables('executionServicePlanName')))]": "Resource"
       },
       "properties": {
-        "serverFarmId": "[resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', parameters('executionServicePlanName'))]",
+        "serverFarmId": "[resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', variables('executionServicePlanName'))]",
         "siteConfig": {
           "use32BitWorkerProcess": "[variables('use32Bit')]"
         }
