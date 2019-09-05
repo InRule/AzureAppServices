@@ -27,6 +27,7 @@ Open the file with your text editor of choice and edit the parametes listed belo
 | catalogSqlDbEdition | Basic | The Azure SQL database edition used for the irCatalog database. Use Basic for less demanding workloads, Standard for most production workloads, and Premium for IO-intensive workloads. |
 | catalogSqlDbPerformanceLevel | Basic | The Azure SQL database performance level for the irCatalog. These correspond to the specific Azure SQL database edition. |
 | inRuleVersion | 5.4.1 | Provide the inRule version you wish to deploy, default value is the latest inRule version. |
+| catalogServicePlanName | inruleCatalogAppServicePlan | The name for the app Service Plan.  Leave blank for the value to be derived as `catalogServiceName` + `Plan`|
 
 # Deploy ARM Template with Azure CLI
 

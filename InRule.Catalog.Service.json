@@ -13,8 +13,7 @@
       "defaultValue": true
     },
     "catalogServicePlanName": {
-      "type": "string",
-      "defaultValue": "[concat(parameters('catalogServiceName'),'Plan')]"
+      "type": "string"
     },
     "catalogServicePlanSkuName": {
       "type": "string",
@@ -102,17 +101,18 @@
     }
   },
   "variables": {
-    "use32Bit": "[or(equals(parameters('catalogServicePlanSkuName'), 'F1'), equals(parameters('catalogServicePlanSkuName'), 'D1'))]"
+    "use32Bit": "[or(equals(parameters('catalogServicePlanSkuName'), 'F1'), equals(parameters('catalogServicePlanSkuName'), 'D1'))]",
+    "catalogServicePlanName": "[if(empty(parameters('catalogServicePlanName')), concat(parameters('catalogServicePlanName'),'Plan'), parameters('catalogServicePlanName'))]"
   },
   "resources": [
     {
       "condition": "[parameters('createCatalogServicePlan')]",
-      "name": "[parameters('catalogServicePlanName')]",
+      "name": "[variables('catalogServicePlanName')]",
       "type": "Microsoft.Web/serverfarms",
       "apiVersion": "2016-09-01",
       "location": "[resourceGroup().location]",
       "properties": {
-        "name": "[parameters('catalogServicePlanName')]"
+        "name": "[variables('catalogServicePlanName')]"
       },
       "sku": {
         "name": "[parameters('catalogServicePlanSkuName')]"
@@ -124,13 +124,13 @@
       "apiVersion": "2016-08-01",
       "location": "[resourceGroup().location]",
       "dependsOn": [
-        "[resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', parameters('catalogServicePlanName'))]"
+        "[resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', variables('catalogServicePlanName'))]"
       ],
       "tags": {
-        "[concat('hidden-related:', resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', parameters('catalogServicePlanName')))]": "Resource"
+        "[concat('hidden-related:', resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', variables('catalogServicePlanName')))]": "Resource"
       },
       "properties": {
-        "serverFarmId": "[resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', parameters('catalogServicePlanName'))]",
+        "serverFarmId": "[resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', variables('catalogServicePlanName'))]",
         "siteConfig": {
           "use32BitWorkerProcess": "[variables('use32Bit')]"
         }
@@ -169,13 +169,13 @@
       "apiVersion": "2016-08-01",
       "location": "[resourceGroup().location]",
       "dependsOn": [
-        "[resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', parameters('catalogServicePlanName'))]"
+        "[resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', variables('catalogServicePlanName'))]"
       ],
       "tags": {
         "[concat('hidden-related:', resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', parameters('catalogServicePlanName')))]": "Resource"
       },
       "properties": {
-        "serverFarmId": "[resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', parameters('catalogServicePlanName'))]",
+        "serverFarmId": "[resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', variables('catalogServicePlanName'))]",
         "siteConfig": {
           "use32BitWorkerProcess": "[variables('use32Bit')]"
         }
