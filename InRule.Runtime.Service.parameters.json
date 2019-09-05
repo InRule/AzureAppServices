@@ -9,7 +9,7 @@
     "value": "https://{catalogAppService}/Service.svc"
   },
   "inRuleVersion": {
-    "value": "5.4.1"
+    "value": "5.4.2"
   },
   "executionServicePlanName": {
     "value": ""
