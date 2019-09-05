@@ -4,7 +4,7 @@ In this section we will be deploying the irServer Rule Execution Service.  This 
 
 If you have not done so already, please read the [prerequisites](../README.md#prerequisites) before you get started.
 
-The arm template can be downloaded [here](https://github.com/InRule/AzureAppServices/releases/latest/download/InRule.Runtime.Service.json) and the parameters file [here](https://github.com/InRule/AzureAppServices/releases/latest/download/InRule.Runtime.Service.parameters.json). Both will be needed to continue with this deployment option.
+The arm template can be downloaded [here](../InRule.Runtime.Service.json) and the parameters file [here](../InRule.Runtime.Service.parameters.json). Both will be needed to continue with this deployment option.
 
 # Update the template parameters
 
@@ -20,6 +20,7 @@ Open the file with your text editor of choice and edit the parametes listed belo
 | executionServiceName | inruleRuntimeAppService | Provide a name for the Azure App Service that the execution service will run on. |
 | executionServicePlanSkuName | B1 | Describes runtime services plan's pricing tier and capacity. [Plan Details](https://azure.microsoft.com/en-us/pricing/details/app-service/)|
 | catalogUri | https://{catalogAppService}/Service.svc | Provide the uri for the catalog service. |
+| inRuleVersion | 5.4.1 | Provide the inRule version you wish to deploy, default value is the latest inRule version. |
 
 # Deploy ARM Template with Azure CLI
 

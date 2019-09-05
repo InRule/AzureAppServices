@@ -4,7 +4,7 @@ In this section we will be deploying the irCatalog® as well as the irCatalog Ma
 
 If you have not done so already, please read the [prerequisites](../README.md#prerequisites) before you get started.
 
-The arm template can be downloaded [here](https://github.com/InRule/AzureAppServices/releases/latest/download/InRule.Catalog.Service.json) and the parameters file [here](https://github.com/InRule/AzureAppServices/releases/latest/download/InRule.Catalog.Service.parameters.json). Both will be needed to continue with this deployment option.
+The arm template can be downloaded [here](../InRule.Catalog.Service.json) and the parameters file [here](../InRule.Catalog.Service.parameters.json). Both will be needed to continue with this deployment option.
 
 # Update the template parameters
 
@@ -20,12 +20,13 @@ Open the file with your text editor of choice and edit the parametes listed belo
 | catalogServiceName | catalogAppService | Provide a name for the Azure App Service that the catalog service will run on. |
 | catalogManagerServiceName | catalogManagerAppService | Provide a name for the Azure App Service that the catalog manager service will run on. |
 | catalogServicePlanSkuName | B1 | Describes catalog services plan's pricing tier and capacity. [Plan Details](https://azure.microsoft.com/en-us/pricing/details/app-service/)|
-| catalogSqlServerName | catalogSqlDbServerName | The server name for the Azure SQL server used to host the irCatalog database(s). |
+| catalogSqlServerName | catalogsqldbservername | The server name for the Azure SQL server used to host the irCatalog database(s). |
 | catalogSqlServerUsername | sqlDbServerUser | The server admin username for the Azure SQL server used to host the irCatalog database(s). |
 | catalogSqlServerPassword | sqlDbServerPassword | The server admin password for the Azure SQL server used to host the irCatalog database(s). |
 | catalogSqlDbName | catalogSqlDbName | The name for the irCatalog database. |
 | catalogSqlDbEdition | Basic | The Azure SQL database edition used for the irCatalog database. Use Basic for less demanding workloads, Standard for most production workloads, and Premium for IO-intensive workloads. |
 | catalogSqlDbPerformanceLevel | Basic | The Azure SQL database performance level for the irCatalog. These correspond to the specific Azure SQL database edition. |
+| inRuleVersion | 5.4.1 | Provide the inRule version you wish to deploy, default value is the latest inRule version. |
 
 # Deploy ARM Template with Azure CLI
 
