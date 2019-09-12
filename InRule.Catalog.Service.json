@@ -1,0 +1,250 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "catalogServiceName": {
+      "type": "string"
+    },
+    "catalogManagerServiceName": {
+      "type": "string"
+    },
+    "createCatalogServicePlan": {
+      "type": "bool",
+      "defaultValue": true
+    },
+    "catalogServicePlanName": {
+      "type": "string"
+    },
+    "catalogServicePlanSkuName": {
+      "type": "string",
+      "allowedValues": [
+        "F1",
+        "D1",
+        "B1",
+        "B2",
+        "B3",
+        "S1",
+        "S2",
+        "S3",
+        "P1",
+        "P2",
+        "P3",
+        "P4"
+      ],
+      "metadata": {
+        "description": "Describes plan's pricing tier and capacity. Check details at https://azure.microsoft.com/en-us/pricing/details/app-service/"
+      }
+    },
+    "servicePlanResourceGroupName": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().name]"
+    },
+    "catalogSqlServerName": {
+      "type": "string",
+      "metadata": {
+        "description": "The server name for the Azure SQL server used to host the irCatalog database(s)."
+      }
+    },
+    "catalogSqlServerUsername": {
+      "type": "string",
+      "defaultValue": "irCatalogAdmin",
+      "metadata": {
+        "description": "The server admin username for the Azure SQL server used to host the irCatalog database(s)."
+      }
+    },
+    "catalogSqlDbName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name for the irCatalog database."
+      }
+    },
+    "catalogSqlDbEdition": {
+      "type": "string",
+      "defaultValue": "Basic",
+      "allowedValues": [ "Basic", "Standard", "Premium" ],
+      "metadata": {
+        "description": "The Azure SQL database edition used for the irCatalog database. Use Basic for less demanding workloads, Standard for most production workloads, and Premium for IO-intensive workloads."
+      }
+    },
+    "catalogSqlDbPerformanceLevel": {
+      "type": "string",
+      "defaultValue": "Basic",
+      "allowedValues": [ "Basic", "S0", "S1", "S2", "S3", "P1", "P2", "P4", "P6", "P11", "P15" ],
+      "metadata": {
+        "description": "The Azure SQL database performance level for the irCatalog. These correspond to the specific Azure SQL database edition."
+      }
+    },
+    "catalogSqlDbSizeInGB": {
+      "type": "string",
+      "defaultValue": "2",
+      "allowedValues": [ "1", "2", "5", "10", "20", "30", "40", "50", "100", "150", "200", "250" ],
+      "metadata": {
+        "description": "The Azure SQL max database size for the irCatalog. This must be valid for the specific Azure SQL database edition and performance level."
+      }
+    },
+    "catalogSqlServerPassword": {
+      "type": "string",
+      "metadata": {
+        "description": "The server admin password for the Azure SQL server used to host the irCatalog database(s)."
+      }
+    },
+    "inRuleVersion": {
+      "type": "string"      
+    },
+    "packageUri": {
+      "type": "string",
+      "defaultValue": "[concat('https://github.com/InRule/AzureAppServices/releases/download/v', parameters('inRuleVersion'),'/InRule.Catalog.Service.zip')]"
+    },
+    "managerPackageUri": {
+      "type": "string",
+      "defaultValue": "[concat('https://github.com/InRule/AzureAppServices/releases/download/v', parameters('inRuleVersion'),'/InRule.Catalog.Manager.Web.zip')]"
+    }
+  },
+  "variables": {
+    "use32Bit": "[or(equals(parameters('catalogServicePlanSkuName'), 'F1'), equals(parameters('catalogServicePlanSkuName'), 'D1'))]",
+    "catalogServicePlanName": "[if(empty(parameters('catalogServicePlanName')), concat(parameters('catalogServicePlanName'),'Plan'), parameters('catalogServicePlanName'))]"
+  },
+  "resources": [
+    {
+      "condition": "[parameters('createCatalogServicePlan')]",
+      "name": "[variables('catalogServicePlanName')]",
+      "type": "Microsoft.Web/serverfarms",
+      "apiVersion": "2016-09-01",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "name": "[variables('catalogServicePlanName')]"
+      },
+      "sku": {
+        "name": "[parameters('catalogServicePlanSkuName')]"
+      }
+    },
+    {
+      "name": "[parameters('catalogServiceName')]",
+      "type": "Microsoft.Web/sites",
+      "apiVersion": "2016-08-01",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', variables('catalogServicePlanName'))]"
+      ],
+      "tags": {
+        "[concat('hidden-related:', resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', variables('catalogServicePlanName')))]": "Resource"
+      },
+      "properties": {
+        "serverFarmId": "[resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', variables('catalogServicePlanName'))]",
+        "siteConfig": {
+          "use32BitWorkerProcess": "[variables('use32Bit')]"
+        }
+      },
+      "resources": [
+        {
+          "name": "MSDeploy",
+          "type": "extensions",
+          "apiVersion": "2016-08-01",
+          "dependsOn": [
+            "[concat('Microsoft.Web/sites/', parameters('catalogServiceName'))]"
+          ],
+          "properties": {
+            "packageUri": "[parameters('packageUri')]"
+          }
+        },
+        {
+          "name": "appsettings",
+          "type": "config",
+          "apiVersion": "2016-08-01",
+          "dependsOn": [
+            "[concat('Microsoft.Web/Sites/', parameters('catalogServiceName'), '/Extensions/MSDeploy')]",
+            "[concat('Microsoft.Web/sites/', parameters('catalogServiceName'))]"
+          ],
+          "properties": {
+            "inrule:repository:service:connectionString": "[concat('Server=tcp:', reference(concat('Microsoft.Sql/servers/', parameters('catalogSqlServerName'))).fullyQualifiedDomainName, ',1433;Database=', parameters('catalogSqlDbName'), ';User Id=', parameters('catalogSqlServerUsername'), ';Password=', parameters('catalogSqlServerPassword'), ';')]",
+            "inrule:repository:licensing:licenseFolder": "D:\\home\\site\\wwwroot",
+            "inrule:logging:level": "Warn"
+          }
+        }
+      ]
+    },
+    {
+      "name": "[parameters('catalogManagerServiceName')]",
+      "type": "Microsoft.Web/sites",
+      "apiVersion": "2016-08-01",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', variables('catalogServicePlanName'))]"
+      ],
+      "tags": {
+        "[concat('hidden-related:', resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', parameters('catalogServicePlanName')))]": "Resource"
+      },
+      "properties": {
+        "serverFarmId": "[resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', variables('catalogServicePlanName'))]",
+        "siteConfig": {
+          "use32BitWorkerProcess": "[variables('use32Bit')]"
+        }
+      },
+      "resources": [
+        {
+          "name": "MSDeploy",
+          "type": "extensions",
+          "apiVersion": "2016-08-01",
+          "dependsOn": [
+            "[concat('Microsoft.Web/sites/', parameters('catalogManagerServiceName'))]"
+          ],
+          "properties": {
+            "packageUri": "[parameters('managerPackageUri')]"
+          }
+        },
+        {
+          "name": "appsettings",
+          "type": "config",
+          "apiVersion": "2016-08-01",
+          "dependsOn": [
+            "[concat('Microsoft.Web/Sites/', parameters('catalogManagerServiceName'), '/Extensions/MSDeploy')]",
+            "[concat('Microsoft.Web/sites/', parameters('catalogManagerServiceName'))]"
+          ],
+          "properties": {
+            "InRule.Catalog.Uri": "[concat('https://', parameters('catalogServiceName') ,'.azurewebsites.net/service.svc')]"
+          }
+        }
+      ]
+    },
+    {
+      "name": "[parameters('catalogSqlServerName')]",
+      "type": "Microsoft.Sql/servers",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2014-04-01-preview",
+      "dependsOn": [],
+      "properties": {
+        "administratorLogin": "[parameters('catalogSqlServerUsername')]",
+        "administratorLoginPassword": "[parameters('catalogSqlServerPassword')]"
+      },
+      "resources": [
+        {
+          "name": "AllowAllWindowsAzureIps",
+          "type": "firewallrules",
+          "location": "[resourceGroup().location]",
+          "apiVersion": "2014-04-01-preview",
+          "dependsOn": [
+            "[resourceId('Microsoft.Sql/servers', parameters('catalogSqlServerName'))]"
+          ],
+          "properties": {
+            "startIpAddress": "0.0.0.0",
+            "endIpAddress": "0.0.0.0"
+          }
+        },
+        {
+          "name": "[parameters('catalogSqlDbName')]",
+          "type": "databases",
+          "location": "[resourceGroup().location]",
+          "apiVersion": "2014-04-01-preview",
+          "dependsOn": [
+            "[resourceId('Microsoft.Sql/servers', parameters('catalogSqlServerName'))]"
+          ],
+          "properties": {
+            "edition": "[parameters('catalogSqlDbEdition')]",
+            "requestedServiceObjectiveName": "[parameters('catalogSqlDbPerformanceLevel')]"
+          }
+        }
+      ]
+    }
+  ],
+  "outputs": {}
+}
