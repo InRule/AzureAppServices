@@ -1,4 +1,4 @@
-InRule® for Microsoft Azure
+nRule® for Microsoft Azure
 ====
 
 InRule _for Microsoft Azure_ allows you to run [irCatalog](https://www.inrule.com/products/inrule-components/ircatalog/), irCatalog Manager Website, and [irServer Rule Execution Service](https://www.inrule.com/products/inrule-components/irserverruleexecutionservice/) inside of the Azure App Service environment with minimal configuration and setup. If you are already familiar with Azure and App Service Web Apps, then you are just a few steps away from deploying InRule _for Microsoft Azure_.
