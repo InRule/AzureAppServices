@@ -1,0 +1,45 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "appServiceName": {
+      "value": ""
+    },
+    "sfLoginUrl": {
+      "value": "https://login.salesforce.com/services/oauth2/token"
+    },
+    "sfUsername": {
+      "value": ""
+    },
+    "sfPassword": {
+      "value": ""
+    },
+    "sfSecurityToken": {
+      "value": ""
+    },
+    "sfConsumerKey": {
+      "value": ""
+    },
+    "sfConsumerSecret": {
+      "value": ""
+    },
+    "catalogUri": {
+      "value": "https://{Context}/Service.svc"
+    },
+    "catalogUser": {
+      "value": "admin"
+    },
+    "catalogPassword": {
+      "value": "password"
+    },
+    "executionServiceBasicUsername": {
+      "value": ""
+    },
+    "executionServiceBasicPassword": {
+      "value": ""
+    },
+    "executionServiceBasicRealm": {
+      "value": ""
+    }
+  }
+}

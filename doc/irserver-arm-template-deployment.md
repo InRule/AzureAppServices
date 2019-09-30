@@ -4,7 +4,7 @@ In this section we will be deploying the irServer Rule Execution Service.  This 
 
 If you have not done so already, please read the [prerequisites](../README.md#prerequisites) before you get started.
 
-The arm template can be downloaded [here](../InRule.Runtime.Service.json) and the parameters file [here](../InRule.Runtime.Service.parameters.json). Both will be needed to continue with this deployment option.
+Get the template and parameters file from the `source.zip` here [here](https://github.com/InRule/AzureAppServices/releases). Both will be needed to continue with this deployment option.
 
 # Update the template parameters
 
