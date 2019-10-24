@@ -80,17 +80,10 @@
     },
     "inRuleVersion": {
       "type": "string",
-      "defaultValue": "5.4.2"
+      "defaultValue": "5.4.3"
     },
     "appInsightsInstrumentationKey": {
       "type": "string"
-    },
-    "appInsightsResourceName": {
-      "type": "string"
-    },
-    "appInsightsLocation": {
-      "type": "string",
-      "defaultValue": "[resourceGroup().location]"
     },
     "packageUri": {
       "type": "string",
@@ -98,23 +91,9 @@
     }
   },
   "variables": {
-    "appServicePlanName": "[if(empty(parameters('appServicePlanName')), concat(parameters('appServiceName'),'Plan'), parameters('appServicePlanName'))]",
-    "appInsightsResourceName": "[if(empty(parameters('appInsightsResourceName')), concat(parameters('appServiceName'),'Insights'), parameters('appInsightsResourceName'))]"
+    "appServicePlanName": "[if(empty(parameters('appServicePlanName')), concat(parameters('appServiceName'),'Plan'), parameters('appServicePlanName'))]"
   },
   "resources": [
-    {
-      "condition": "[not(empty(parameters('appInsightsResourceName')))]",
-      "name": "[variables('appInsightsResourceName')]",
-      "type": "Microsoft.Insights/components",
-      "apiVersion": "2015-05-01",
-      "location": "[parameters('appInsightsLocation')]",
-      "kind": "web",
-      "tags": {
-        "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/sites/', parameters('appInsightsResourceName'))]": "Resource"
-      },
-      "properties": {
-      }
-    },
     {
       "condition": "[parameters('createAppServicePlan')]",
       "name": "[variables('appServicePlanName')]",
@@ -183,7 +162,7 @@
             "inrule:crm:s2s:crmOrgUrl": "[parameters('orgUrl')]",
             "inrule:repository:licensing:licenseFolder": "D:\\home\\site\\wwwroot",
             "inrule:logging:level": "Warn",
-            "inrule:logging:appInsights:instrumentationKey": "[if(empty(parameters('appInsightsResourceName')), parameters('appInsightsInstrumentationKey'), reference(resourceId('Microsoft.Insights/components', parameters('appInsightsResourceName'))).InstrumentationKey)]"
+            "inrule:logging:appInsights:instrumentationKey": "[parameters('appInsightsInstrumentationKey')]"
           }
         },
         {
