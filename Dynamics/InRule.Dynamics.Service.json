@@ -80,7 +80,7 @@
     },
     "inRuleVersion": {
       "type": "string",
-      "defaultValue": "5.4.3"
+      "defaultValue": "5.5.0"
     },
     "appInsightsInstrumentationKey": {
       "type": "string"
