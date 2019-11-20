@@ -1,6 +1,6 @@
-irCatalog Manager
+﻿﻿irCatalog® Manager
 ===
-The Catalog Manager is a stand-alone web application that provides an administrative interface to an irCatalog repository.  It is used to manage and migrate Rule Applications across an organization's various staging environments including production. It also provides an interface for managing users, roles, and permissions.
+The Catalog Manager is a stand-alone web application that provides an administrative interface to an irCatalog® repository.  It is used to manage and migrate Rule Applications across an organization's various staging environments including production. It also provides an interface for managing users, roles, and permissions.
 
 If you have not done so already, please read the [prerequisites](../README.md#prerequisites) before you get started.
 
@@ -9,21 +9,21 @@ If you have not done so already, please read the [prerequisites](../README.md#pr
 ## Deploy irCatalog
 In order to use irCatalog Manager, make sure that you have successfully deployed [irCatalog](./ircatalog.md).
 
-## Sign in to Azure
+## Sign in to Microsoft® Azure®
 First, [open a PowerShell prompt](https://docs.microsoft.com/en-us/powershell/scripting/setup/starting-windows-powershell) and use the Azure CLI to [sign in](https://docs.microsoft.com/en-us/cli/azure/authenticate-azure-cli) to your Azure subscription:
 ```powershell
 az login
 ```
 
 ## Set active subscription
-If your Azure account has access to multiple subscriptions, you will need to [set your active subscription](https://docs.microsoft.com/en-us/cli/azure/account#az-account-set) to where you create your Azure resources:
+If your Microsoft® Azure® account has access to multiple subscriptions, you will need to [set your active subscription](https://docs.microsoft.com/en-us/cli/azure/account#az-account-set) to where you create your Microsoft® Azure® resources:
 ```powershell
 # Example: az account set --subscription "Contoso Subscription 1"
 az account set --subscription SUBSCRIPTION_NAME
 ```
 
 ## Create resource group
-Create the resource group (one resource group per environment is typical) that will contain the InRule-related Azure resources with the [az group create](https://docs.microsoft.com/en-us/cli/azure/group#az-group-create) command:
+Create the resource group (one resource group per environment is typical) that will contain the InRule-related Microsoft® Azure® resources with the [az group create](https://docs.microsoft.com/en-us/cli/azure/group#az-group-create) command:
 ```powershell
 # Example: az group create --name inrule-prod-rg --location eastus
 az group create --name RESOURCE_GROUP_NAME --location LOCATION
@@ -37,7 +37,7 @@ az appservice plan create --name APP_SERVICE_PLAN_NAME --resource-group RESOURCE
 ```
 
 ## Create Web App
-Create the [Azure App Service Web App](https://docs.microsoft.com/en-us/azure/app-service/app-service-web-overview) for irCatalog Manager with the [az webapp create](https://docs.microsoft.com/en-us/cli/azure/webapp#az-webapp-create) command:
+Create the [Microsoft® Azure® App Service Web App](https://docs.microsoft.com/en-us/azure/app-service/app-service-web-overview) for irCatalog Manager with the [az webapp create](https://docs.microsoft.com/en-us/cli/azure/webapp#az-webapp-create) command:
 ```powershell
 # Example: az webapp create --name contoso-catalogmgr-prod-wa --plan inrule-prod-sp --resource-group inrule-prod-rg
 az webapp create --name WEB_APP_NAME --plan APP_SERVICE_PLAN_NAME --resource-group RESOURCE_GROUP_NAME
@@ -63,5 +63,3 @@ Verify your deployment is successfully configured by visiting irCatalog Manager 
 # Example: az webapp browse --name contoso-catalogmgr-prod-wa --resource-group inrule-prod-rg
 az webapp browse --name WEB_APP_NAME --resource-group RESOURCE_GROUP_NAME
 ```
-
-

@@ -1,17 +1,17 @@
-InRule® for Microsoft Azure
+InRule® for Microsoft® Azure®
 ====
 
-InRule _for Microsoft Azure_ allows you to run [irCatalog](https://www.inrule.com/products/inrule-components/ircatalog/), irCatalog Manager Website, and [irServer Rule Execution Service](https://www.inrule.com/products/inrule-components/irserverruleexecutionservice/) inside of the Azure App Service environment with minimal configuration and setup. If you are already familiar with Azure and App Service Web Apps, then you are just a few steps away from deploying InRule _for Microsoft Azure_.
+InRule® _for Microsoft® Azure®_ allows you to run [irCatalog](https://www.inrule.com/products/inrule-components/ircatalog/)®, irCatalog Manager Website, and [irServer® Rule Execution Service](https://www.inrule.com/products/inrule-components/irserverruleexecutionservice/) inside of the Microsoft® Azure® App Service environment with minimal configuration and setup. If you are already familiar with Microsoft® Azure® and App Service Web Apps, then you are just a few steps away from deploying InRule _for Microsoft® Azure®_.
 
 # Prerequisites
 
 Before you get started, you'll need the make sure you have the following:
 
-* Knowledge and familiarity with Microsoft Azure, specifically around [Azure Resource Management](https://docs.microsoft.com/en-us/azure/azure-resource-manager/), [Azure App Service Web Apps](https://docs.microsoft.com/en-us/azure/app-service/), and [Azure SQL Databases](https://docs.microsoft.com/en-us/azure/sql-database/).
+* Knowledge and familiarity with Microsoft® Azure®, specifically around [Azure Resource Management](https://docs.microsoft.com/en-us/azure/azure-resource-manager/), [Azure App Service Web Apps](https://docs.microsoft.com/en-us/azure/app-service/), and [Azure SQL Databases](https://docs.microsoft.com/en-us/azure/sql-database/).
 
-* A Microsoft Azure Subscription. If you do not have an Azure subscription, create a [free account](https://azure.microsoft.com/en-us/free/) before you begin.
+* A Microsoft® Azure® Subscription. If you do not have an Azure subscription, create a [free account](https://azure.microsoft.com/en-us/free/) before you begin.
 
-* A valid InRule license file, usually named `InRuleLicense.xml`. If you do not have a valid InRule license file for InRule _for Microsoft Azure_, please contact [Support](mailto:support@inrule.com?subject=InRule®%20for%20Microsoft%20Azure%20-%20App%20Service%20Web%20Apps).
+* A valid InRule® license file, usually named `InRuleLicense.xml`. If you do not have a valid InRule license file for InRule _for Microsoft Azure_, please contact [Support](mailto:support@inrule.com?subject=InRule®%20for%20Microsoft%20Azure%20-%20App%20Service%20Web%20Apps).
 
 * [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli) version 2.0.21 or later is installed. To see which version you have, run `az --version` command in your terminal window.
 
@@ -60,5 +60,4 @@ Once Web Apps have been deployed, their individual log files can be retrieved.
 
 
 
-
-
+_InRule, InRule Technology, irAuthor, irVerify, irServer, irCatalog, irSDK and  irX are registered trademarks of InRule Technology, Inc. irDistribution and irWord are trademarks of InRule Technology, Inc. All other trademarks and trade names mentioned herein may be the trademarks of their respective owners and are hereby acknowledged._

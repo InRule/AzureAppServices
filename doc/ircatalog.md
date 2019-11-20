@@ -1,4 +1,4 @@
-irCatalog
+﻿﻿irCatalog®
 ====
 irCatalog® is a business rule management tool that provides centralized management of rules to ensure the integrity of business rules, keep everyone working on the latest version of rules, and promote sharing of common rules across customers, processes or applications.
 
@@ -6,16 +6,16 @@ If you have not done so already, please read the [prerequisites](../README.md#pr
 
 # Database Deployment
 
-irCatalog supports both Microsoft SQL Server (which includes Azure SQL Databases) and Oracle Database.  This section explains how to provision a new Microsoft Azure SQL Database for irCatalog. If you have an existing database, you may skip to the the [Web App Deployment](#web-app-deployment) section.
+irCatalog supports both Microsoft® SQL Server (which includes Microsoft® Azure® SQL Databases) and Oracle Database.  This section explains how to provision a new Microsoft® Azure® SQL Database for irCatalog. If you have an existing database, you may skip to the the [Web App Deployment](#web-app-deployment) section.
 
-## Sign in to Azure
-First, [open a PowerShell prompt](https://docs.microsoft.com/en-us/powershell/scripting/setup/starting-windows-powershell) and use the Azure CLI to [sign in](https://docs.microsoft.com/en-us/cli/azure/authenticate-azure-cli) to your Azure subscription:
+## Sign in to Microsoft® Azure®
+First, [open a PowerShell prompt](https://docs.microsoft.com/en-us/powershell/scripting/setup/starting-windows-powershell) and use the Azure CLI to [sign in](https://docs.microsoft.com/en-us/cli/azure/authenticate-azure-cli) to your Microsoft® Azure® subscription:
 ```powershell
 az login
 ```
 
 ## Set active subscription
-If your Azure account has access to multiple subscriptions, you will need to [set your active subscription](https://docs.microsoft.com/en-us/cli/azure/account#az-account-set) to where you create your Azure resources:
+If your Microsoft® Azure® account has access to multiple subscriptions, you will need to [set your active subscription](https://docs.microsoft.com/en-us/cli/azure/account#az-account-set) to where you create your Azure resources:
 ```powershell
 # Example: az account set --subscription "Contoso Subscription 1"
 az account set --subscription SUBSCRIPTION_NAME
@@ -145,5 +145,5 @@ The irCatalog application now needs to be configured to point to your irCatalog 
 az webapp config appsettings set --name WEB_APP_NAME --resource-group RESOURCE_GROUP_NAME --settings inrule:repository:service:connectionString="Server=tcp:SERVER_NAME.database.windows.net,1433;Initial Catalog=DATABASE_NAME;Persist Security Info=False;User ID=USER_NAME;Password=USER_PASSWORD;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30";
 ```
 
-## Verify using irAuthor
+## Verify using irAuthor®
 Using irAuthor you should now be able to connect to your catalog using the url [https://WEB_APP_NAME.azurewebsites.net/service.svc](https://WEB_APP_NAME.azurewebsites.net/service.svc).

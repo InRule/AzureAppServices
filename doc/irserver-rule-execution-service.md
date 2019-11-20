@@ -1,26 +1,26 @@
-irServer Rule Execution Service
+﻿﻿irServer® Rule Execution Service
 ====
-With irServer® Rule Execution Service, you can call business rules from a variety of systems including J2EE applications, BPM processes and ESB orchestrations. Execute any rules stored in irCatalog or in the App Service Web App itself. Access is available via REST or SOAP.
+With irServer® Rule Execution Service, you can call business rules from a variety of systems including J2EE applications, BPM processes and ESB orchestrations. Execute any rules stored in irCatalog® or in the App Service Web App itself. Access is available via REST or SOAP.
 
 If you have not done so already, please read the [prerequisites](../README.md#prerequisites) before you get started.
 
 # Deployment
 
-## Sign in to Azure
-First, [open a PowerShell prompt](https://docs.microsoft.com/en-us/powershell/scripting/setup/starting-windows-powershell) and use the Azure CLI to [sign in](https://docs.microsoft.com/en-us/cli/azure/authenticate-azure-cli) to your Azure subscription:
+## Sign in to Microsoft® Azure®
+First, [open a PowerShell prompt](https://docs.microsoft.com/en-us/powershell/scripting/setup/starting-windows-powershell) and use the Microsoft® Azure® CLI to [sign in](https://docs.microsoft.com/en-us/cli/azure/authenticate-azure-cli) to your Microsoft® Azure®subscription:
 ```powershell
 az login
 ```
 
 ## Set active subscription
-If your Azure account has access to multiple subscriptions, you will need to [set your active subscription](https://docs.microsoft.com/en-us/cli/azure/account#az-account-set) to where you create your Azure resources:
+If your Microsoft® Azure®account has access to multiple subscriptions, you will need to [set your active subscription](https://docs.microsoft.com/en-us/cli/azure/account#az-account-set) to where you create your Microsoft® Azure®resources:
 ```powershell
 # Example: az account set --subscription "Contoso Subscription 1"
 az account set --subscription SUBSCRIPTION_NAME
 ```
 
 ## Create resource group
-Create the resource group (one resource group per environment is typical) that will contain the InRule-related Azure resources with the [az group create](https://docs.microsoft.com/en-us/cli/azure/group#az-group-create) command:
+Create the resource group (one resource group per environment is typical) that will contain the InRule-related Microsoft® Azure® resources with the [az group create](https://docs.microsoft.com/en-us/cli/azure/group#az-group-create) command:
 ```powershell
 # Example: az group create --name inrule-prod-rg --location eastus
 az group create --name RESOURCE_GROUP_NAME --location LOCATION
@@ -34,7 +34,7 @@ az appservice plan create --name APP_SERVICE_PLAN_NAME --resource-group RESOURCE
 ```
 
 ## Create Web App
-Create the [Azure App Service Web App](https://docs.microsoft.com/en-us/azure/app-service/app-service-web-overview) for irServer Rule Execution Service with the [az webapp create](https://docs.microsoft.com/en-us/cli/azure/webapp#az-webapp-create) command:
+Create the [Microsoft® Azure® App Service Web App](https://docs.microsoft.com/en-us/azure/app-service/app-service-web-overview) for irServer Rule Execution Service with the [az webapp create](https://docs.microsoft.com/en-us/cli/azure/webapp#az-webapp-create) command:
 ```powershell
 # Example: az webapp create --name contoso-execution-prod-wa --plan inrule-prod-sp --resource-group inrule-prod-rg
 az webapp create --name WEB_APP_NAME --plan APP_SERVICE_PLAN_NAME --resource-group RESOURCE_GROUP_NAME
@@ -87,7 +87,7 @@ SessionId           : 1ac58648-9c3a-4d79-83c5-2c31d2eb32d7
 
 # Execution of Rules
 
-After deployment, you have different options on how to execute rules. You can choose to execute rules against rule applications that are stored directly on Azure App Service Web App itself, or against rule applications stored in an irCatalog instance.
+After deployment, you have different options on how to execute rules. You can choose to execute rules against rule applications that are stored directly on Microsoft® Azure® App Service Web App itself, or against rule applications stored in an irCatalog instance.
 
 The examples below are using the [Chicago Food Tax Generator sample](https://github.com/InRule/Samples/tree/master/Authoring%20Samples/Chicago%20Food%20Tax%20Generator) and they each have different assumptions in order for you to use each.
 
@@ -95,8 +95,8 @@ The examples below are using the [Chicago Food Tax Generator sample](https://git
 
 This example assumes the following:
 * You have the `Chicago Food Tax Generator.ruleapp` from the sample saved in your current directory,
-* Your Azure Resource Group is named `inrule-prod-rg`, and
-* Your Azure Web App is named `contoso-execution-prod-wa`.
+* Your Microsoft® Azure® Azure Resource Group is named `inrule-prod-rg`, and
+* Your Microsoft® Azure® Azure Web App is named `contoso-execution-prod-wa`.
 
 You may adjust the examples below to fit your actual use case.
 
@@ -137,7 +137,7 @@ Invoke-RestMethod -Method 'Post' -ContentType 'application/json' -Headers @{"Acc
 ### Provide a default irCatalog
 A default irCatalog instance can be configured so irServer Rule Execution Service will use that catalog if you do not want to pass in its url for each request.
 
-First, configure the appropriate application setting for the Azure App Service Web App:
+First, configure the appropriate application setting for the Microsoft® Azure® Azure App Service Web App:
 ```powershell
 az webapp config appsettings set --name contoso-execution-prod-wa --resource-group inrule-prod-rg --settings inrule:runtime:service:catalog:catalogServiceUri="https://contoso-catalog-prod-wa.azurewebsites.net/Service.svc"
 ```
@@ -148,7 +148,7 @@ Invoke-RestMethod -Method 'Post' -ContentType 'application/json' -Headers @{"Acc
 ```
 
 ### Calling irServer Rule Execution Service from a browser
-By default, CORS is not enabled in an Azure App Service Web App. This prevents you from making calls to your irServer Rule Execution Service via JavaScript in a browser.
+By default, CORS is not enabled in an Microsoft® Azure® Azure App Service Web App. This prevents you from making calls to your irServer Rule Execution Service via JavaScript in a browser.
 To enable CORS for any calling domain you can use the following command:
 ```powershell
 az resource update --name web --resource-group inrule-prod-rg --namespace Microsoft.Web --resource-type config --parent sites/contoso-execution-prod-wa --set properties.cors.allowedOrigins="['*']" --api-version 2015-06-01
