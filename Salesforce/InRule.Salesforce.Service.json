@@ -1,0 +1,163 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "appServiceName": {
+      "type": "string"
+    },
+    "sfLoginUrl": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Login URL for the Salesforce instance used with the integration framework, ex: 'https://login.salesforce.com/services/oauth2/token'"
+      }
+    },
+    "sfUsername": {
+      "type": "string"
+    },
+    "sfPassword": {
+      "type": "string"
+    },
+    "sfSecurityToken": {
+      "type": "string"
+    },
+    "sfConsumerKey": {
+      "type": "string"
+    },
+    "sfConsumerSecret": {
+      "type": "string"
+    },
+    "catalogUri": {
+      "type": "string"
+    },
+    "catalogUser": {
+      "type": "string"
+    },
+    "catalogPassword": {
+      "type": "string"
+    },
+    "executionServiceBasicUsername": {
+      "type": "string"
+    },
+    "executionServiceBasicPassword": {
+      "type": "string"
+    },
+    "executionServiceBasicRealm": {
+      "type": "string"
+    },
+    "createAppServicePlan": {
+      "type": "bool",
+      "defaultValue": true
+    },
+    "appServicePlanName": {
+      "type": "string",
+      "defaultValue": "[concat(parameters('appServiceName'),'Plan')]"
+    },
+    "appServicePlanSkuName": {
+      "type": "string",
+      "defaultValue": "F1",
+      "allowedValues": [
+        "F1",
+        "D1",
+        "B1",
+        "B2",
+        "B3",
+        "S1",
+        "S2",
+        "S3",
+        "P1",
+        "P2",
+        "P3",
+        "P4"
+      ],
+      "metadata": {
+        "description": "Describes plan's pricing tier and capacity. Check details at https://azure.microsoft.com/en-us/pricing/details/app-service/"
+      }
+    },
+    "servicePlanResourceGroupName": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().name]"
+    },
+    "inRuleVersion": {
+      "type": "string",
+      "defaultValue": "5.5.0"
+    },
+    "packageUri": {
+      "type": "string",
+      "defaultValue": "[concat('https://github.com/InRule/AzureAppServices/releases/download/v', parameters('inRuleVersion'),'/InRule.Salesforce.WebService.zip')]"
+    }
+  },
+  "variables": {},
+  "resources": [
+    {
+      "condition": "[parameters('createAppServicePlan')]",
+      "name": "[parameters('appServicePlanName')]",
+      "type": "Microsoft.Web/serverfarms",
+      "apiVersion": "2016-09-01",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "name": "[parameters('appServicePlanName')]"
+      },
+      "sku": {
+        "name": "[parameters('appServicePlanSkuName')]"
+      }
+    },
+    {
+      "name": "[parameters('appServiceName')]",
+      "type": "Microsoft.Web/sites",
+      "apiVersion": "2016-08-01",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', parameters('appServicePlanName'))]"
+      ],
+      "tags": {
+        "[concat('hidden-related:', resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', parameters('appServicePlanName')))]": "Resource"
+      },
+      "properties": {
+        "serverFarmId": "[resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', parameters('appServicePlanName'))]"
+      },
+      "resources": [
+        {
+          "name": "MSDeploy",
+          "type": "extensions",
+          "apiVersion": "2016-08-01",
+          "dependsOn": [
+            "[concat('Microsoft.Web/sites/', parameters('appServiceName'))]"
+          ],
+          "properties": {
+            "packageUri": "[parameters('packageURI')]"
+          }
+        },
+        {
+          "name": "appsettings",
+          "type": "config",
+          "apiVersion": "2016-08-01",
+          "dependsOn": [
+            "[concat('Microsoft.Web/Sites/', parameters('appServiceName'), '/Extensions/MSDeploy')]",
+            "[concat('Microsoft.Web/sites/', parameters('appServiceName'))]"
+          ],
+          "properties": {
+            "inrule:sf:api:loginUrl": "[parameters('sfLoginUrl')]",
+            "inrule:sf:api:username": "[parameters('sfUsername')]",
+            "inrule:sf:api:password": "[parameters('sfPassword')]",
+            "inrule:sf:api:securityToken": "[parameters('sfSecurityToken')]",
+            "inrule:sf:api:consumerKey": "[parameters('sfConsumerKey')]",
+            "inrule:sf:api:consumerSecret": "[parameters('sfConsumerSecret')]",
+            "inrule:sf:catalog:label": "LIVE",
+            "inrule:sf:catalog:user": "[parameters('catalogUser')]",
+            "inrule:sf:catalog:password": "[parameters('catalogPassword')]",
+            "inrule:sf:catalog:sso": "false",
+            "inrule:sf:catalog:uri": "[parameters('catalogUri')]",
+            "inrule:sf:catalog:ruleAppDirectory": "C:\\RuleApps",
+            "inrule:sf:catalog:useInRuleCatalog": "true",
+            "inrule:sf:ruleService:basicUserName": "[parameters('executionServiceBasicUsername')]",
+            "inrule:sf:ruleService:basicPwd": "[parameters('executionServiceBasicPassword')]",
+            "inrule:sf:ruleService:basicRealm": "[parameters('executionServiceBasicRealm')]",
+            "inrule:repository:licensing:licenseFolder": "D:\\home\\site\\wwwroot",
+            "inrule:logging:level": "Warn"
+          }
+        }
+      ]
+    }
+  ]
+}

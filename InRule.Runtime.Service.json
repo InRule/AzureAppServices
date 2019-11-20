@@ -1,0 +1,116 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "executionServiceName": {
+      "type": "string"
+    },
+    "createExecutionServicePlan": {
+      "type": "bool",
+      "defaultValue": true
+    },
+    "executionServicePlanName": {
+      "type": "string",
+      "defaultValue": "[concat(parameters('executionServiceName'),'Plan')]"
+    },
+    "executionServicePlanSkuName": {
+      "type": "string",
+      "allowedValues": [
+        "F1",
+        "D1",
+        "B1",
+        "B2",
+        "B3",
+        "S1",
+        "S2",
+        "S3",
+        "P1",
+        "P2",
+        "P3",
+        "P4"
+      ],
+      "metadata": {
+        "description": "Describes plan's pricing tier and capacity. Check details at https://azure.microsoft.com/en-us/pricing/details/app-service/"
+      }
+    },
+    "servicePlanResourceGroupName": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().name]"
+    },
+    "inRuleVersion": {
+      "type": "string"      
+    },
+    "packageUri": {
+      "type": "string",
+      "defaultValue": "[concat('https://github.com/InRule/AzureAppServices/releases/download/v', parameters('inRuleVersion'),'/InRule.Runtime.Service.zip')]"
+    },
+    "catalogUri": {
+      "type": "string"
+    }
+  },
+  "variables": {
+    "use32Bit": "[or(equals(parameters('executionServicePlanSkuName'), 'F1'), equals(parameters('executionServicePlanSkuName'), 'D1'))]",
+    "executionServicePlanName": "[if(empty(parameters('executionServicePlanName')), concat(parameters('executionServicePlanName'),'Plan'), parameters('executionServicePlanName'))]"
+  },
+  "resources": [
+    {
+      "condition": "[parameters('createExecutionServicePlan')]",
+      "name": "[variables('executionServicePlanName')]",
+      "type": "Microsoft.Web/serverfarms",
+      "apiVersion": "2016-09-01",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "name": "[variables('executionServicePlanName')]"
+      },
+      "sku": {
+        "name": "[parameters('executionServicePlanSkuName')]"
+      }
+    },
+    {
+      "name": "[parameters('executionServiceName')]",
+      "type": "Microsoft.Web/sites",
+      "apiVersion": "2016-08-01",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', variables('executionServicePlanName'))]"
+      ],
+      "tags": {
+        "[concat('hidden-related:', resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', variables('executionServicePlanName')))]": "Resource"
+      },
+      "properties": {
+        "serverFarmId": "[resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', variables('executionServicePlanName'))]",
+        "siteConfig": {
+          "use32BitWorkerProcess": "[variables('use32Bit')]"
+        }
+      },
+      "resources": [
+        {
+          "name": "MSDeploy",
+          "type": "extensions",
+          "apiVersion": "2016-08-01",
+          "dependsOn": [
+            "[concat('Microsoft.Web/sites/', parameters('executionServiceName'))]"
+          ],
+          "properties": {
+            "packageUri": "[parameters('packageUri')]"
+          }
+        },
+        {
+          "name": "appsettings",
+          "type": "config",
+          "apiVersion": "2016-08-01",
+          "dependsOn": [
+            "[concat('Microsoft.Web/Sites/', parameters('executionServiceName'), '/Extensions/MSDeploy')]",
+            "[concat('Microsoft.Web/sites/', parameters('executionServiceName'))]"
+          ],
+          "properties": {
+            "inrule:runtime:service:catalog:catalogServiceUri": "[parameters('catalogUri')]",
+            "inrule:repository:licensing:licenseFolder": "D:\\home\\site\\wwwroot",
+            "inrule:logging:level": "Warn"
+          }
+        }
+      ]
+    }
+  ],
+  "outputs": {}
+}

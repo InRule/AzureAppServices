@@ -1,0 +1,200 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "appServiceName": {
+      "type": "string"
+    },
+    "relayName": {
+      "type": "string"
+    },
+    "orgUrl": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Organization URL for the Dynamics instance used with the integration framework. This is just the root URL, ex: 'https://contoso.crm.dynamics.com'"
+      }
+    },
+    "appId": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Azure app ID used for S2S authentication"
+      }
+    },
+    "appSecret": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Secret value for app key used for S2S authentication"
+      }
+    },
+    "crmConnectionString": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Connection string for the Dynamics CRM instance used with the integration framework. Refer to this link for more details and formatting: https://docs.microsoft.com/en-us/dynamics365/customer-engagement/developer/xrm-tooling/use-connection-strings-xrm-tooling-connect"
+      }
+    },
+    "catalogUri": {
+      "type": "string"
+    },
+    "catalogUser": {
+      "type": "string"
+    },
+    "catalogPassword": {
+      "type": "string"
+    },
+    "createAppServicePlan": {
+      "type": "bool",
+      "defaultValue": true
+    },
+    "appServicePlanName": {
+      "type": "string",
+      "defaultValue": "[concat(parameters('appServiceName'),'Plan')]"
+    },
+    "appServicePlanSkuName": {
+      "type": "string",
+      "defaultValue": "B1",
+      "allowedValues": [
+        "F1",
+        "D1",
+        "B1",
+        "B2",
+        "B3",
+        "S1",
+        "S2",
+        "S3",
+        "P1",
+        "P2",
+        "P3",
+        "P4"
+      ],
+      "metadata": {
+        "description": "Describes plan's pricing tier and capacity. Check details at https://azure.microsoft.com/en-us/pricing/details/app-service/"
+      }
+    },
+    "servicePlanResourceGroupName": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().name]"
+    },
+    "inRuleVersion": {
+      "type": "string",
+      "defaultValue": "5.5.0"
+    },
+    "appInsightsInstrumentationKey": {
+      "type": "string"
+    },
+    "packageUri": {
+      "type": "string",
+      "defaultValue": "[concat('https://github.com/InRule/AzureAppServices/releases/download/v', parameters('inRuleVersion'),'/InRule.CRM.WebJob.zip')]"
+    }
+  },
+  "variables": {
+    "appServicePlanName": "[if(empty(parameters('appServicePlanName')), concat(parameters('appServiceName'),'Plan'), parameters('appServicePlanName'))]"
+  },
+  "resources": [
+    {
+      "condition": "[parameters('createAppServicePlan')]",
+      "name": "[variables('appServicePlanName')]",
+      "type": "Microsoft.Web/serverfarms",
+      "apiVersion": "2016-09-01",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "name": "[variables('appServicePlanName')]"
+      },
+      "sku": {
+        "name": "[parameters('appServicePlanSkuName')]"
+      }
+    },
+    {
+      "name": "[parameters('appServiceName')]",
+      "type": "Microsoft.Web/sites",
+      "apiVersion": "2016-08-01",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', variables('appServicePlanName'))]"
+      ],
+      "tags": {
+        "[concat('hidden-related:', resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', variables('appServicePlanName')))]": "Resource"
+      },
+      "properties": {
+        "serverFarmId": "[resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', variables('appServicePlanName'))]",
+        "siteConfig": {
+          "AlwaysOn": true,
+          "use32BitWorkerProcess": false
+        }
+      },
+      "resources": [
+        {
+          "name": "MSDeploy",
+          "type": "extensions",
+          "apiVersion": "2016-08-01",
+          "dependsOn": [
+            "[concat('Microsoft.Web/sites/', parameters('appServiceName'))]"
+          ],
+          "properties": {
+            "packageUri": "[parameters('packageURI')]"
+          }
+        },
+        {
+          "name": "appsettings",
+          "type": "config",
+          "apiVersion": "2016-08-01",
+          "dependsOn": [
+            "[concat('Microsoft.Web/Sites/', parameters('appServiceName'), '/Extensions/MSDeploy')]",
+            "[concat('Microsoft.Web/sites/', parameters('appServiceName'))]"
+          ],
+          "properties": {
+            "inrule:crm:catalog:label": "LIVE",
+            "inrule:crm:catalog:user": "[parameters('catalogUser')]",
+            "inrule:crm:catalog:password": "[parameters('catalogPassword')]",
+            "inrule:crm:catalog:sso": "false",
+            "inrule:crm:catalog:uri": "[parameters('catalogUri')]",
+            "inrule:crm:catalog:ruleAppDirectory": "C:\\RuleApps",
+            "inrule:crm:catalog:useInRuleCatalog": "true",
+            "inrule:crm:serviceBus:key": "[listKeys(resourceId('Microsoft.Relay/namespaces/authorizationRules', parameters('relayName'), 'RootManageSharedAccessKey'), providers('Microsoft.Relay', 'namespaces').apiVersions[0]).primaryKey]",
+            "inrule:crm:serviceBus:namespace": "[parameters('relayName')]",
+            "inrule:crm:serviceBus:owner": "RootManageSharedAccessKey",
+            "inrule:crm:serviceBus:path": "ruleexecution",
+            "inrule:crm:s2s:azureAppId": "[parameters('appId')]",
+            "inrule:crm:s2s:azureAppSecret": "[parameters('appSecret')]",
+            "inrule:crm:s2s:crmOrgUrl": "[parameters('orgUrl')]",
+            "inrule:repository:licensing:licenseFolder": "D:\\home\\site\\wwwroot",
+            "inrule:logging:level": "Warn",
+            "inrule:logging:appInsights:instrumentationKey": "[parameters('appInsightsInstrumentationKey')]"
+          }
+        },
+        {
+          "condition": "[not(equals(parameters('crmConnectionString'), ''))]",
+          "name": "connectionstrings",
+          "type": "config",
+          "apiVersion": "2016-08-01",
+          "dependsOn": [
+            "[concat('Microsoft.Web/Sites/', parameters('appServiceName'), '/Extensions/MSDeploy')]",
+            "[concat('Microsoft.Web/sites/', parameters('appServiceName'))]"
+          ],
+          "properties": {
+            "DynamicsCrm": {
+              "value": "[parameters('crmConnectionString')]",
+              "type": "Custom"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "[parameters('relayName')]",
+      "type": "Microsoft.Relay/namespaces",
+      "apiVersion": "2017-04-01",
+      "location": "[resourceGroup().location]",
+      "properties": {}
+    }
+  ],
+  "outputs": {
+    "relayKey": {
+      "type": "string",
+      "value": "[listKeys(resourceId('Microsoft.Relay/namespaces/authorizationRules', parameters('relayName'), 'RootManageSharedAccessKey'), providers('Microsoft.Relay', 'namespaces').apiVersions[0]).primaryKey]"
+    }    
+  }
+}

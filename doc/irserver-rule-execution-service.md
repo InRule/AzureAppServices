@@ -65,11 +65,6 @@ $client = New-Object System.Net.WebClient;$client.Credentials = New-Object Syste
 ## Verify with apply rules
 As a final verification that irServer Rule Execution Service is properly functioning, a REST call can be made to ApplyRules on the InvoiceSample rule application.
 
-First, force the use of TLS 1.2. Otherwise the subsequent `Invoke-RestMethod` call will not work.
-```powershell
-[Net.ServicePointManager]::SecurityProtocol=[Net.SecurityProtocolType]::Tls12
-```
-
 Then call ApplyRules on your irServer Rule Execution Service instance:
 ```powershell
 # Example: Invoke-RestMethod -Method 'Post' -ContentType 'application/json' -Headers @{"Accept"="application/json"} -Uri https://contoso-execution-prod-wa.azurewebsites.net/HttpService.svc/ApplyRules -Body '{"RuleApp":{"FileName":"InvoiceSample.ruleappx"},"EntityState":"{\"CustID\":\"1\",\"LineItems\":[]}","EntityName":"Invoice"}'
