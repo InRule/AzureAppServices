@@ -27,7 +27,7 @@
       "value": ""
     },
     "crmConnectionString": {
-      "value":  ""
+      "value": ""
     },
     "appServicePlanName": {
       "value": ""
@@ -36,6 +36,9 @@
       "value": "5.5.0"
     },
     "appInsightsInstrumentationKey": {
+      "value": ""
+    },
+    "appInsightsResourceName": {
       "value": ""
     }
   }

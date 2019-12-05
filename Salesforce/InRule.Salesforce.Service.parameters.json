@@ -40,6 +40,18 @@
     },
     "executionServiceBasicRealm": {
       "value": ""
+    },
+    "appServicePlanName": {
+      "value": ""
+    },
+    "inRuleVersion": {
+      "value": "5.5.0"
+    },
+    "appInsightsResourceName": {
+      "value": ""
+    },
+    "appInsightsInstrumentationKey": {
+      "value": ""
     }
   }
 }
