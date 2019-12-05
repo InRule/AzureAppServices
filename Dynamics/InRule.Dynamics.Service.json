@@ -85,15 +85,36 @@
     "appInsightsInstrumentationKey": {
       "type": "string"
     },
+    "appInsightsResourceName": {
+      "type": "string"
+    },
+    "appInsightsLocation": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]"
+    },
     "packageUri": {
       "type": "string",
       "defaultValue": "[concat('https://github.com/InRule/AzureAppServices/releases/download/v', parameters('inRuleVersion'),'/InRule.CRM.WebJob.zip')]"
     }
   },
   "variables": {
-    "appServicePlanName": "[if(empty(parameters('appServicePlanName')), concat(parameters('appServiceName'),'Plan'), parameters('appServicePlanName'))]"
+    "appServicePlanName": "[if(empty(parameters('appServicePlanName')), concat(parameters('appServiceName'),'Plan'), parameters('appServicePlanName'))]",
+    "appInsightsResourceName": "[if(empty(parameters('appInsightsResourceName')), concat(parameters('appServiceName'),'Insights'), parameters('appInsightsResourceName'))]"
   },
   "resources": [
+    {
+      "condition": "[not(empty(parameters('appInsightsResourceName')))]",
+      "name": "[variables('appInsightsResourceName')]",
+      "type": "Microsoft.Insights/components",
+      "apiVersion": "2015-05-01",
+      "location": "[parameters('appInsightsLocation')]",
+      "kind": "web",
+      "tags": {
+        "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/sites/', parameters('appInsightsResourceName'))]": "Resource"
+      },
+      "properties": {
+      }
+    },
     {
       "condition": "[parameters('createAppServicePlan')]",
       "name": "[variables('appServicePlanName')]",
@@ -162,7 +183,7 @@
             "inrule:crm:s2s:crmOrgUrl": "[parameters('orgUrl')]",
             "inrule:repository:licensing:licenseFolder": "D:\\home\\site\\wwwroot",
             "inrule:logging:level": "Warn",
-            "inrule:logging:appInsights:instrumentationKey": "[parameters('appInsightsInstrumentationKey')]"
+            "inrule:logging:appInsights:instrumentationKey": "[if(empty(parameters('appInsightsResourceName')), parameters('appInsightsInstrumentationKey'), reference(resourceId('Microsoft.Insights/components', parameters('appInsightsResourceName'))).InstrumentationKey)]"
           }
         },
         {
@@ -175,7 +196,7 @@
             "[concat('Microsoft.Web/sites/', parameters('appServiceName'))]"
           ],
           "properties": {
-            "DynamicsCrm": {
+            "DynamicsCRM": {
               "value": "[parameters('crmConnectionString')]",
               "type": "Custom"
             }
@@ -195,6 +216,6 @@
     "relayKey": {
       "type": "string",
       "value": "[listKeys(resourceId('Microsoft.Relay/namespaces/authorizationRules', parameters('relayName'), 'RootManageSharedAccessKey'), providers('Microsoft.Relay', 'namespaces').apiVersions[0]).primaryKey]"
-    }    
+    }
   }
 }
