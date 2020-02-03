@@ -80,7 +80,7 @@
     },
     "inRuleVersion": {
       "type": "string",
-      "defaultValue": "5.5.0"
+      "defaultValue": "5.5.1"
     },
     "appInsightsInstrumentationKey": {
       "type": "string"
@@ -216,6 +216,6 @@
     "relayKey": {
       "type": "string",
       "value": "[listKeys(resourceId('Microsoft.Relay/namespaces/authorizationRules', parameters('relayName'), 'RootManageSharedAccessKey'), providers('Microsoft.Relay', 'namespaces').apiVersions[0]).primaryKey]"
-    }
+    }    
   }
 }
