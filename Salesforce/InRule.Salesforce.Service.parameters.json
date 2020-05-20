@@ -24,7 +24,7 @@
       "value": ""
     },
     "catalogUri": {
-      "value": "https://{Context}/Service.svc"
+      "value": ""
     },
     "catalogUser": {
       "value": "admin"
@@ -38,14 +38,11 @@
     "executionServiceBasicPassword": {
       "value": ""
     },
-    "executionServiceBasicRealm": {
-      "value": ""
-    },
     "appServicePlanName": {
       "value": ""
     },
     "inRuleVersion": {
-      "value": "5.5.1"
+      "value": "5.6.0"
     },
     "appInsightsResourceName": {
       "value": ""
