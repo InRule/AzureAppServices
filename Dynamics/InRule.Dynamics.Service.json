@@ -3,10 +3,16 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "appServiceName": {
-      "type": "string"
+      "type": "string",
+      "metadata": {
+        "description": "Name of the App Service to deploy that the Rule Execution Service will be installed on"
+      }
     },
     "relayName": {
-      "type": "string"
+      "type": "string",
+      "metadata": {
+        "description": "Name of the Azure Relay to deploy that will function as the service bus between the Rule Execution Service and Dynamics"
+      }
     },
     "orgUrl": {
       "type": "string",
@@ -37,21 +43,36 @@
       }
     },
     "catalogUri": {
-      "type": "string"
+      "type": "string",
+      "metadata": {
+        "description": "URI for your InRule Rule Catalog service, should follow this format: https://{Context}/Service.svc, with {Context} being replaced with the base catalog service URI."
+      }
     },
     "catalogUser": {
-      "type": "string"
+      "type": "string",
+      "metadata": {
+        "description": "Login username to connect to your InRule Rule Catalog"
+      }
     },
     "catalogPassword": {
-      "type": "string"
+      "type": "string",
+      "metadata": {
+        "description": "Login password to connect to your InRule Rule Catalog"
+      }
     },
     "createAppServicePlan": {
       "type": "bool",
-      "defaultValue": true
+      "defaultValue": true,
+      "metadata": {
+        "description": "If set to false, provide the name and resource group of an existing service plan in the 'appServicePlanName' and 'servicePlanResourceGroupName' parameters. Otherwise a new plan will be created with the supplied name"
+      }
     },
     "appServicePlanName": {
       "type": "string",
-      "defaultValue": "[concat(parameters('appServiceName'),'Plan')]"
+      "defaultValue": "[concat(parameters('appServiceName'),'Plan')]",
+      "metadata": {
+        "description": "Defines the App Service Plan's name, defaulting to the value of the App Service's name with 'Plan' appended to the end"
+      }
     },
     "appServicePlanSkuName": {
       "type": "string",
@@ -76,25 +97,52 @@
     },
     "servicePlanResourceGroupName": {
       "type": "string",
-      "defaultValue": "[resourceGroup().name]"
+      "defaultValue": "[resourceGroup().name]",
+      "metadata": {
+        "description": "Optional name of the resource group for the existing app service plan. If creating a new plan, leave as the default value"
+      }
     },
     "inRuleVersion": {
       "type": "string",
-      "defaultValue": "5.5.1"
+      "defaultValue": "5.6.0",
+      "metadata": {
+        "description": "Defines what version of the InRule Execution Service to deploy"
+      }
+    },
+    "createAppInsightsResource": {
+      "type": "bool",
+      "defaultValue": true,
+      "metadata": {
+        "description": "If set to true, provide a value for the appInsightsResourceName parameter. If set to false, you can provide a value for the appInsightsIntrumentationKey to associate your App Service with an existing App Insights resource"
+      }
     },
     "appInsightsInstrumentationKey": {
-      "type": "string"
+      "type": "string",
+      "defaultValue": "AppInsightsInstrumentationKey",
+      "metadata": {
+        "description": "If createAppInsightsResource is set to false and you have an existing App Insights resource you'd like to use instead, provide the Instrumentation key here. If createAppInsightsResource is set to true, leave this blank and provide a value for 'appInsightsResourceName' instead"
+      }
     },
     "appInsightsResourceName": {
-      "type": "string"
+      "type": "string",
+      "defaultValue": "[concat(parameters('appServiceName'),'AppInsights')]",
+      "metadata": {
+        "description": "If createAppInsightsResource is set to true, define the name of the Application Insights resource to deploy here. If createAppInsightsResource is set to false, leave this field blank"
+      }
     },
     "appInsightsLocation": {
       "type": "string",
-      "defaultValue": "[resourceGroup().location]"
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "Defines what Azure region to deploy the Application Insights resource to. Check details at https://azure.microsoft.com/en-us/global-infrastructure/services/?products=monitor"
+      }
     },
     "packageUri": {
       "type": "string",
-      "defaultValue": "[concat('https://github.com/InRule/AzureAppServices/releases/download/v', parameters('inRuleVersion'),'/InRule.CRM.WebJob.zip')]"
+      "defaultValue": "[concat('https://github.com/InRule/AzureAppServices/releases/download/v', parameters('inRuleVersion'),'/InRule.CRM.WebJob.zip')]",
+      "metadata": {
+        "description": "Download URI for the Execution Service package. Calculated from the inRuleVersion parameter."
+      }
     }
   },
   "variables": {
@@ -103,29 +151,56 @@
   },
   "resources": [
     {
-      "condition": "[not(empty(parameters('appInsightsResourceName')))]",
+      "name": "[parameters('relayName')]",
+      "type": "Microsoft.Relay/namespaces",
+      "apiVersion": "2017-04-01",
+      "location": "[resourceGroup().location]",
+      "properties": {}
+    },
+    {
+      "condition": "[parameters('createAppInsightsResource')]",
       "name": "[variables('appInsightsResourceName')]",
       "type": "Microsoft.Insights/components",
       "apiVersion": "2015-05-01",
       "location": "[parameters('appInsightsLocation')]",
+      "dependsOn": [
+        "[concat('Microsoft.Relay/namespaces/', parameters('relayName'))]"
+      ],
       "kind": "web",
       "tags": {
         "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/sites/', parameters('appInsightsResourceName'))]": "Resource"
       },
-      "properties": {
-      }
+      "properties": {}
     },
     {
       "condition": "[parameters('createAppServicePlan')]",
-      "name": "[variables('appServicePlanName')]",
-      "type": "Microsoft.Web/serverfarms",
-      "apiVersion": "2016-09-01",
-      "location": "[resourceGroup().location]",
+      "name": "AppServicePlanTemplate",
+      "apiVersion": "2017-05-10",
+      "type": "Microsoft.Resources/deployments",
+      "resourceGroup": "[parameters('servicePlanResourceGroupName')]",
+      "dependsOn": [
+        "[concat('Microsoft.Relay/namespaces/', parameters('relayName'))]"
+      ],
       "properties": {
-        "name": "[variables('appServicePlanName')]"
-      },
-      "sku": {
-        "name": "[parameters('appServicePlanSkuName')]"
+        "mode": "Incremental",
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "resources": [
+            {
+              "name": "[variables('appServicePlanName')]",
+              "type": "Microsoft.Web/serverfarms",
+              "apiVersion": "2016-09-01",
+              "location": "[resourceGroup().location]",
+              "properties": {
+                "name": "[variables('appServicePlanName')]"
+              },
+              "sku": {
+                "name": "[parameters('appServicePlanSkuName')]"
+              }
+            }
+          ]
+        }
       }
     },
     {
@@ -134,11 +209,9 @@
       "apiVersion": "2016-08-01",
       "location": "[resourceGroup().location]",
       "dependsOn": [
-        "[resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', variables('appServicePlanName'))]"
+        "[resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Resources/deployments', 'AppServicePlanTemplate')]",
+        "[concat('Microsoft.Relay/namespaces/', parameters('relayName'))]"
       ],
-      "tags": {
-        "[concat('hidden-related:', resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', variables('appServicePlanName')))]": "Resource"
-      },
       "properties": {
         "serverFarmId": "[resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', variables('appServicePlanName'))]",
         "siteConfig": {
@@ -174,7 +247,7 @@
             "inrule:crm:catalog:uri": "[parameters('catalogUri')]",
             "inrule:crm:catalog:ruleAppDirectory": "C:\\RuleApps",
             "inrule:crm:catalog:useInRuleCatalog": "true",
-            "inrule:crm:serviceBus:key": "[listKeys(resourceId('Microsoft.Relay/namespaces/authorizationRules', parameters('relayName'), 'RootManageSharedAccessKey'), providers('Microsoft.Relay', 'namespaces').apiVersions[0]).primaryKey]",
+            "inrule:crm:serviceBus:key": "[listKeys(resourceId('Microsoft.Relay/namespaces/authorizationRules', parameters('relayName'), 'RootManageSharedAccessKey'), '2017-04-01').primaryKey]",
             "inrule:crm:serviceBus:namespace": "[parameters('relayName')]",
             "inrule:crm:serviceBus:owner": "RootManageSharedAccessKey",
             "inrule:crm:serviceBus:path": "ruleexecution",
@@ -203,19 +276,12 @@
           }
         }
       ]
-    },
-    {
-      "name": "[parameters('relayName')]",
-      "type": "Microsoft.Relay/namespaces",
-      "apiVersion": "2017-04-01",
-      "location": "[resourceGroup().location]",
-      "properties": {}
     }
   ],
   "outputs": {
     "relayKey": {
       "type": "string",
-      "value": "[listKeys(resourceId('Microsoft.Relay/namespaces/authorizationRules', parameters('relayName'), 'RootManageSharedAccessKey'), providers('Microsoft.Relay', 'namespaces').apiVersions[0]).primaryKey]"
+      "value": "[listKeys(resourceId('Microsoft.Relay/namespaces/authorizationRules', parameters('relayName'), 'RootManageSharedAccessKey'), '2017-04-01').primaryKey]"
     }    
   }
 }
