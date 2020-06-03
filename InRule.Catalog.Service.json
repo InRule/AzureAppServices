@@ -3,17 +3,30 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "catalogServiceName": {
-      "type": "string"
+      "type": "string",
+      "metadata": {
+        "description": "Name of the App Service resource the catalog will be installed on"
+      }
     },
     "catalogManagerServiceName": {
-      "type": "string"
+      "type": "string",
+      "metadata": {
+        "description": "Name of the App Service resource the catalog manager will be installed on"
+      }
     },
     "createCatalogServicePlan": {
       "type": "bool",
-      "defaultValue": true
+      "defaultValue": true,
+      "metadata": {
+        "description": "If set to false, provide the name and resource group of an existing service plan in the 'catalogServicePlanName' and 'servicePlanResourceGroupName' parameters. Otherwise a new plan will be created with the supplied name"
+      }
     },
     "catalogServicePlanName": {
-      "type": "string"
+      "type": "string",
+      "defaultValue": "[concat(parameters('appServiceName'),'Plan')]",
+      "metadata": {
+        "description": "Name for the App Service Plan, defaulting to the value of the App Service's name with 'Plan' appended to the end"
+      }
     },
     "catalogServicePlanSkuName": {
       "type": "string",
@@ -37,7 +50,10 @@
     },
     "servicePlanResourceGroupName": {
       "type": "string",
-      "defaultValue": "[resourceGroup().name]"
+      "defaultValue": "[resourceGroup().name]",
+      "metadata": {
+        "description": "Optional name of the resource group for the existing app service plan. If creating a new plan, leave as the default value"
+      }
     },
     "catalogSqlServerName": {
       "type": "string",
@@ -89,15 +105,25 @@
       }
     },
     "inRuleVersion": {
-      "type": "string"      
+      "type": "string",
+      "defaultValue": "5.6.0",
+      "metadata": {
+        "description": "Version of the catalog to deploy"
+      } 
     },
     "packageUri": {
       "type": "string",
-      "defaultValue": "[concat('https://github.com/InRule/AzureAppServices/releases/download/v', parameters('inRuleVersion'),'/InRule.Catalog.Service.zip')]"
+      "defaultValue": "[concat('https://github.com/InRule/AzureAppServices/releases/download/v', parameters('inRuleVersion'),'/InRule.Catalog.Service.zip')]",
+      "metadata": {
+        "description": "Download URI for the catalog service package, default to calculated from the inRuleVersion parameter. Leave as default unless deploying a custom package"
+      }
     },
     "managerPackageUri": {
       "type": "string",
-      "defaultValue": "[concat('https://github.com/InRule/AzureAppServices/releases/download/v', parameters('inRuleVersion'),'/InRule.Catalog.Manager.Web.zip')]"
+      "defaultValue": "[concat('https://github.com/InRule/AzureAppServices/releases/download/v', parameters('inRuleVersion'),'/InRule.Catalog.Manager.Web.zip')]",
+      "metadata": {
+        "description": "Download URI for the catalog manager package, default to calculated from the inRuleVersion parameter. Leave as default unless deploying a custom package"
+      }
     }
   },
   "variables": {
@@ -107,15 +133,30 @@
   "resources": [
     {
       "condition": "[parameters('createCatalogServicePlan')]",
-      "name": "[variables('catalogServicePlanName')]",
-      "type": "Microsoft.Web/serverfarms",
-      "apiVersion": "2016-09-01",
-      "location": "[resourceGroup().location]",
+      "name": "AppServicePlanTemplate",
+      "apiVersion": "2017-05-10",
+      "type": "Microsoft.Resources/deployments",
+      "resourceGroup": "[parameters('servicePlanResourceGroupName')]",
       "properties": {
-        "name": "[variables('catalogServicePlanName')]"
-      },
-      "sku": {
-        "name": "[parameters('catalogServicePlanSkuName')]"
+        "mode": "Incremental",
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "resources": [
+            {
+              "name": "[variables('catalogServicePlanName')]",
+              "type": "Microsoft.Web/serverfarms",
+              "apiVersion": "2016-09-01",
+              "location": "[resourceGroup().location]",
+              "properties": {
+                "name": "[variables('catalogServicePlanName')]"
+              },
+              "sku": {
+                "name": "[parameters('catalogServicePlanSkuName')]"
+              }
+            }
+          ]
+        }
       }
     },
     {
@@ -124,7 +165,7 @@
       "apiVersion": "2016-08-01",
       "location": "[resourceGroup().location]",
       "dependsOn": [
-        "[resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', variables('catalogServicePlanName'))]"
+        "[resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Resources/deployments', 'AppServicePlanTemplate')]"
       ],
       "tags": {
         "[concat('hidden-related:', resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', variables('catalogServicePlanName')))]": "Resource"
@@ -169,7 +210,7 @@
       "apiVersion": "2016-08-01",
       "location": "[resourceGroup().location]",
       "dependsOn": [
-        "[resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', variables('catalogServicePlanName'))]"
+        "[resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Resources/deployments', 'AppServicePlanTemplate')]"
       ],
       "tags": {
         "[concat('hidden-related:', resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', parameters('catalogServicePlanName')))]": "Resource"
