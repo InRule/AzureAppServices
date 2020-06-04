@@ -3,15 +3,24 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "executionServiceName": {
-      "type": "string"
+      "type": "string",
+      "metadata": {
+        "description": "Name of the App Service resource the execution service will be installed on"
+      }
     },
     "createExecutionServicePlan": {
       "type": "bool",
-      "defaultValue": true
+      "defaultValue": true,
+      "metadata": {
+        "description": "If set to false, provide the name and resource group of an existing service plan in the 'executionServicePlanName' and 'servicePlanResourceGroupName' parameters. Otherwise a new plan will be created with the supplied name"
+      }
     },
     "executionServicePlanName": {
       "type": "string",
-      "defaultValue": "[concat(parameters('executionServiceName'),'Plan')]"
+      "defaultValue": "[concat(parameters('executionServiceName'),'Plan')]",
+      "metadata": {
+        "description": "Name for the App Service Plan, defaulting to the value of the App Service's name with 'Plan' appended to the end"
+      }
     },
     "executionServicePlanSkuName": {
       "type": "string",
@@ -35,17 +44,30 @@
     },
     "servicePlanResourceGroupName": {
       "type": "string",
-      "defaultValue": "[resourceGroup().name]"
+      "defaultValue": "[resourceGroup().name]",
+      "metadata": {
+        "description": "Optional name of the resource group for the existing app service plan. If creating a new plan, leave as the default value"
+      }
     },
     "inRuleVersion": {
-      "type": "string"      
+      "type": "string",
+      "defaultValue": "5.6.0",
+      "metadata": {
+        "description": "Version of the execution service to deploy"
+      }
     },
     "packageUri": {
       "type": "string",
-      "defaultValue": "[concat('https://github.com/InRule/AzureAppServices/releases/download/v', parameters('inRuleVersion'),'/InRule.Runtime.Service.zip')]"
+      "defaultValue": "[concat('https://github.com/InRule/AzureAppServices/releases/download/v', parameters('inRuleVersion'),'/InRule.Runtime.Service.zip')]",
+      "metadata": {
+        "description": "Download URI for the execution service package, default to calculated from the inRuleVersion parameter. Leave as default unless deploying a custom package"
+      }
     },
     "catalogUri": {
-      "type": "string"
+      "type": "string",
+      "metadata": {
+        "description": "URI for your InRule Rule Catalog service, should follow this format: https://{Context}/Service.svc, with {Context} being replaced with the base catalog service URI."
+      }
     }
   },
   "variables": {
@@ -55,15 +77,30 @@
   "resources": [
     {
       "condition": "[parameters('createExecutionServicePlan')]",
-      "name": "[variables('executionServicePlanName')]",
-      "type": "Microsoft.Web/serverfarms",
-      "apiVersion": "2016-09-01",
-      "location": "[resourceGroup().location]",
+      "name": "AppServicePlanTemplate",
+      "apiVersion": "2017-05-10",
+      "type": "Microsoft.Resources/deployments",
+      "resourceGroup": "[parameters('servicePlanResourceGroupName')]",
       "properties": {
-        "name": "[variables('executionServicePlanName')]"
-      },
-      "sku": {
-        "name": "[parameters('executionServicePlanSkuName')]"
+        "mode": "Incremental",
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "resources": [
+            {
+              "name": "[variables('executionServicePlanName')]",
+              "type": "Microsoft.Web/serverfarms",
+              "apiVersion": "2016-09-01",
+              "location": "[resourceGroup().location]",
+              "properties": {
+                "name": "[variables('executionServicePlanName')]"
+              },
+              "sku": {
+                "name": "[parameters('executionServicePlanSkuName')]"
+              }
+            }
+          ]
+        }
       }
     },
     {
@@ -72,7 +109,7 @@
       "apiVersion": "2016-08-01",
       "location": "[resourceGroup().location]",
       "dependsOn": [
-        "[resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', variables('executionServicePlanName'))]"
+        "[resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Resources/deployments', 'AppServicePlanTemplate')]"
       ],
       "tags": {
         "[concat('hidden-related:', resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', variables('executionServicePlanName')))]": "Resource"

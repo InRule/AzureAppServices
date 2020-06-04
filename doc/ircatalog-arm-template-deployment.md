@@ -1,18 +1,18 @@
 irCatalog and irCatalog Manager Arm Template Deployment
 ====
-In this section we will be deploying the irCatalog® as well as the irCatalog Manager.  This will create a databse and two app services.  To make this process easier, we'll be using an Azure Resource Manager (ARM) template, which allows us to deploy and configure all the Azure resources needed for both the irCatalog and irCatalog Manager.
+In this section we will be deploying the irCatalog® as well as the irCatalog Manager.  This will create a database and two app services.  To make this process easier, we'll be using an Azure Resource Manager (ARM) template, which allows us to deploy and configure all the Azure resources needed for both the irCatalog and irCatalog Manager.
 
 If you have not done so already, please read the [prerequisites](../README.md#prerequisites) before you get started.
 
-Get the template and parameters file from the `source.zip` [here](https://github.com/InRule/AzureAppServices/releases). Both will be needed to continue with this deployment option.
+Get the template and parameters file from the `source.zip` [here](https://github.com/InRule/AzureAppServices/releases). Both will be needed to continue with this deployment option. The steps that follow will show how to deploy using the Azure CLI, but the provided template can also be deployed through the Azure portal.
 
 # Update the template parameters
 
 Before deploying the ARM template, we need to define certain parameters.
 
-Locate the _InRule.Catalog.Service.parameters.json_ file you dowloaded above.
+Locate the _InRule.Catalog.Service.parameters.json_ file you downloaded above.
 
-Open the file with your text editor of choice and edit the parametes listed below:
+Open the file with your text editor of choice and edit the parameters listed below:
 
 #### InRule.Catalog.Service.parameters.json
 | Parameter | Example Values | Description |
