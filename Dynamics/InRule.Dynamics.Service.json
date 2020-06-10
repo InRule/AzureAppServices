@@ -29,14 +29,14 @@
       }
     },
     "appSecret": {
-      "type": "string",
+      "type": "securestring",
       "defaultValue": "",
       "metadata": {
         "description": "Secret value for app key used for S2S authentication"
       }
     },
     "crmConnectionString": {
-      "type": "string",
+      "type": "securestring",
       "defaultValue": "",
       "metadata": {
         "description": "Connection string for the Dynamics CRM instance used with the integration framework. Refer to this link for more details and formatting: https://docs.microsoft.com/en-us/dynamics365/customer-engagement/developer/xrm-tooling/use-connection-strings-xrm-tooling-connect"
@@ -55,7 +55,7 @@
       }
     },
     "catalogPassword": {
-      "type": "string",
+      "type": "securestring",
       "metadata": {
         "description": "Login password to connect to your InRule Rule Catalog"
       }
