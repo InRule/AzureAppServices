@@ -22,13 +22,13 @@
       }
     },
     "sfPassword": {
-      "type": "string",
+      "type": "securestring",
       "metadata": {
         "description": "Login password to connect to your Salesforce Account"
       }
     },
     "sfSecurityToken": {
-      "type": "string",
+      "type": "securestring",
       "metadata": {
         "description": "API token for the Salesforce service account"
       }
@@ -40,7 +40,7 @@
       }
     },
     "sfConsumerSecret": {
-      "type": "string",
+      "type": "securestring",
       "metadata": {
         "description": "OAuth consumer secret for the connected app"
       }
@@ -58,7 +58,7 @@
       }
     },
     "catalogPassword": {
-      "type": "string",
+      "type": "securestring",
       "metadata": {
         "description": "Login password to connect to your InRule Rule Catalog"
       }
@@ -70,7 +70,7 @@
       }
     },
     "executionServiceBasicPassword": {
-      "type": "string",
+      "type": "securestring",
       "metadata": {
         "description": "Password used to secure the rule service. This same password will need to be provided to Salesforce during configuration"
       }
