@@ -128,7 +128,7 @@
   },
   "variables": {
     "use32Bit": "[or(equals(parameters('catalogServicePlanSkuName'), 'F1'), equals(parameters('catalogServicePlanSkuName'), 'D1'))]",
-    "catalogServicePlanName": "[if(empty(parameters('catalogServicePlanName')), concat(parameters('catalogServicePlanName'),'Plan'), parameters('catalogServicePlanName'))]"
+    "catalogServicePlanName": "[if(empty(parameters('catalogServicePlanName')), concat(parameters('catalogServiceName'),'Plan'), parameters('catalogServicePlanName'))]"
   },
   "resources": [
     {

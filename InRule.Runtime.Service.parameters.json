@@ -1,17 +1,21 @@
 {
-  "executionServiceName": {
-    "value": "{inruleRuntimeAppService}"
-  },
-  "executionServicePlanSkuName": {
-    "value": "B1"
-  },
-  "catalogUri": {
-    "value": ""
-  },
-  "inRuleVersion": {
-    "value": "5.6.0"
-  },
-  "executionServicePlanName": {
-    "value": ""
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "executionServiceName": {
+      "value": "{inruleRuntimeAppService}"
+    },
+    "executionServicePlanSkuName": {
+      "value": "B1"
+    },
+    "catalogUri": {
+      "value": ""
+    },
+    "inRuleVersion": {
+      "value": "5.6.0"
+    },
+    "executionServicePlanName": {
+      "value": ""
+    }
   }
 }
