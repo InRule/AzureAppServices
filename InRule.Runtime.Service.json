@@ -8,7 +8,7 @@
         "description": "Name of the App Service resource the execution service will be installed on"
       }
     },
-    "createExecutionServicePlan": {
+    "createOrUpdateExecutionServicePlan": {
       "type": "bool",
       "defaultValue": true,
       "metadata": {
@@ -76,7 +76,7 @@
   },
   "resources": [
     {
-      "condition": "[parameters('createExecutionServicePlan')]",
+      "condition": "[parameters('createOrUpdateExecutionServicePlan')]",
       "name": "AppServicePlanTemplate",
       "apiVersion": "2017-05-10",
       "type": "Microsoft.Resources/deployments",

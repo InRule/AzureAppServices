@@ -14,7 +14,7 @@
         "description": "Name of the App Service resource the catalog manager will be installed on"
       }
     },
-    "createCatalogServicePlan": {
+    "createOrUpdateCatalogServicePlan": {
       "type": "bool",
       "defaultValue": true,
       "metadata": {
@@ -132,7 +132,7 @@
   },
   "resources": [
     {
-      "condition": "[parameters('createCatalogServicePlan')]",
+      "condition": "[parameters('createOrUpdateCatalogServicePlan')]",
       "name": "AppServicePlanTemplate",
       "apiVersion": "2017-05-10",
       "type": "Microsoft.Resources/deployments",
