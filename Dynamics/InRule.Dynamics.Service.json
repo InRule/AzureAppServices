@@ -256,7 +256,7 @@
             "inrule:crm:s2s:crmOrgUrl": "[parameters('orgUrl')]",
             "inrule:repository:licensing:licenseFolder": "D:\\home\\site\\wwwroot",
             "inrule:logging:level": "Warn",
-            "inrule:logging:appInsights:instrumentationKey": "[if(empty(parameters('appInsightsResourceName')), parameters('appInsightsInstrumentationKey'), reference(resourceId('Microsoft.Insights/components', parameters('appInsightsResourceName'))).InstrumentationKey)]"
+            "inrule:logging:appInsights:instrumentationKey": "[if(empty(parameters('appInsightsResourceName')), parameters('appInsightsInstrumentationKey'), reference(resourceId('Microsoft.Insights/components', parameters('appInsightsResourceName')), '2015-05-01').InstrumentationKey)]"
           }
         },
         {
