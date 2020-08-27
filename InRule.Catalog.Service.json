@@ -23,7 +23,7 @@
     },
     "catalogServicePlanName": {
       "type": "string",
-      "defaultValue": "[concat(parameters('appServiceName'),'Plan')]",
+      "defaultValue": "[concat(parameters('catalogServiceName'),'Plan')]",
       "metadata": {
         "description": "Name for the App Service Plan, defaulting to the value of the App Service's name with 'Plan' appended to the end"
       }
