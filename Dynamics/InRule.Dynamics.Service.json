@@ -60,7 +60,7 @@
         "description": "Login password to connect to your InRule Rule Catalog"
       }
     },
-    "createAppServicePlan": {
+    "createOrUpdateAppServicePlan": {
       "type": "bool",
       "defaultValue": true,
       "metadata": {
@@ -109,7 +109,7 @@
         "description": "Defines what version of the InRule Execution Service to deploy"
       }
     },
-    "createAppInsightsResource": {
+    "createOrUpdateAppInsightsResource": {
       "type": "bool",
       "defaultValue": true,
       "metadata": {
@@ -120,14 +120,14 @@
       "type": "string",
       "defaultValue": "AppInsightsInstrumentationKey",
       "metadata": {
-        "description": "If createAppInsightsResource is set to false and you have an existing App Insights resource you'd like to use instead, provide the Instrumentation key here. If createAppInsightsResource is set to true, leave this blank and provide a value for 'appInsightsResourceName' instead"
+        "description": "If createOrUpdateAppInsightsResource is set to false and you have an existing App Insights resource you'd like to use instead, provide the Instrumentation key here. If createOrUpdateAppInsightsResource is set to true, leave this blank and provide a value for 'appInsightsResourceName' instead"
       }
     },
     "appInsightsResourceName": {
       "type": "string",
       "defaultValue": "[concat(parameters('appServiceName'),'AppInsights')]",
       "metadata": {
-        "description": "If createAppInsightsResource is set to true, define the name of the Application Insights resource to deploy here. If createAppInsightsResource is set to false, leave this field blank"
+        "description": "If createOrUpdateAppInsightsResource is set to true, define the name of the Application Insights resource to deploy here. If createOrUpdateAppInsightsResource is set to false, leave this field blank"
       }
     },
     "appInsightsLocation": {
@@ -158,7 +158,7 @@
       "properties": {}
     },
     {
-      "condition": "[parameters('createAppInsightsResource')]",
+      "condition": "[parameters('createOrUpdateAppInsightsResource')]",
       "name": "[variables('appInsightsResourceName')]",
       "type": "Microsoft.Insights/components",
       "apiVersion": "2015-05-01",
@@ -173,7 +173,7 @@
       "properties": {}
     },
     {
-      "condition": "[parameters('createAppServicePlan')]",
+      "condition": "[parameters('createOrUpdateAppServicePlan')]",
       "name": "AppServicePlanTemplate",
       "apiVersion": "2017-05-10",
       "type": "Microsoft.Resources/deployments",
@@ -256,7 +256,7 @@
             "inrule:crm:s2s:crmOrgUrl": "[parameters('orgUrl')]",
             "inrule:repository:licensing:licenseFolder": "D:\\home\\site\\wwwroot",
             "inrule:logging:level": "Warn",
-            "inrule:logging:appInsights:instrumentationKey": "[if(empty(parameters('appInsightsResourceName')), parameters('appInsightsInstrumentationKey'), reference(resourceId('Microsoft.Insights/components', parameters('appInsightsResourceName'))).InstrumentationKey)]"
+            "inrule:logging:appInsights:instrumentationKey": "[if(empty(parameters('appInsightsResourceName')), parameters('appInsightsInstrumentationKey'), reference(resourceId('Microsoft.Insights/components', parameters('appInsightsResourceName')), '2015-05-01').InstrumentationKey)]"
           }
         },
         {

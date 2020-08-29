@@ -14,7 +14,7 @@
         "description": "Name of the App Service resource the catalog manager will be installed on"
       }
     },
-    "createCatalogServicePlan": {
+    "createOrUpdateCatalogServicePlan": {
       "type": "bool",
       "defaultValue": true,
       "metadata": {
@@ -23,7 +23,7 @@
     },
     "catalogServicePlanName": {
       "type": "string",
-      "defaultValue": "[concat(parameters('appServiceName'),'Plan')]",
+      "defaultValue": "[concat(parameters('catalogServiceName'),'Plan')]",
       "metadata": {
         "description": "Name for the App Service Plan, defaulting to the value of the App Service's name with 'Plan' appended to the end"
       }
@@ -128,11 +128,11 @@
   },
   "variables": {
     "use32Bit": "[or(equals(parameters('catalogServicePlanSkuName'), 'F1'), equals(parameters('catalogServicePlanSkuName'), 'D1'))]",
-    "catalogServicePlanName": "[if(empty(parameters('catalogServicePlanName')), concat(parameters('catalogServicePlanName'),'Plan'), parameters('catalogServicePlanName'))]"
+    "catalogServicePlanName": "[if(empty(parameters('catalogServicePlanName')), concat(parameters('catalogServiceName'),'Plan'), parameters('catalogServicePlanName'))]"
   },
   "resources": [
     {
-      "condition": "[parameters('createCatalogServicePlan')]",
+      "condition": "[parameters('createOrUpdateCatalogServicePlan')]",
       "name": "AppServicePlanTemplate",
       "apiVersion": "2017-05-10",
       "type": "Microsoft.Resources/deployments",
