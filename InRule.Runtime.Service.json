@@ -51,7 +51,7 @@
     },
     "inRuleVersion": {
       "type": "string",
-      "defaultValue": "5.6.0",
+      "defaultValue": "5.7.0",
       "metadata": {
         "description": "Version of the execution service to deploy"
       }
