@@ -18,28 +18,28 @@
       "type": "string",
       "defaultValue": "",
       "metadata": {
-        "description": "Organization URL for the Dynamics instance used with the integration framework. This is just the root URL, ex: 'https://contoso.crm.dynamics.com'"
+        "description": "(Deprecated, Use crmConnectionString) Organization URL for the Dynamics instance used with the integration framework. This is just the root URL, ex: 'https://contoso.crm.dynamics.com'"
       }
     },
     "appId": {
       "type": "string",
       "defaultValue": "",
       "metadata": {
-        "description": "Azure app ID used for S2S authentication"
+        "description": "(Deprecated, Use crmConnectionString) Azure app ID used for S2S authentication"
       }
     },
     "appSecret": {
       "type": "securestring",
       "defaultValue": "",
       "metadata": {
-        "description": "Secret value for app key used for S2S authentication"
+        "description": "(Deprecated, Use crmConnectionString) Secret value for app key used for S2S authentication"
       }
     },
     "crmConnectionString": {
       "type": "securestring",
       "defaultValue": "",
       "metadata": {
-        "description": "Connection string for the Dynamics CRM instance used with the integration framework. Refer to this link for more details and formatting: https://docs.microsoft.com/en-us/dynamics365/customer-engagement/developer/xrm-tooling/use-connection-strings-xrm-tooling-connect"
+        "description": "Connection string for the Dynamics CRM instance used with the integration framework. Refer to this link for more details and formatting: https://docs.microsoft.com/en-us/powerapps/developer/common-data-service/xrm-tooling/use-connection-strings-xrm-tooling-connect"
       }
     },
     "catalogUri": {
@@ -104,7 +104,7 @@
     },
     "inRuleVersion": {
       "type": "string",
-      "defaultValue": "5.6.0",
+      "defaultValue": "5.7.0",
       "metadata": {
         "description": "Defines what version of the InRule Execution Service to deploy"
       }
