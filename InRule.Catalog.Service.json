@@ -132,6 +132,19 @@
   },
   "resources": [
     {
+      "apiVersion": "2020-06-01",
+      "name": "pid-50659428-9551-4c59-b7a5-79bf3402de4f",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "resources": []
+        }
+      }
+    },
+    {
       "condition": "[parameters('createOrUpdateCatalogServicePlan')]",
       "name": "AppServicePlanTemplate",
       "apiVersion": "2017-05-10",
