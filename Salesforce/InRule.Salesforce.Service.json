@@ -119,7 +119,7 @@
     },
     "inRuleVersion": {
       "type": "string",
-      "defaultValue": "5.6.0",
+      "defaultValue": "5.7.0",
       "metadata": {
         "description": "Defines what version of the InRule Execution Service to deploy"
       }
@@ -206,62 +206,62 @@
         }
       }
     },
-      {
-        "name": "[parameters('appServiceName')]",
-        "type": "Microsoft.Web/sites",
-        "apiVersion": "2016-08-01",
-        "location": "[resourceGroup().location]",
-        "dependsOn": [
-          "[resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Resources/deployments', 'AppServicePlanTemplate')]"
-        ],
-        "tags": {
-          "[concat('hidden-related:', resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', parameters('appServicePlanName')))]": "Resource"
-        },
-        "properties": {
-          "serverFarmId": "[resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', variables('appServicePlanName'))]"
-        },
-        "resources": [
-          {
-            "name": "MSDeploy",
-            "type": "extensions",
-            "apiVersion": "2016-08-01",
-            "dependsOn": [
-              "[concat('Microsoft.Web/sites/', parameters('appServiceName'))]"
-            ],
-            "properties": {
-              "packageUri": "[parameters('packageURI')]"
-            }
-          },
-          {
-            "name": "appsettings",
-            "type": "config",
-            "apiVersion": "2016-08-01",
-            "dependsOn": [
-              "[concat('Microsoft.Web/Sites/', parameters('appServiceName'), '/Extensions/MSDeploy')]",
-              "[concat('Microsoft.Web/sites/', parameters('appServiceName'))]"
-            ],
-            "properties": {
-              "inrule:sf:api:loginUrl": "[parameters('sfLoginUrl')]",
-              "inrule:sf:api:username": "[parameters('sfUsername')]",
-              "inrule:sf:api:password": "[parameters('sfPassword')]",
-              "inrule:sf:api:securityToken": "[parameters('sfSecurityToken')]",
-              "inrule:sf:api:consumerKey": "[parameters('sfConsumerKey')]",
-              "inrule:sf:api:consumerSecret": "[parameters('sfConsumerSecret')]",
-              "inrule:sf:catalog:label": "LIVE",
-              "inrule:sf:catalog:user": "[parameters('catalogUser')]",
-              "inrule:sf:catalog:password": "[parameters('catalogPassword')]",
-              "inrule:sf:catalog:sso": "false",
-              "inrule:sf:catalog:uri": "[parameters('catalogUri')]",
-              "inrule:sf:catalog:ruleAppDirectory": "C:\\RuleApps",
-              "inrule:sf:catalog:useInRuleCatalog": "true",
-              "inrule:sf:ruleService:basicUserName": "[parameters('executionServiceBasicUsername')]",
-              "inrule:sf:ruleService:basicPwd": "[parameters('executionServiceBasicPassword')]",
-              "inrule:repository:licensing:licenseFolder": "D:\\home\\site\\wwwroot",
-              "inrule:logging:level": "Warn",
-              "inrule:logging:appInsights:instrumentationKey": "[if(empty(parameters('appInsightsResourceName')), parameters('appInsightsInstrumentationKey'), reference(resourceId('Microsoft.Insights/components', parameters('appInsightsResourceName')), '2015-05-01').InstrumentationKey)]"
-            }
+    {
+      "name": "[parameters('appServiceName')]",
+      "type": "Microsoft.Web/sites",
+      "apiVersion": "2016-08-01",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Resources/deployments', 'AppServicePlanTemplate')]"
+      ],
+      "tags": {
+        "[concat('hidden-related:', resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', parameters('appServicePlanName')))]": "Resource"
+      },
+      "properties": {
+        "serverFarmId": "[resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', variables('appServicePlanName'))]"
+      },
+      "resources": [
+        {
+          "name": "MSDeploy",
+          "type": "extensions",
+          "apiVersion": "2016-08-01",
+          "dependsOn": [
+            "[concat('Microsoft.Web/sites/', parameters('appServiceName'))]"
+          ],
+          "properties": {
+            "packageUri": "[parameters('packageURI')]"
           }
-        ]
-      }
+        },
+        {
+          "name": "appsettings",
+          "type": "config",
+          "apiVersion": "2016-08-01",
+          "dependsOn": [
+            "[concat('Microsoft.Web/Sites/', parameters('appServiceName'), '/Extensions/MSDeploy')]",
+            "[concat('Microsoft.Web/sites/', parameters('appServiceName'))]"
+          ],
+          "properties": {
+            "inrule:sf:api:loginUrl": "[parameters('sfLoginUrl')]",
+            "inrule:sf:api:username": "[parameters('sfUsername')]",
+            "inrule:sf:api:password": "[parameters('sfPassword')]",
+            "inrule:sf:api:securityToken": "[parameters('sfSecurityToken')]",
+            "inrule:sf:api:consumerKey": "[parameters('sfConsumerKey')]",
+            "inrule:sf:api:consumerSecret": "[parameters('sfConsumerSecret')]",
+            "inrule:sf:catalog:label": "LIVE",
+            "inrule:sf:catalog:user": "[parameters('catalogUser')]",
+            "inrule:sf:catalog:password": "[parameters('catalogPassword')]",
+            "inrule:sf:catalog:sso": "false",
+            "inrule:sf:catalog:uri": "[parameters('catalogUri')]",
+            "inrule:sf:catalog:ruleAppDirectory": "C:\\RuleApps",
+            "inrule:sf:catalog:useInRuleCatalog": "true",
+            "inrule:sf:ruleService:basicUserName": "[parameters('executionServiceBasicUsername')]",
+            "inrule:sf:ruleService:basicPwd": "[parameters('executionServiceBasicPassword')]",
+            "inrule:repository:licensing:licenseFolder": "D:\\home\\site\\wwwroot",
+            "inrule:logging:level": "Warn",
+            "inrule:logging:appInsights:instrumentationKey": "[if(empty(parameters('appInsightsResourceName')), parameters('appInsightsInstrumentationKey'), reference(resourceId('Microsoft.Insights/components', parameters('appInsightsResourceName')), '2015-05-01').InstrumentationKey)]"
+          }
+        }
+      ]
+    }
   ]
 }

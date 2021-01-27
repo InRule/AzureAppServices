@@ -17,15 +17,6 @@
     "catalogPassword": {
       "value": "password"
     },
-    "orgUrl": {
-      "value": ""
-    },
-    "appId": {
-      "value": ""
-    },
-    "appSecret": {
-      "value": ""
-    },
     "crmConnectionString": {
       "value": ""
     },
@@ -33,13 +24,16 @@
       "value": ""
     },
     "inRuleVersion": {
-      "value": "5.6.0"
+      "value": "5.7.0"
     },
     "appInsightsInstrumentationKey": {
       "value": ""
     },
     "appInsightsResourceName": {
       "value": ""
+    },
+    "createOrUpdateAppServicePlan": {
+      "value": true
     }
   }
 }
