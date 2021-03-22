@@ -106,7 +106,7 @@
     },
     "inRuleVersion": {
       "type": "string",
-      "defaultValue": "5.7.0",
+      "defaultValue": "5.7.1",
       "metadata": {
         "description": "Version of the catalog to deploy"
       } 
