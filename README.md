@@ -1,7 +1,7 @@
 InRule® Cloud Deployment Options for Microsoft® Azure®
 ====
 
-InRule provides cloud deployment options that allow you to run [irCatalog](https://www.inrule.com/products/inrule-components/ircatalog/)®, irCatalog Manager Website, and [irServer® Rule Execution Service](https://www.inrule.com/products/inrule-components/irserverruleexecutionservice/) inside of the Microsoft® Azure® App Service environment with minimal configuration and setup. If you are already familiar with Microsoft® Azure® and App Service Web Apps, then you are just a few steps away from deploying InRule _for Microsoft® Azure®_.
+InRule provides cloud deployment options that allow you to run [irCatalog](https://www.inrule.com/products/inrule-components/ircatalog/)®, irCatalog Manager Website, and [irServer® Rule Execution Service](https://inrule.com/inrule/inrule-components/irserverruleexecutionservice/) inside of the Microsoft® Azure® App Service environment with minimal configuration and setup. If you are already familiar with Microsoft® Azure® and App Service Web Apps, then you are just a few steps away from deploying InRule _for Microsoft® Azure®_.
 
 # Prerequisites
 
