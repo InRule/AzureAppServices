@@ -54,7 +54,7 @@ az group deployment create -g RESOURCE_GROUP_NAME --template-file .\InRule.Runti
 ```
 
 ## Verify with apply rules
-Follow the setps to verify rules in the [irServer Web App Deployment](irserver-rule-execution-service.md#verify-with-apply-rules)
+Follow the steps to verify rules in the [irServer Web App Deployment](irserver-rule-execution-service.md#verify-with-apply-rules)
 
 # Execution of Rules
-Follow the setps for executing rules in the [irServer Web App Deployment](irserver-rule-execution-service.md#execution-of-rules)
+Follow the steps for executing rules in the [irServer Web App Deployment](irserver-rule-execution-service.md#execution-of-rules)
