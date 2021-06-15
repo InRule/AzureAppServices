@@ -23,17 +23,20 @@
     "appServicePlanName": {
       "value": ""
     },
+    "createOrUpdateAppServicePlan": {
+      "value": true
+    },
     "inRuleVersion": {
-      "value": "5.7.1"
+      "value": "5.7.2"
     },
     "appInsightsInstrumentationKey": {
       "value": ""
     },
-    "appInsightsResourceName": {
+    "appInsightsConnectionString": {
       "value": ""
     },
-    "createOrUpdateAppServicePlan": {
-      "value": true
+    "appInsightsResourceName": {
+      "value": ""
     }
   }
 }

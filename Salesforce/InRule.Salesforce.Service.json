@@ -119,37 +119,37 @@
     },
     "inRuleVersion": {
       "type": "string",
-      "defaultValue": "5.7.1",
+      "defaultValue": "5.7.2",
       "metadata": {
         "description": "Defines what version of the InRule Execution Service to deploy"
       }
     },
     "createOrUpdateAppInsightsResource": {
       "type": "bool",
-      "defaultValue": true,
+      "defaultValue": false,
       "metadata": {
-        "description": "If set to true, provide a value for the appInsightsResourceName parameter. If set to false, you can provide a value for the appInsightsIntrumentationKey to associate your App Service with an existing App Insights resource"
+        "description": "(Deprecated, now conditionally triggered based on appInsightsInstrumentationKey) If set to true, provide a value for the appInsightsResourceName parameter. If set to false, you can provide a value for the appInsightsIntrumentationKey to associate your App Service with an existing App Insights resource"
       }
     },
     "appInsightsInstrumentationKey": {
       "type": "string",
-      "defaultValue": "AppInsightsInstrumentationKey",
+      "defaultValue": "",
       "metadata": {
-        "description": "If createOrUpdateAppInsightsResource is set to false and you have an existing App Insights resource you'd like to use instead, provide the Instrumentation key here. If createOrUpdateAppInsightsResource is set to true, leave this blank and provide a value for 'appInsightsResourceName' instead"
+        "description": "Provide an Instrumentation Key if you have an existing App Insights resource you'd like to use for logging and telemetry. If you are configuring this in a nonstandard azure environment, please additionally provide an App Insights Connection String. Otherwise, leave this value blank and provide a value for the 'appInsightsResourceName' parameter, which will create the resource for you"
       }
     },
     "appInsightsConnectionString": {
       "type": "string",
       "defaultValue": "[concat('InstrumentationKey=', parameters('appInsightsInstrumentationKey'), ';')]",
       "metadata": {
-        "description": "If createOrUpdateAppInsightsResource is set to false and you have an existing App Insights resource you'd like to use instead, provide the Connection String here. If createOrUpdateAppInsightsResource is set to true, leave this blank and provide a value for 'appInsightsResourceName' instead"
+        "description": "Only override the default value here if you have an existing App Insights resource you'd like to use, AND you need to use a non-standard connection string. If you need to supply your own connection string, be sure to set that value here, as well as providing your instrumentation key in the appInsightsInstrumentationKey parameter. If you want this template to manage the App Insights resource for you, or only need to provide an instrumentation key, leave this value as the default and provide values for appInsightsResourceName or appInsightsInstrumentationKey instead"
       }
     },
     "appInsightsResourceName": {
       "type": "string",
       "defaultValue": "[concat(parameters('appServiceName'),'AppInsights')]",
       "metadata": {
-        "description": "If createOrUpdateAppInsightsResource is set to true, define the name of the Application Insights resource to deploy here. If createOrUpdateAppInsightsResource is set to false, leave this field blank"
+        "description": "Provide a name if you do not have an existing App Insights resource you'd like to use for logging and telemetry. Setting this value will create a new App Insights resource with the provided name. This defaults to appending 'AppInsights' to the App Service resource name, but you can provide your own name. If you have an existing resource you'd like to use, leave this value blank and provide one for the 'appInsightsInstrumentationKey' parameter"
       }
     },
     "appInsightsLocation": {
@@ -186,7 +186,7 @@
       }
     },
     {
-      "condition": "[parameters('createOrUpdateAppInsightsResource')]",
+      "condition": "[or(empty(parameters('appInsightsInstrumentationKey')), parameters('createOrUpdateAppInsightsResource'))]",
       "name": "[variables('appInsightsResourceName')]",
       "type": "Microsoft.Insights/components",
       "apiVersion": "2018-05-01-preview",
@@ -278,8 +278,7 @@
             "inrule:sf:ruleService:basicPwd": "[parameters('executionServiceBasicPassword')]",
             "inrule:repository:licensing:licenseFolder": "D:\\home\\site\\wwwroot",
             "inrule:logging:level": "Warn",
-            "APPLICATIONINSIGHTS_CONNECTION_STRING": "[if(parameters('createOrUpdateAppInsightsResource'), reference(resourceId('Microsoft.Insights/components', parameters('appInsightsResourceName')), '2018-05-01-preview').ConnectionString, parameters('appInsightsConnectionString'))]",
-            "inrule:logging:appInsights:instrumentationKey": "[if(empty(parameters('appInsightsResourceName')), parameters('appInsightsInstrumentationKey'), reference(resourceId('Microsoft.Insights/components', parameters('appInsightsResourceName')), '2015-05-01').InstrumentationKey)]"
+            "APPLICATIONINSIGHTS_CONNECTION_STRING": "[if(or(empty(parameters('appInsightsInstrumentationKey')), parameters('createOrUpdateAppInsightsResource')), reference(resourceId('Microsoft.Insights/components', parameters('appInsightsResourceName')), '2018-05-01-preview').ConnectionString, parameters('appInsightsConnectionString'))]"
           }
         }
       ]
