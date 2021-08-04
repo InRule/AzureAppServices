@@ -124,6 +124,14 @@
       "metadata": {
         "description": "Download URI for the catalog manager package, default to calculated from the inRuleVersion parameter. Leave as default unless deploying a custom package"
       }
+    },
+    "deloyInitialDb": {
+      "type": "bool",
+      "defaultValue": false
+    },
+    "catalogBacpacUrl": {
+      "type": "string",
+      "defaultValue": "https://irintonlinestorage.blob.core.windows.net/catalogdb/ircatdb.bacpac"
     }
   },
   "variables": {
@@ -295,7 +303,26 @@
           "properties": {
             "edition": "[parameters('catalogSqlDbEdition')]",
             "requestedServiceObjectiveName": "[parameters('catalogSqlDbPerformanceLevel')]"
-          }
+          },
+          "resources": [
+            {
+              "condition": "[parameters('deloyInitialDb')]",
+              "type": "extensions",
+              "apiVersion": "2014-04-01",
+              "name": "Import",
+              "dependsOn": [
+                "[resourceId('Microsoft.Sql/servers/databases', parameters('catalogSqlServerName'), parameters('catalogSqlDbName'))]"
+              ],
+              "properties": {
+                "storageKeyType": "SharedAccessKey",
+                "storageKey": "?",
+                "storageUri": "[parameters('catalogBacpacUrl')]",
+                "administratorLogin": "[parameters('catalogSqlServerUsername')]",
+                "administratorLoginPassword": "[parameters('catalogSqlServerPassword')]",
+                "operationMode": "Import"
+              }
+            }
+          ]
         }
       ]
     }
