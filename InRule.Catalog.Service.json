@@ -131,7 +131,7 @@
     },
     "catalogBacpacUrl": {
       "type": "string",
-      "defaultValue": "https://irintonlinestorage.blob.core.windows.net/catalogdb/ircatdb.bacpac"
+      "defaultValue": "[concat('https://github.com/InRule/AzureAppServices/releases/download/v', parameters('inRuleVersion'),'/InRule.Catalog.Database.bacpac')]"
     }
   },
   "variables": {
