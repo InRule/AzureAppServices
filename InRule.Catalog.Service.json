@@ -129,7 +129,7 @@
       "type": "bool",
       "defaultValue": false
     },
-    "catalogBacpacUrl": {
+    "catalogBacpacUri": {
       "type": "string",
       "defaultValue": "[concat('https://github.com/InRule/AzureAppServices/releases/download/v', parameters('inRuleVersion'),'/InRule.Catalog.Database.bacpac')]"
     }
@@ -316,7 +316,7 @@
               "properties": {
                 "storageKeyType": "SharedAccessKey",
                 "storageKey": "?",
-                "storageUri": "[parameters('catalogBacpacUrl')]",
+                "storageUri": "[parameters('catalogBacpacUri')]",
                 "administratorLogin": "[parameters('catalogSqlServerUsername')]",
                 "administratorLoginPassword": "[parameters('catalogSqlServerPassword')]",
                 "operationMode": "Import"
