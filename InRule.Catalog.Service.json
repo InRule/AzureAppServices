@@ -131,7 +131,7 @@
     },
     "catalogBacpacUri": {
       "type": "string",
-      "defaultValue": "[concat('https://github.com/InRule/AzureAppServices/releases/download/v', parameters('inRuleVersion'),'/InRule.Catalog.Database.bacpac')]"
+      "defaultValue": "[concat('https://inruleintegrations.blob.core.windows.net/catalog/', parameters('inRuleVersion'),'/InRule.Catalog.Service.Database.bacpac')]"
     }
   },
   "variables": {
