@@ -1,5 +1,5 @@
 {
-  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
     "catalogServiceName": {
@@ -131,7 +131,7 @@
     },
     "catalogBacpacUri": {
       "type": "string",
-      "defaultValue": "[concat('https://github.com/InRule/AzureAppServices/releases/download/v', parameters('inRuleVersion'),'/InRule.Catalog.Database.bacpac')]"
+      "defaultValue": "[concat('https://inruleintegrations.blob.core.windows.net/catalog/', parameters('inRuleVersion'),'/InRule.Catalog.Service.Database.bacpac')]"
     }
   },
   "variables": {
@@ -140,7 +140,7 @@
   },
   "resources": [
     {
-      "apiVersion": "2020-06-01",
+      "apiVersion": "2021-04-01",
       "name": "pid-50659428-9551-4c59-b7a5-79bf3402de4f",
       "type": "Microsoft.Resources/deployments",
       "properties": {
@@ -155,7 +155,7 @@
     {
       "condition": "[parameters('createOrUpdateCatalogServicePlan')]",
       "name": "AppServicePlanTemplate",
-      "apiVersion": "2017-05-10",
+      "apiVersion": "2021-04-01",
       "type": "Microsoft.Resources/deployments",
       "resourceGroup": "[parameters('servicePlanResourceGroupName')]",
       "properties": {
@@ -167,7 +167,7 @@
             {
               "name": "[variables('catalogServicePlanName')]",
               "type": "Microsoft.Web/serverfarms",
-              "apiVersion": "2016-09-01",
+              "apiVersion": "2020-12-01",
               "location": "[resourceGroup().location]",
               "properties": {
                 "name": "[variables('catalogServicePlanName')]"
@@ -183,7 +183,7 @@
     {
       "name": "[parameters('catalogServiceName')]",
       "type": "Microsoft.Web/sites",
-      "apiVersion": "2016-08-01",
+      "apiVersion": "2020-12-01",
       "location": "[resourceGroup().location]",
       "dependsOn": [
         "[resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Resources/deployments', 'AppServicePlanTemplate')]"
@@ -201,7 +201,7 @@
         {
           "name": "MSDeploy",
           "type": "extensions",
-          "apiVersion": "2016-08-01",
+          "apiVersion": "2020-12-01",
           "dependsOn": [
             "[concat('Microsoft.Web/sites/', parameters('catalogServiceName'))]"
           ],
@@ -212,7 +212,7 @@
         {
           "name": "appsettings",
           "type": "config",
-          "apiVersion": "2016-08-01",
+          "apiVersion": "2020-12-01",
           "dependsOn": [
             "[concat('Microsoft.Web/Sites/', parameters('catalogServiceName'), '/Extensions/MSDeploy')]",
             "[concat('Microsoft.Web/sites/', parameters('catalogServiceName'))]"
@@ -228,7 +228,7 @@
     {
       "name": "[parameters('catalogManagerServiceName')]",
       "type": "Microsoft.Web/sites",
-      "apiVersion": "2016-08-01",
+      "apiVersion": "2020-12-01",
       "location": "[resourceGroup().location]",
       "dependsOn": [
         "[resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Resources/deployments', 'AppServicePlanTemplate')]"
@@ -246,7 +246,7 @@
         {
           "name": "MSDeploy",
           "type": "extensions",
-          "apiVersion": "2016-08-01",
+          "apiVersion": "2020-12-01",
           "dependsOn": [
             "[concat('Microsoft.Web/sites/', parameters('catalogManagerServiceName'))]"
           ],
@@ -257,7 +257,7 @@
         {
           "name": "appsettings",
           "type": "config",
-          "apiVersion": "2016-08-01",
+          "apiVersion": "2020-12-01",
           "dependsOn": [
             "[concat('Microsoft.Web/Sites/', parameters('catalogManagerServiceName'), '/Extensions/MSDeploy')]",
             "[concat('Microsoft.Web/sites/', parameters('catalogManagerServiceName'))]"
@@ -272,7 +272,7 @@
       "name": "[parameters('catalogSqlServerName')]",
       "type": "Microsoft.Sql/servers",
       "location": "[resourceGroup().location]",
-      "apiVersion": "2014-04-01-preview",
+      "apiVersion": "2021-02-01-preview",
       "dependsOn": [],
       "properties": {
         "administratorLogin": "[parameters('catalogSqlServerUsername')]",
@@ -283,7 +283,7 @@
           "name": "AllowAllWindowsAzureIps",
           "type": "firewallrules",
           "location": "[resourceGroup().location]",
-          "apiVersion": "2014-04-01-preview",
+          "apiVersion": "2021-02-01-preview",
           "dependsOn": [
             "[resourceId('Microsoft.Sql/servers', parameters('catalogSqlServerName'))]"
           ],
@@ -296,7 +296,7 @@
           "name": "[parameters('catalogSqlDbName')]",
           "type": "databases",
           "location": "[resourceGroup().location]",
-          "apiVersion": "2014-04-01-preview",
+          "apiVersion": "2021-02-01-preview",
           "dependsOn": [
             "[resourceId('Microsoft.Sql/servers', parameters('catalogSqlServerName'))]"
           ],
