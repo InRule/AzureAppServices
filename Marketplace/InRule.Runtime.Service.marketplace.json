@@ -1,0 +1,358 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "executionServiceName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the App Service resource the execution service will be installed on"
+      }
+    },
+    "createOrUpdateExecutionServicePlan": {
+      "type": "bool",
+      "defaultValue": true,
+      "metadata": {
+        "description": "If set to false, provide the name and resource group of an existing service plan in the 'executionServicePlanName' and 'servicePlanResourceGroupName' parameters. Otherwise a new plan will be created with the supplied name"
+      }
+    },
+    "executionServicePlanName": {
+      "type": "string",
+      "defaultValue": "[concat(parameters('executionServiceName'),'Plan')]",
+      "metadata": {
+        "description": "Name for the App Service Plan, defaulting to the value of the App Service's name with 'Plan' appended to the end"
+      }
+    },
+    "executionServicePlanSkuName": {
+      "type": "string",
+      "allowedValues": [
+        "F1",
+        "D1",
+        "B1",
+        "B2",
+        "B3",
+        "S1",
+        "S2",
+        "S3",
+        "P1",
+        "P2",
+        "P3",
+        "P4"
+      ],
+      "metadata": {
+        "description": "Describes plan's pricing tier and capacity. Check details at https://azure.microsoft.com/en-us/pricing/details/app-service/"
+      }
+    },
+    "servicePlanResourceGroupName": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().name]",
+      "metadata": {
+        "description": "Optional name of the resource group for the existing app service plan. If creating a new plan, leave as the default value"
+      }
+    },
+    "inRuleVersion": {
+      "type": "string",
+      "defaultValue": "5.7.2",
+      "metadata": {
+        "description": "Version of the execution service to deploy"
+      }
+    },
+    "packageUri": {
+      "type": "string",
+      "defaultValue": "[concat('https://github.com/InRule/AzureAppServices/releases/download/v', parameters('inRuleVersion'),'/InRule.Runtime.Service.zip')]",
+      "metadata": {
+        "description": "Download URI for the execution service package, default to calculated from the inRuleVersion parameter. Leave as default unless deploying a custom package"
+      }
+    },
+    "catalogUri": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "URI for your InRule Rule Catalog service, should follow this format: https://{Context}/Service.svc, with {Context} being replaced with the base catalog service URI. If you are setting deployCatalogResources to true, leave this value blank."
+      }
+    },
+    "deployCatalogResources": {
+      "type": "bool",
+      "defaultValue": false,
+      "metadata": {
+        "description": "Optionally deploy the required Azure resources for an InRule catalog server. If selecting yes, fill out the catalog parameters below. Otherwise, the following parameters can be left blank."
+      }
+    },
+    "catalogTemplateUri": {
+      "type": "string",
+      "defaultValue": "[concat('https://github.com/InRule/AzureAppServices/releases/download/v', parameters('inRuleVersion'),'/InRule.Catalog.Service.json')]",
+      "metadata": {
+        "description": "URI for the linked catalog template. Calculated from the inRuleVersion parameter."
+      }
+    },
+    "catalogServiceName": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Name of the App Service resource the catalog will be installed on"
+      }
+    },
+    "catalogManagerServiceName": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Name of the App Service resource the catalog manager will be installed on"
+      }
+    },
+    "catalogSqlServerName": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "The server name for the Azure SQL server used to host the irCatalog database(s)."
+      }
+    },
+    "catalogSqlServerUsername": {
+      "type": "string",
+      "defaultValue": "irCatalogAdmin",
+      "metadata": {
+        "description": "The server admin username for the Azure SQL server used to host the irCatalog database(s)."
+      }
+    },
+    "catalogSqlDbName": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "The name for the irCatalog database."
+      }
+    },
+    "catalogSqlDbEdition": {
+      "type": "string",
+      "defaultValue": "Basic",
+      "allowedValues": [ "Basic", "Standard", "Premium" ],
+      "metadata": {
+        "description": "The Azure SQL database edition used for the irCatalog database. Use Basic for less demanding workloads, Standard for most production workloads, and Premium for IO-intensive workloads."
+      }
+    },
+    "catalogSqlDbPerformanceLevel": {
+      "type": "string",
+      "defaultValue": "Basic",
+      "allowedValues": [ "Basic", "S0", "S1", "S2", "S3", "P1", "P2", "P4", "P6", "P11", "P15" ],
+      "metadata": {
+        "description": "The Azure SQL database performance level for the irCatalog. These correspond to the specific Azure SQL database edition."
+      }
+    },
+    "catalogSqlServerPassword": {
+      "type": "securestring",
+      "defaultValue": "",
+      "metadata": {
+        "description": "The server admin password for the Azure SQL server used to host the irCatalog database(s)."
+      }
+    },
+    "catalogServicePackageUri": {
+      "type": "string",
+      "defaultValue": "[concat('https://github.com/InRule/AzureAppServices/releases/download/v', parameters('inRuleVersion'),'/InRule.Catalog.Service.zip')]",
+      "metadata": {
+        "description": "Download URI for the catalog service package, default to calculated from the inRuleVersion parameter. Leave as default unless deploying a custom package"
+      }
+    },
+    "catalogManagerPackageUri": {
+      "type": "string",
+      "defaultValue": "[concat('https://github.com/InRule/AzureAppServices/releases/download/v', parameters('inRuleVersion'),'/InRule.Catalog.Manager.Web.zip')]",
+      "metadata": {
+        "description": "Download URI for the catalog manager package, default to calculated from the inRuleVersion parameter. Leave as default unless deploying a custom package"
+      }
+    },
+    "deployInitialCatalogDb": {
+      "type": "bool",
+      "defaultValue": false,
+      "metadata": {
+        "description": "Set this to true if this is the first time deploying the catalog SQL resources. This will create the required schema and add a catalog user with the username/password credentials of admin/password. Selecting this will also configure the execution service to use these default credentials. It is suggested to change the password for this account as soon as possible. If the SQL DB already exists, this must be set to false, otherwise the deployment will fail."
+      }
+    },
+    "catalogBacpacUri": {
+      "type": "string",
+      "defaultValue": "[concat('https://github.com/InRule/AzureAppServices/releases/download/v', parameters('inRuleVersion'),'/InRule.Catalog.Service.Database.bacpac')]"
+    },
+    "deployArtifactsFromPackage": {
+      "type": "bool",
+      "defaultValue": false,
+      "metadata": {
+        "description": "Internal. Leave as false unless deploying from a combined Marketplace package"
+      }
+    },
+    "_artifactsLocation": {
+      "type": "string",
+      "metadata": {
+        "description": "The base URI where artifacts required by this template are located including a trailing '/'"
+      },
+      "defaultValue": "[deployment().properties.templateLink.uri]"
+    },
+    "_artifactsLocationSasToken": {
+      "type": "securestring",
+      "metadata": {
+        "description": "The sasToken required to access _artifactsLocation.  When the template is deployed using the accompanying scripts, a sasToken will be automatically generated. Use the defaultValue if the staging location is not secured."
+      },
+      "defaultValue": ""
+    }
+  },
+  "variables": {
+    "use32Bit": "[or(equals(parameters('executionServicePlanSkuName'), 'F1'), equals(parameters('executionServicePlanSkuName'), 'D1'))]",
+    "executionServicePlanName": "[if(empty(parameters('executionServicePlanName')), concat(parameters('executionServiceName'),'Plan'), parameters('executionServicePlanName'))]",
+    "catalogUri": "[if(parameters('deployCatalogResources'), concat('https://', parameters('catalogServiceName'), '.azurewebsites.net/service.svc'), parameters('catalogUri'))]",
+    "packageCatalogTemplateUri": "[uri(parameters('_artifactsLocation'), concat('nestedtemplates/InRule.Catalog.Service.json', parameters('_artifactsLocationSasToken')))]",
+    "packageCatalogServiceUri": "[uri(parameters('_artifactsLocation'), concat('artifacts/InRule.Catalog.Service.zip', parameters('_artifactsLocationSasToken')))]",
+    "packageCatalogManagerServiceUri": "[uri(parameters('_artifactsLocation'), concat('artifacts/InRule.Catalog.Manager.Web.zip', parameters('_artifactsLocationSasToken')))]",
+    "catalogTemplateUri": "[if(parameters('deployArtifactsFromPackage'), variables('packageCatalogTemplateUri'), parameters('catalogTemplateUri'))]",
+    "catalogServicePackageUri": "[if(parameters('deployArtifactsFromPackage'), variables('packageCatalogServiceUri'), parameters('catalogServicePackageUri'))]",
+    "catalogManagerPackageUri": "[if(parameters('deployArtifactsFromPackage'), variables('packageCatalogManagerServiceUri'), parameters('catalogManagerPackageUri'))]",
+    "catalogBacpacUri": "[parameters('catalogBacpacUri')]"
+  },
+  "resources": [
+    {
+      "apiVersion": "2021-04-01",
+      "name": "pid-50659428-9551-4c59-b7a5-79bf3402de4f",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "resources": []
+        }
+      }
+    },
+    {
+      "condition": "[parameters('createOrUpdateExecutionServicePlan')]",
+      "name": "AppServicePlanTemplate",
+      "apiVersion": "2021-04-01",
+      "type": "Microsoft.Resources/deployments",
+      "resourceGroup": "[parameters('servicePlanResourceGroupName')]",
+      "properties": {
+        "mode": "Incremental",
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "resources": [
+            {
+              "name": "[variables('executionServicePlanName')]",
+              "type": "Microsoft.Web/serverfarms",
+              "apiVersion": "2020-12-01",
+              "location": "[resourceGroup().location]",
+              "properties": {
+                "name": "[variables('executionServicePlanName')]"
+              },
+              "sku": {
+                "name": "[parameters('executionServicePlanSkuName')]"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "[parameters('executionServiceName')]",
+      "type": "Microsoft.Web/sites",
+      "apiVersion": "2020-12-01",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Resources/deployments', 'AppServicePlanTemplate')]"
+      ],
+      "tags": {
+        "[concat('hidden-related:', resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', variables('executionServicePlanName')))]": "Resource"
+      },
+      "properties": {
+        "serverFarmId": "[resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', variables('executionServicePlanName'))]",
+        "siteConfig": {
+          "use32BitWorkerProcess": "[variables('use32Bit')]"
+        }
+      },
+      "resources": [
+        {
+          "name": "MSDeploy",
+          "type": "extensions",
+          "apiVersion": "2020-12-01",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/sites', parameters('executionServiceName'))]"
+          ],
+          "properties": {
+            "packageUri": "[parameters('packageUri')]"
+          }
+        },
+        {
+          "name": "appsettings",
+          "type": "config",
+          "apiVersion": "2020-12-01",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/sites/extensions', parameters('executionServiceName'), 'MSDeploy')]",
+            "[resourceId('Microsoft.Web/sites', parameters('executionServiceName'))]"
+          ],
+          "properties": {
+            "inrule:runtime:service:catalog:catalogServiceUri": "[variables('catalogUri')]",
+            "inrule:repository:licensing:licenseFolder": "D:\\home\\site\\wwwroot",
+            "inrule:logging:level": "Warn"
+          }
+        }
+      ]
+    },
+    {
+      "condition": "[parameters('deployCatalogResources')]",
+      "apiVersion": "2021-04-01",
+      "name": "CatalogDeploy",
+      "type": "Microsoft.Resources/deployments",
+      "resourceGroup": "[resourceGroup().name]",
+      "dependsOn": ["[resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Resources/deployments', 'AppServicePlanTemplate')]"],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('catalogTemplateUri')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "catalogServiceName": {
+            "value": "[parameters('catalogServiceName')]"
+          },
+          "catalogManagerServiceName": {
+            "value": "[parameters('catalogManagerServiceName')]"
+          },
+          "createOrUpdateCatalogServicePlan": {
+            "value": false
+          },
+          "catalogServicePlanName": {
+            "value": "[parameters('executionServicePlanName')]"
+          },
+          "catalogServicePlanSkuName": {
+            "value": "[parameters('executionServicePlanSkuName')]"
+          },
+          "servicePlanResourceGroupName": {
+            "value": "[parameters('servicePlanResourceGroupName')]"
+          },
+          "catalogSqlServerName": {
+            "value": "[parameters('catalogSqlServerName')]"
+          },
+          "catalogSqlServerUsername": {
+            "value": "[parameters('catalogSqlServerUsername')]"
+          },
+          "catalogSqlDbName": {
+            "value": "[parameters('catalogSqlDbName')]"
+          },
+          "catalogSqlDbEdition": {
+            "value": "[parameters('catalogSqlDbEdition')]"
+          },
+          "catalogSqlDbPerformanceLevel": {
+            "value": "[parameters('catalogSqlDbPerformanceLevel')]"
+          },
+          "catalogSqlServerPassword": {
+            "value": "[parameters('catalogSqlServerPassword')]"
+          },
+          "packageUri": {
+            "value": "[variables('catalogServicePackageUri')]"
+          },
+          "managerPackageUri": {
+            "value": "[variables('catalogManagerPackageUri')]"
+          },
+          "deloyInitialDb": {
+            "value": "[parameters('deployInitialCatalogDb')]"
+          },
+          "catalogBacpacUri": {
+            "value": "[variables('catalogBacpacUri')]"
+          }
+        }
+      }
+    }
+  ],
+  "outputs": {}
+}
