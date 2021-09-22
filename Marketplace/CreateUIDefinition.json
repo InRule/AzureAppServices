@@ -3,6 +3,13 @@
     "handler": "Microsoft.Azure.CreateUIDef",
     "version": "0.1.2-preview",
     "parameters": {
+        "config": {
+            "basics": {
+              "resourceGroup": {
+                "allowExisting": true
+              }
+            }
+        },
         "basics": [
             {
                 "name": "appServicePlan",
@@ -20,12 +27,14 @@
                     {
                         "name": "createOrUpdateAppServicePlan",
                         "type": "Microsoft.Common.CheckBox",
-                        "label": "Use Existing App  Service Plan"                
+                        "label": "Use Existing App  Service Plan",
+                        "toolTip": "If you have an existing app plan you want to host the InRule App Services on, select this checkbox and choose the Service Plan below"                
                     },
                     {
                         "name": "selectedAppServicePlan",
                         "type": "Microsoft.Solutions.ResourceSelector",
                         "label": "Select App Service Plan",
+                        "toolTip": "Select an existing App Service Plan to deploy the InRule App Services on",
                         "visible": "[bool(basics('appServicePlan').createOrUpdateAppServicePlan)]",
                         "resourceType": "Microsoft.Web/serverfarms",                
                         "options": {
@@ -52,7 +61,7 @@
                         "label": "App Service Plan Size",
                         "visible": "[bool(not(basics('appServicePlan').createOrUpdateAppServicePlan))]",
                         "defaultValue": "B1",
-                        "toolTip": "",
+                        "toolTip": "Describes plan's pricing tier and capacity. Check details at https://azure.microsoft.com/en-us/pricing/details/app-service/",
                         "constraints": {
                             "allowedValues": [
                                 { "label": "F1", "value": "F1" },
@@ -233,6 +242,7 @@
             }
         ],
         "outputs": { 
+            "location": "[location()]",
             "executionServiceName": "[concat(steps('servicePlan').resourceNamePrefix , '-execute')]",
             "createOrUpdateExecutionServicePlan": "[not(basics('appServicePlan').createOrUpdateAppServicePlan)]",
 
