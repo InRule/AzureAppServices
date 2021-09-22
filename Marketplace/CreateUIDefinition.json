@@ -109,7 +109,7 @@
                         "name": "resourceNamePrefix",
                         "type": "Microsoft.Common.TextBox",
                         "label": "Resource Name Prefix",
-                        "toolTip": "Resource name prefix that will be used to derive all resource names.  The suggested conventions is companyName-inrule-environmentName, but other conventions are also allowed.",
+                        "toolTip": "Resource name prefix that will be used to derive all resource names.  The suggested convention is companyName-inrule-environmentName, but other conventions are also allowed.",
                         "placeholder": "yourCompanyName-inrule-environment",
                         "visible": true,
                         "constraints": {
