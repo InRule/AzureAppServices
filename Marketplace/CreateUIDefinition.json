@@ -93,15 +93,15 @@
                         "type": "Microsoft.Common.TextBlock",
                         "visible": true,
                         "options": {
-                            "text": "This value will be used as a prefix to derive all other resource names.  This includes the app service plan, catalog, sql server, and database - e.g inrule-prod-exec-plan, inrule-prod-exec-catalog, etc."
+                            "text": "This value will be used as a prefix to derive all other resource names.  This includes the execution service, app service plan, catalog, sql server, and database - e.g contoso-inrule-prod-plan, contoso-inrule-prod-catalog, etc."
                         }
                     },
                     {
-                        "name": "appServiceName",
+                        "name": "resourceNamePrefix",
                         "type": "Microsoft.Common.TextBox",
-                        "label": "Execution Service Name",
-                        "toolTip": "Execution Service Name for the Rule Execution Service",
-                        "placeholder": "inrule-prod-exec",
+                        "label": "Resource Name Prefix",
+                        "toolTip": "Resource name prefix that will be used to derive all resource names.  The suggested conventions is companyName-inrule-environmentName, but other conventions are also allowed.",
+                        "placeholder": "yourCompanyName-inrule-environment",
                         "visible": true,
                         "constraints": {
                             "required": true
@@ -232,22 +232,22 @@
                 ]
             }
         ],
-        "outputs": {
-            "executionServiceName": "[steps('servicePlan').appServiceName]",
+        "outputs": { 
+            "executionServiceName": "[concat(steps('servicePlan').resourceNamePrefix , '-execute')]",
             "createOrUpdateExecutionServicePlan": "[not(basics('appServicePlan').createOrUpdateAppServicePlan)]",
 
-            "executionServicePlanName": "[if(basics('appServicePlan').createOrUpdateAppServicePlan, basics('appServicePlan').selectedAppServicePlan.name, concat(steps('servicePlan').appServiceName , '-plan'))]",
+            "executionServicePlanName": "[if(basics('appServicePlan').createOrUpdateAppServicePlan, basics('appServicePlan').selectedAppServicePlan.name, concat(steps('servicePlan').resourceNamePrefix , '-plan'))]",
             "executionServicePlanSkuName": "[basics('appServicePlan').appServicePlanSkuName]",
             "servicePlanResourceGroupName": "[last(take(split(basics('appServicePlan').selectedAppServicePlan.id, '/'),5))]",
 
             "catalogUri": "[steps('catalogConfig').catalogUri]",
             
             "deployCatalogResources": "[equals(steps('catalogConfig').deployCatalogResources, 'deployResources')]",
-            "catalogServiceName": "[concat(steps('servicePlan').appServiceName , '-catalog')]",
-            "catalogManagerServiceName": "[concat(steps('servicePlan').appServiceName , '-catman')]",
-            "catalogSqlServerName": "[concat(steps('servicePlan').appServiceName , '-sql-server')]",
+            "catalogServiceName": "[concat(steps('servicePlan').resourceNamePrefix , '-catalog')]",
+            "catalogManagerServiceName": "[concat(steps('servicePlan').resourceNamePrefix , '-catman')]",
+            "catalogSqlServerName": "[concat(steps('servicePlan').resourceNamePrefix , '-sql-server')]",
             "catalogSqlServerUsername": "[steps('catalogConfig').catalogDb.catalogSqlUser]",
-            "catalogSqlDbName": "[concat(steps('servicePlan').appServiceName , '-db')]",
+            "catalogSqlDbName": "[concat(steps('servicePlan').resourceNamePrefix , '-db')]",
             "catalogSqlDbEdition": "[steps('catalogConfig').catalogDb.catalogSqlEdition]",
             "catalogSqlDbPerformanceLevel": "[steps('catalogConfig').catalogDb.catalogSqlPerformance]",
             "catalogSqlServerPassword": "[steps('catalogConfig').catalogDb.catalogSqlPassword]",
