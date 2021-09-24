@@ -254,10 +254,10 @@
             
             "deployCatalogResources": "[equals(steps('catalogConfig').deployCatalogResources, 'deployResources')]",
             "catalogServiceName": "[concat(steps('servicePlan').resourceNamePrefix , '-catalog')]",
-            "catalogManagerServiceName": "[concat(steps('servicePlan').resourceNamePrefix , '-catman')]",
-            "catalogSqlServerName": "[concat(steps('servicePlan').resourceNamePrefix , '-sql-server')]",
+            "catalogManagerServiceName": "[concat(steps('servicePlan').resourceNamePrefix , '-catalogmgr')]",
+            "catalogSqlServerName": "[concat(steps('servicePlan').resourceNamePrefix , '-sqlsrv')]",
             "catalogSqlServerUsername": "[steps('catalogConfig').catalogDb.catalogSqlUser]",
-            "catalogSqlDbName": "[concat(steps('servicePlan').resourceNamePrefix , '-db')]",
+            "catalogSqlDbName": "[concat(steps('servicePlan').resourceNamePrefix , '-sqldb')]",
             "catalogSqlDbEdition": "[steps('catalogConfig').catalogDb.catalogSqlEdition]",
             "catalogSqlDbPerformanceLevel": "[steps('catalogConfig').catalogDb.catalogSqlPerformance]",
             "catalogSqlServerPassword": "[steps('catalogConfig').catalogDb.catalogSqlPassword]",
