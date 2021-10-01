@@ -356,6 +356,9 @@
           },
           "catalogBacpacUri": {
             "value": "[variables('catalogBacpacUri')]"
+          },
+          "location": {
+            "value": "[parameters('location')]"
           }
         }
       }
