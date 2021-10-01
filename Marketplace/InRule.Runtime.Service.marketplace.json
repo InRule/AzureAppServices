@@ -187,6 +187,13 @@
         "description": "The sasToken required to access _artifactsLocation.  When the template is deployed using the accompanying scripts, a sasToken will be automatically generated. Use the defaultValue if the staging location is not secured."
       },
       "defaultValue": ""
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "Optional for resources. By default the location of the resource group will be used"
+      }
     }
   },
   "variables": {
@@ -231,7 +238,7 @@
               "name": "[variables('executionServicePlanName')]",
               "type": "Microsoft.Web/serverfarms",
               "apiVersion": "2020-12-01",
-              "location": "[resourceGroup().location]",
+              "location": "[parameters('location')]",
               "properties": {
                 "name": "[variables('executionServicePlanName')]"
               },
@@ -247,7 +254,7 @@
       "name": "[parameters('executionServiceName')]",
       "type": "Microsoft.Web/sites",
       "apiVersion": "2020-12-01",
-      "location": "[resourceGroup().location]",
+      "location": "[parameters('location')]",
       "dependsOn": [
         "[resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Resources/deployments', 'AppServicePlanTemplate')]"
       ],
