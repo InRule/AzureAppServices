@@ -24,6 +24,7 @@
     },
     "executionServicePlanSkuName": {
       "type": "string",
+      "defaultValue": "F1",
       "allowedValues": [
         "F1",
         "D1",
@@ -165,7 +166,7 @@
     },
     "catalogBacpacUri": {
       "type": "string",
-      "defaultValue": "[concat('https://github.com/InRule/AzureAppServices/releases/download/v', parameters('inRuleVersion'),'/InRule.Catalog.Service.Database.bacpac')]"
+      "defaultValue": "[concat('https://inruleintegrations.blob.core.windows.net/catalog/', parameters('inRuleVersion'),'/InRule.Catalog.Service.Database.bacpac')]"
     },
     "deployArtifactsFromPackage": {
       "type": "bool",
