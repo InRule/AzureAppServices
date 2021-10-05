@@ -113,7 +113,13 @@
                         "placeholder": "yourCompanyName-inrule-environment",
                         "visible": true,
                         "constraints": {
-                            "required": true
+                            "required": true,
+                            "validations": [
+                                {
+                                    "regex": "^[a-z0-9_\\-]+$",
+                                    "message": "Resource Name Prefix can only be made up of lowercase letters 'a'-'z', the numbers 0-9 and hyphens."
+                                }
+                            ]
                         }
                     }
                 ]
