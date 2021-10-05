@@ -1,0 +1,60 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "executionServiceName": {
+            "value": ""
+        },
+        "createOrUpdateExecutionServicePlan": {
+            "value": true
+        },
+        "executionServicePlanName": {
+            "value": ""
+        },
+        "executionServicePlanSkuName": {
+            "value": "B1"
+        },
+        "catalogUri": {
+            "value": null
+        },
+        "deployCatalogResources": {
+            "value": true
+        },
+        "catalogServiceName": {
+            "value": ""
+        },
+        "catalogManagerServiceName": {
+            "value": ""
+        },
+        "catalogSqlServerName": {
+            "value": ""
+        },
+        "catalogSqlServerUsername": {
+            "value": ""
+        },
+        "catalogSqlDbName": {
+            "value": ""
+        },
+        "catalogSqlDbEdition": {
+            "value": "Basic"
+        },
+        "catalogSqlDbPerformanceLevel": {
+            "value": "Basic"
+        },
+        "catalogSqlServerPassword": {
+            "value": ""
+        },
+        "deployInitialCatalogDb": {
+            "value": true
+        },
+        "catalogBacpacUri": {
+            "value": "[concat('https://github.com/InRule/AzureAppServices/releases/download/v', parameters('inRuleVersion'),'/InRule.Catalog.Service.Database.bacpac')]"
+        },
+        "deployArtifactsFromPackage": {
+            "value": false
+        },
+        "_artifactsLocation": {
+            "value": "https://inrule.com"
+        }
+    }
+}
