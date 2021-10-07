@@ -48,7 +48,7 @@
             "value": true
         },
         "catalogBacpacUri": {
-            "value": "[concat('https://github.com/InRule/AzureAppServices/releases/download/v', parameters('inRuleVersion'),'/InRule.Catalog.Service.Database.bacpac')]"
+            "value": "https://inruleintegrations.blob.core.windows.net/catalog/5.7.2/InRule.Catalog.Service.Database.bacpac"
         },
         "deployArtifactsFromPackage": {
             "value": false
