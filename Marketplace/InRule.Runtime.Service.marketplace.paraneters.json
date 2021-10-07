@@ -48,7 +48,7 @@
             "value": true
         },
         "catalogBacpacUri": {
-            "value": "https://inruleintegrations.blob.core.windows.net/catalog/5.7.2/InRule.Catalog.Service.Database.bacpac"
+            "value": "[concat('https://inruleintegrations.blob.core.windows.net/catalog/',parameters('inRuleVersion'),'/InRule.Catalog.Service.Database.bacpac')]"
         },
         "deployArtifactsFromPackage": {
             "value": false
