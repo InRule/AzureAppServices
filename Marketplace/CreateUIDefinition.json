@@ -1,0 +1,274 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/0.1.2-preview/CreateUIDefinition.MultiVm.json#",
+    "handler": "Microsoft.Azure.CreateUIDef",
+    "version": "0.1.2-preview",
+    "parameters": {
+        "config": {
+            "basics": {
+              "resourceGroup": {
+                "allowExisting": true
+              }
+            }
+        },
+        "basics": [
+            {
+                "name": "appServicePlan",
+                "type": "Microsoft.Common.Section",
+                "label": "App Service Plan",
+                "elements": [
+                    {
+                        "name": "appServicePlanMessage",
+                        "type": "Microsoft.Common.TextBlock",
+                        "visible": true,
+                        "options": {
+                            "text": "The app service used for the InRule execution service needs to be added to an app service plan. You can either create a new app service plan or select and existing app service plan to use."
+                        }
+                    },
+                    {
+                        "name": "createOrUpdateAppServicePlan",
+                        "type": "Microsoft.Common.CheckBox",
+                        "label": "Use Existing App  Service Plan",
+                        "toolTip": "If you have an existing app plan you want to host the InRule App Services on, select this checkbox and choose the Service Plan below"                
+                    },
+                    {
+                        "name": "selectedAppServicePlan",
+                        "type": "Microsoft.Solutions.ResourceSelector",
+                        "label": "Select App Service Plan",
+                        "toolTip": "Select an existing App Service Plan to deploy the InRule App Services on",
+                        "visible": "[bool(basics('appServicePlan').createOrUpdateAppServicePlan)]",
+                        "resourceType": "Microsoft.Web/serverfarms",                
+                        "options": {
+                            "filter": {
+                                "subscription": "onBasics",
+                                "location": "onBasics"
+                            }
+                        },
+                        "constraints": {
+                            "required": "[bool(basics('appServicePlan').createOrUpdateAppServicePlan)]"
+                        }
+                    },
+                    {
+                        "name": "createAppServicePlanHelper",
+                        "type": "Microsoft.Common.TextBlock",
+                        "visible": "[bool(basics('appServicePlan').createOrUpdateAppServicePlan)]",
+                        "options": {
+                            "text": "If you do not see the App Service Plan you are looking for, make sure that you are deploying to the same region the resource is located."
+                        }
+                    },
+                    {
+                        "name": "appServicePlanSkuName",
+                        "type": "Microsoft.Common.DropDown",
+                        "label": "App Service Plan Size",
+                        "visible": "[bool(not(basics('appServicePlan').createOrUpdateAppServicePlan))]",
+                        "defaultValue": "B1",
+                        "toolTip": "Describes plan's pricing tier and capacity. Check details at https://azure.microsoft.com/en-us/pricing/details/app-service/",
+                        "constraints": {
+                            "allowedValues": [
+                                { "label": "F1", "value": "F1" },
+                                { "label": "D1", "value": "D1" },
+                                { "label": "B1", "value": "B1" },
+                                { "label": "B2", "value": "B2" },
+                                { "label": "B3", "value": "B3" },
+                                { "label": "S1", "value": "S1" },
+                                { "label": "S2", "value": "S2" },
+                                { "label": "S3", "value": "S3" },
+                                { "label": "P1", "value": "P1" },
+                                { "label": "P2", "value": "P2" },
+                                { "label": "P3", "value": "P3" },
+                                { "label": "P4", "value": "P4" }
+                            ],
+                            "required": "[bool(not(basics('appServicePlan').createOrUpdateAppServicePlan))]"
+                        }
+                    }
+                ],
+                "visible": true
+            }
+        ],
+        "steps": [
+            {
+                "name": "servicePlan",
+                "label": "Service Config",
+                "elements": [
+                    {
+                        "name": "headerText",
+                        "type": "Microsoft.Common.TextBlock",
+                        "visible": true,
+                        "options": {
+                            "text": "Configure the rule execution service."
+                        }
+                    },
+                    {
+                        "name": "appServiceNameBlurb",
+                        "type": "Microsoft.Common.TextBlock",
+                        "visible": true,
+                        "options": {
+                            "text": "This value will be used as a prefix to derive all other resource names.  This includes the execution service, app service plan, catalog, sql server, and database - e.g contoso-inrule-prod-plan, contoso-inrule-prod-catalog, etc."
+                        }
+                    },
+                    {
+                        "name": "resourceNamePrefix",
+                        "type": "Microsoft.Common.TextBox",
+                        "label": "Resource Name Prefix",
+                        "toolTip": "Resource name prefix that will be used to derive all resource names.  The suggested convention is companyName-inrule-environmentName, but other conventions are also allowed.",
+                        "placeholder": "yourCompanyName-inrule-environment",
+                        "visible": true,
+                        "constraints": {
+                            "required": true,
+                            "validations": [
+                                {
+                                    "regex": "^[a-z0-9_\\-]+$",
+                                    "message": "Resource Name Prefix can only be made up of lowercase letters 'a'-'z', the numbers 0-9 and hyphens."
+                                }
+                            ]
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "catalogConfig",
+                "label": "Catalog Config",
+                "elements": [
+                    {
+                        "name": "catalogConfigHeader",
+                        "type": "Microsoft.Common.TextBlock",
+                        "visible": true,
+                        "options": {
+                            "text": "Configure the catalog service."
+                        }
+                    },
+                    {
+                        "name": "deployCatalogResources",
+                        "type": "Microsoft.Common.OptionsGroup",
+                        "label": "Catalog Setup",
+                        "defaultValue": "Provide existing catalog credentials",
+                        "toolTip": "If you have already deployed a catalog server you would like to use, you can provide the credentials for it here. Otherwise, you can select to deploy the catalog resources and a catalog service and database will be provisioned for you",
+                        "constraints": {
+                          "allowedValues": [
+                            {
+                              "label": "Connect to existing catalog",
+                              "value": "credentialsOnly"
+                            },
+                            {
+                              "label": "Deploy catalog service",
+                              "value": "deployResources"
+                            }
+                          ],
+                          "required": true
+                        },
+                        "visible": true
+                    },
+                    {
+                        "name": "catalogUri",
+                        "type": "Microsoft.Common.TextBox",
+                        "label": "Catalog URI",
+                        "toolTip": "URI for your InRule Rule Catalog service, should follow this format: https://{Context}/Service.svc, with {Context} being replaced with the base catalog service URI.",
+                        "visible": "[equals(steps('catalogConfig').deployCatalogResources, 'credentialsOnly')]",
+                        "constraints": {
+                            "required": true,
+                            "validations": [
+                                {
+                                  "regex": "^https?://",
+                                  "message": "Please provide a valid catalog URI"
+                                }
+                              ]
+                        }
+                    },
+                    {
+                        "name": "catalogDb",
+                        "type": "Microsoft.Common.Section",
+                        "label": "Catalog Database",
+                        "elements": [
+                            {
+                                "name": "catalogSqlUser",
+                                "type": "Microsoft.Common.TextBox",
+                                "label": "Catalog SQL User",
+                                "toolTip": "The server admin username for the Azure SQL server used to host the irCatalog database",
+                                "visible": true,
+                                "constraints": {
+                                    "required": true
+                                }
+                            },
+                            {
+                                "name": "catalogSqlPassword",
+                                "type": "Microsoft.Common.PasswordBox",
+                                "label": {
+                                  "password": "Catalog SQL Password",
+                                  "confirmPassword": "Confirm Catalog SQL Password"
+                                },
+                                "toolTip": "The server admin password for the Azure SQL server used to host the irCatalog database",
+                                "visible": true,
+                                "constraints": {
+                                    "required": true
+                                }
+                            },
+                            {
+                                "name": "catalogSqlEdition",
+                                "type": "Microsoft.Common.DropDown",
+                                "label": "Catalog SQL Edition",
+                                "toolTip": "The Azure SQL database edition used for the irCatalog database. Use Basic for less demanding workloads, Standard for most production workloads, and Premium for IO-intensive workloads",
+                                "defaultValue": "Basic",
+                                "visible": true,
+                                "constraints": {
+                                    "allowedValues": [
+                                        { "label": "Basic", "value": "Basic" },
+                                        { "label": "Standard", "value": "Standard" },
+                                        { "label": "Premium", "value": "Premium" }
+                                    ],
+                                    "required": true
+                                }
+                            },
+                            {
+                                "name": "catalogSqlPerformance",
+                                "type": "Microsoft.Common.DropDown",
+                                "label": "Catalog SQL Performance Level",
+                                "defaultValue": "Basic",
+                                "toolTip": "The Azure SQL database performance level for the irCatalog. These correspond to the specific Azure SQL database edition",
+                                "visible": true,
+                                "constraints": {
+                                    "allowedValues": [
+                                        { "label": "Basic", "value": "Basic" },
+                                        { "label": "S0", "value": "S0" },
+                                        { "label": "S1", "value": "S1" },
+                                        { "label": "S2", "value": "S2" },
+                                        { "label": "S3", "value": "S3" },
+                                        { "label": "P1", "value": "P1" },
+                                        { "label": "P2", "value": "P2" },
+                                        { "label": "P4", "value": "P4" },
+                                        { "label": "P6", "value": "P6" },
+                                        { "label": "P11", "value": "P11" },
+                                        { "label": "P15", "value": "P15" }
+                                    ],
+                                    "required": true
+                                }
+                            }
+                        ],
+                        "visible": "[equals(steps('catalogConfig').deployCatalogResources, 'deployResources')]"
+                    }
+                ]
+            }
+        ],
+        "outputs": { 
+            "location": "[location()]",
+            "executionServiceName": "[concat(steps('servicePlan').resourceNamePrefix , '-execute')]",
+            "createOrUpdateExecutionServicePlan": "[not(basics('appServicePlan').createOrUpdateAppServicePlan)]",
+
+            "executionServicePlanName": "[if(basics('appServicePlan').createOrUpdateAppServicePlan, basics('appServicePlan').selectedAppServicePlan.name, concat(steps('servicePlan').resourceNamePrefix , '-plan'))]",
+            "executionServicePlanSkuName": "[basics('appServicePlan').appServicePlanSkuName]",
+            "servicePlanResourceGroupName": "[last(take(split(basics('appServicePlan').selectedAppServicePlan.id, '/'),5))]",
+
+            "catalogUri": "[steps('catalogConfig').catalogUri]",
+            
+            "deployCatalogResources": "[equals(steps('catalogConfig').deployCatalogResources, 'deployResources')]",
+            "catalogServiceName": "[concat(steps('servicePlan').resourceNamePrefix , '-catalog')]",
+            "catalogManagerServiceName": "[concat(steps('servicePlan').resourceNamePrefix , '-catalogmgr')]",
+            "catalogSqlServerName": "[concat(steps('servicePlan').resourceNamePrefix , '-sqlsrv')]",
+            "catalogSqlServerUsername": "[steps('catalogConfig').catalogDb.catalogSqlUser]",
+            "catalogSqlDbName": "[concat(steps('servicePlan').resourceNamePrefix , '-sqldb')]",
+            "catalogSqlDbEdition": "[steps('catalogConfig').catalogDb.catalogSqlEdition]",
+            "catalogSqlDbPerformanceLevel": "[steps('catalogConfig').catalogDb.catalogSqlPerformance]",
+            "catalogSqlServerPassword": "[steps('catalogConfig').catalogDb.catalogSqlPassword]",
+            "deployInitialCatalogDb": "[equals(steps('catalogConfig').deployCatalogResources, 'deployResources')]",
+            "deployArtifactsFromPackage": true
+        }
+    }
+}
