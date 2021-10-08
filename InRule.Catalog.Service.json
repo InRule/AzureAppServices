@@ -90,14 +90,6 @@
         "description": "The Azure SQL database performance level for the irCatalog. These correspond to the specific Azure SQL database edition."
       }
     },
-    "catalogSqlDbSizeInGB": {
-      "type": "string",
-      "defaultValue": "2",
-      "allowedValues": [ "1", "2", "5", "10", "20", "30", "40", "50", "100", "150", "200", "250" ],
-      "metadata": {
-        "description": "The Azure SQL max database size for the irCatalog. This must be valid for the specific Azure SQL database edition and performance level."
-      }
-    },
     "catalogSqlServerPassword": {
       "type": "string",
       "metadata": {
@@ -132,6 +124,13 @@
     "catalogBacpacUri": {
       "type": "string",
       "defaultValue": "[concat('https://inruleintegrations.blob.core.windows.net/catalog/', parameters('inRuleVersion'),'/InRule.Catalog.Service.Database.bacpac')]"
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "Optional for resources. By default the location of the resource group will be used"
+      }
     }
   },
   "variables": {
@@ -168,7 +167,7 @@
               "name": "[variables('catalogServicePlanName')]",
               "type": "Microsoft.Web/serverfarms",
               "apiVersion": "2020-12-01",
-              "location": "[resourceGroup().location]",
+              "location": "[parameters('location')]",
               "properties": {
                 "name": "[variables('catalogServicePlanName')]"
               },
@@ -184,7 +183,7 @@
       "name": "[parameters('catalogServiceName')]",
       "type": "Microsoft.Web/sites",
       "apiVersion": "2020-12-01",
-      "location": "[resourceGroup().location]",
+      "location": "[parameters('location')]",
       "dependsOn": [
         "[resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Resources/deployments', 'AppServicePlanTemplate')]"
       ],
@@ -203,7 +202,7 @@
           "type": "extensions",
           "apiVersion": "2020-12-01",
           "dependsOn": [
-            "[concat('Microsoft.Web/sites/', parameters('catalogServiceName'))]"
+            "[resourceId('Microsoft.Web/sites', parameters('catalogServiceName'))]"
           ],
           "properties": {
             "packageUri": "[parameters('packageUri')]"
@@ -214,11 +213,11 @@
           "type": "config",
           "apiVersion": "2020-12-01",
           "dependsOn": [
-            "[concat('Microsoft.Web/Sites/', parameters('catalogServiceName'), '/Extensions/MSDeploy')]",
-            "[concat('Microsoft.Web/sites/', parameters('catalogServiceName'))]"
+            "[resourceId('Microsoft.Web/sites/extensions', parameters('catalogServiceName'), 'MSDeploy')]",
+            "[resourceId('Microsoft.Web/sites', parameters('catalogServiceName'))]"
           ],
           "properties": {
-            "inrule:repository:service:connectionString": "[concat('Server=tcp:', reference(concat('Microsoft.Sql/servers/', parameters('catalogSqlServerName'))).fullyQualifiedDomainName, ',1433;Database=', parameters('catalogSqlDbName'), ';User Id=', parameters('catalogSqlServerUsername'), ';Password=', parameters('catalogSqlServerPassword'), ';')]",
+            "inrule:repository:service:connectionString": "[concat('Server=tcp:', reference(resourceId('Microsoft.Sql/servers', parameters('catalogSqlServerName'))).fullyQualifiedDomainName, ',1433;Database=', parameters('catalogSqlDbName'), ';User Id=', parameters('catalogSqlServerUsername'), ';Password=', parameters('catalogSqlServerPassword'), ';')]",
             "inrule:repository:licensing:licenseFolder": "D:\\home\\site\\wwwroot",
             "inrule:logging:level": "Warn"
           }
@@ -229,7 +228,7 @@
       "name": "[parameters('catalogManagerServiceName')]",
       "type": "Microsoft.Web/sites",
       "apiVersion": "2020-12-01",
-      "location": "[resourceGroup().location]",
+      "location": "[parameters('location')]",
       "dependsOn": [
         "[resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Resources/deployments', 'AppServicePlanTemplate')]"
       ],
@@ -248,7 +247,7 @@
           "type": "extensions",
           "apiVersion": "2020-12-01",
           "dependsOn": [
-            "[concat('Microsoft.Web/sites/', parameters('catalogManagerServiceName'))]"
+            "[resourceId('Microsoft.Web/sites', parameters('catalogManagerServiceName'))]"
           ],
           "properties": {
             "packageUri": "[parameters('managerPackageUri')]"
@@ -259,8 +258,8 @@
           "type": "config",
           "apiVersion": "2020-12-01",
           "dependsOn": [
-            "[concat('Microsoft.Web/Sites/', parameters('catalogManagerServiceName'), '/Extensions/MSDeploy')]",
-            "[concat('Microsoft.Web/sites/', parameters('catalogManagerServiceName'))]"
+            "[resourceId('Microsoft.Web/sites/extensions', parameters('catalogManagerServiceName'), 'MSDeploy')]",
+            "[resourceId('Microsoft.Web/sites', parameters('catalogManagerServiceName'))]"
           ],
           "properties": {
             "InRule.Catalog.Uri": "[concat('https://', parameters('catalogServiceName') ,'.azurewebsites.net/service.svc')]"
@@ -271,9 +270,8 @@
     {
       "name": "[parameters('catalogSqlServerName')]",
       "type": "Microsoft.Sql/servers",
-      "location": "[resourceGroup().location]",
+      "location": "[parameters('location')]",
       "apiVersion": "2021-02-01-preview",
-      "dependsOn": [],
       "properties": {
         "administratorLogin": "[parameters('catalogSqlServerUsername')]",
         "administratorLoginPassword": "[parameters('catalogSqlServerPassword')]"
@@ -282,7 +280,7 @@
         {
           "name": "AllowAllWindowsAzureIps",
           "type": "firewallrules",
-          "location": "[resourceGroup().location]",
+          "location": "[parameters('location')]",
           "apiVersion": "2021-02-01-preview",
           "dependsOn": [
             "[resourceId('Microsoft.Sql/servers', parameters('catalogSqlServerName'))]"
@@ -295,7 +293,7 @@
         {
           "name": "[parameters('catalogSqlDbName')]",
           "type": "databases",
-          "location": "[resourceGroup().location]",
+          "location": "[parameters('location')]",
           "apiVersion": "2021-02-01-preview",
           "dependsOn": [
             "[resourceId('Microsoft.Sql/servers', parameters('catalogSqlServerName'))]"
