@@ -185,7 +185,13 @@
                                 "toolTip": "The server admin username for the Azure SQL server used to host the irCatalog database",
                                 "visible": true,
                                 "constraints": {
-                                    "required": true
+                                    "required": true,
+                                    "validations": [
+                                      {
+                                        "regex": ".*",
+                                        "message": "Please provide a valid user"
+                                      }
+                                    ]
                                 }
                             },
                             {
