@@ -56,7 +56,7 @@ az group create --name RESOURCE_GROUP_NAME --location LOCATION
 ## Execute the following command to deploy the ARM template
 Replace __RESOURCE_GROUP_NAME__ with the name of the Azure Resource Group you want to deploy to:
 ```powershell
-az group deployment create -g RESOURCE_GROUP_NAME --template-file .\InRule.Catalog.Service.json --parameters .\InRule.Catalog.Service.parameters.json
+az deployment group create -g RESOURCE_GROUP_NAME --template-file .\InRule.Catalog.Service.json --parameters .\InRule.Catalog.Service.parameters.json
 ```
 
 ## Allow Your Local Machine Access via Firewall Rule
