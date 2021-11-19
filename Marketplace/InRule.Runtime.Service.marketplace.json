@@ -5,7 +5,14 @@
     "executionServiceName": {
       "type": "string",
       "metadata": {
-        "description": "Name of the App Service resource the execution service will be installed on"
+        "description": "Name of the App Service to deploy that the Rule Execution Service will be installed on"
+      }
+    },
+    "catalogUri": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "URI for your InRule Rule Catalog service, should follow this format: https://{Context}/Service.svc, with {Context} being replaced with the base catalog service URI. If you are setting deployCatalogResources to true, leave this value blank."
       }
     },
     "createOrUpdateExecutionServicePlan": {
@@ -19,7 +26,7 @@
       "type": "string",
       "defaultValue": "[concat(parameters('executionServiceName'),'Plan')]",
       "metadata": {
-        "description": "Name for the App Service Plan, defaulting to the value of the App Service's name with 'Plan' appended to the end"
+        "description": "Defines the App Service Plan's name, defaulting to the value of the App Service's name with 'Plan' appended to the end"
       }
     },
     "executionServicePlanSkuName": {
@@ -54,21 +61,21 @@
       "type": "string",
       "defaultValue": "5.7.2",
       "metadata": {
-        "description": "Version of the execution service to deploy"
+        "description": "Defines what version of the InRule Execution Service to deploy"
       }
     },
     "packageUri": {
       "type": "string",
       "defaultValue": "[concat('https://github.com/InRule/AzureAppServices/releases/download/v', parameters('inRuleVersion'),'/InRule.Runtime.Service.zip')]",
       "metadata": {
-        "description": "Download URI for the execution service package, default to calculated from the inRuleVersion parameter. Leave as default unless deploying a custom package"
+        "description": "Download URI for the Execution Service package. Calculated from the inRuleVersion parameter."
       }
     },
-    "catalogUri": {
+    "location": {
       "type": "string",
-      "defaultValue": "",
+      "defaultValue": "[resourceGroup().location]",
       "metadata": {
-        "description": "URI for your InRule Rule Catalog service, should follow this format: https://{Context}/Service.svc, with {Context} being replaced with the base catalog service URI. If you are setting deployCatalogResources to true, leave this value blank."
+        "description": "Optional for resources. By default the location of the resource group will be used"
       }
     },
     "deployCatalogResources": {
@@ -188,22 +195,17 @@
         "description": "The sasToken required to access _artifactsLocation.  When the template is deployed using the accompanying scripts, a sasToken will be automatically generated. Use the defaultValue if the staging location is not secured."
       },
       "defaultValue": ""
-    },
-    "location": {
-      "type": "string",
-      "defaultValue": "[resourceGroup().location]",
-      "metadata": {
-        "description": "Optional for resources. By default the location of the resource group will be used"
-      }
     }
   },
   "variables": {
     "use32Bit": "[or(equals(parameters('executionServicePlanSkuName'), 'F1'), equals(parameters('executionServicePlanSkuName'), 'D1'))]",
     "executionServicePlanName": "[if(empty(parameters('executionServicePlanName')), concat(parameters('executionServiceName'),'Plan'), parameters('executionServicePlanName'))]",
     "catalogUri": "[if(parameters('deployCatalogResources'), concat('https://', parameters('catalogServiceName'), '.azurewebsites.net/service.svc'), parameters('catalogUri'))]",
+    "packageAppPackageUri": "[uri(parameters('_artifactsLocation'), concat('artifacts/InRule.Runtime.Service.zip', parameters('_artifactsLocationSasToken')))]",
     "packageCatalogTemplateUri": "[uri(parameters('_artifactsLocation'), concat('nestedtemplates/InRule.Catalog.Service.json', parameters('_artifactsLocationSasToken')))]",
     "packageCatalogServiceUri": "[uri(parameters('_artifactsLocation'), concat('artifacts/InRule.Catalog.Service.zip', parameters('_artifactsLocationSasToken')))]",
     "packageCatalogManagerServiceUri": "[uri(parameters('_artifactsLocation'), concat('artifacts/InRule.Catalog.Manager.Web.zip', parameters('_artifactsLocationSasToken')))]",
+    "appPackageUri": "[if(parameters('deployArtifactsFromPackage'), variables('packageAppPackageUri'), parameters('packageUri'))]",
     "catalogTemplateUri": "[if(parameters('deployArtifactsFromPackage'), variables('packageCatalogTemplateUri'), parameters('catalogTemplateUri'))]",
     "catalogServicePackageUri": "[if(parameters('deployArtifactsFromPackage'), variables('packageCatalogServiceUri'), parameters('catalogServicePackageUri'))]",
     "catalogManagerPackageUri": "[if(parameters('deployArtifactsFromPackage'), variables('packageCatalogManagerServiceUri'), parameters('catalogManagerPackageUri'))]",
@@ -259,9 +261,6 @@
       "dependsOn": [
         "[resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Resources/deployments', 'AppServicePlanTemplate')]"
       ],
-      "tags": {
-        "[concat('hidden-related:', resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', variables('executionServicePlanName')))]": "Resource"
-      },
       "properties": {
         "serverFarmId": "[resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', variables('executionServicePlanName'))]",
         "siteConfig": {
@@ -277,7 +276,7 @@
             "[resourceId('Microsoft.Web/sites', parameters('executionServiceName'))]"
           ],
           "properties": {
-            "packageUri": "[parameters('packageUri')]"
+            "packageUri": "[variables('appPackageUri')]"
           }
         },
         {
@@ -302,9 +301,12 @@
       "name": "CatalogDeploy",
       "type": "Microsoft.Resources/deployments",
       "resourceGroup": "[resourceGroup().name]",
-      "dependsOn": ["[resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Resources/deployments', 'AppServicePlanTemplate')]"],
+      "dependsOn": [ "[resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Resources/deployments', 'AppServicePlanTemplate')]" ],
       "properties": {
         "mode": "Incremental",
+        "expressionEvaluationOptions": {
+          "scope": "outer"
+        },
         "templateLink": {
           "uri": "[variables('catalogTemplateUri')]",
           "contentVersion": "1.0.0.0"
