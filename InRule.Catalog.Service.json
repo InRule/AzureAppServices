@@ -85,7 +85,7 @@
     "catalogSqlDbPerformanceLevel": {
       "type": "string",
       "defaultValue": "Basic",
-      "allowedValues": [ "Basic", "S0", "S1", "S2", "S3", "P1", "P2", "P4", "P6", "P11", "P15" ],
+      "allowedValues": [ "Basic", "S0", "S1", "S2", "S3", "S4", "S6", "S7", "S9", "S12", "P1", "P2", "P4", "P6", "P11", "P15" ],
       "metadata": {
         "description": "The Azure SQL database performance level for the irCatalog. These correspond to the specific Azure SQL database edition."
       }
@@ -271,7 +271,7 @@
       "name": "[parameters('catalogSqlServerName')]",
       "type": "Microsoft.Sql/servers",
       "location": "[parameters('location')]",
-      "apiVersion": "2021-02-01-preview",
+      "apiVersion": "2021-05-01-preview",
       "properties": {
         "administratorLogin": "[parameters('catalogSqlServerUsername')]",
         "administratorLoginPassword": "[parameters('catalogSqlServerPassword')]"
@@ -281,7 +281,7 @@
           "name": "AllowAllWindowsAzureIps",
           "type": "firewallrules",
           "location": "[parameters('location')]",
-          "apiVersion": "2021-02-01-preview",
+          "apiVersion": "2021-05-01-preview",
           "dependsOn": [
             "[resourceId('Microsoft.Sql/servers', parameters('catalogSqlServerName'))]"
           ],
@@ -294,13 +294,13 @@
           "name": "[parameters('catalogSqlDbName')]",
           "type": "databases",
           "location": "[parameters('location')]",
-          "apiVersion": "2021-02-01-preview",
+          "apiVersion": "2021-05-01-preview",
           "dependsOn": [
             "[resourceId('Microsoft.Sql/servers', parameters('catalogSqlServerName'))]"
           ],
-          "properties": {
-            "edition": "[parameters('catalogSqlDbEdition')]",
-            "requestedServiceObjectiveName": "[parameters('catalogSqlDbPerformanceLevel')]"
+          "sku": {
+            "tier": "[parameters('catalogSqlDbEdition')]",
+            "name": "[parameters('catalogSqlDbPerformanceLevel')]"
           },
           "resources": [
             {
