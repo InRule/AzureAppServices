@@ -71,7 +71,6 @@
     }
   },
   "variables": {
-    "use32Bit": "[or(equals(parameters('executionServicePlanSkuName'), 'F1'), equals(parameters('executionServicePlanSkuName'), 'D1'))]",
     "executionServicePlanName": "[if(empty(parameters('executionServicePlanName')), concat(parameters('executionServiceName'),'Plan'), parameters('executionServicePlanName'))]"
   },
   "resources": [
@@ -130,7 +129,7 @@
       "properties": {
         "serverFarmId": "[resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', variables('executionServicePlanName'))]",
         "siteConfig": {
-          "use32BitWorkerProcess": "[variables('use32Bit')]"
+          "use32BitWorkerProcess": "[or(equals(if(parameters('createOrUpdateExecutionServicePlan'), parameters('executionServicePlanSkuName'), reference(resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', variables('executionServicePlanName')), '2021-02-01', 'Full').sku.name), 'F1'), equals(if(parameters('createOrUpdateExecutionServicePlan'), parameters('executionServicePlanSkuName'), reference(resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', variables('executionServicePlanName')), '2021-02-01', 'Full').sku.name), 'D1'))]"
         }
       },
       "resources": [
