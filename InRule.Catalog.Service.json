@@ -117,7 +117,7 @@
         "description": "Download URI for the catalog manager package, default to calculated from the inRuleVersion parameter. Leave as default unless deploying a custom package"
       }
     },
-    "deloyInitialDb": {
+    "deployInitialDb": {
       "type": "bool",
       "defaultValue": false
     },
@@ -303,7 +303,7 @@
           },
           "resources": [
             {
-              "condition": "[parameters('deloyInitialDb')]",
+              "condition": "[parameters('deployInitialDb')]",
               "type": "extensions",
               "apiVersion": "2014-04-01",
               "name": "Import",
