@@ -354,7 +354,7 @@
           "managerPackageUri": {
             "value": "[variables('catalogManagerPackageUri')]"
           },
-          "deloyInitialDb": {
+          "deployInitialDb": {
             "value": "[parameters('deployInitialCatalogDb')]"
           },
           "catalogBacpacUri": {
