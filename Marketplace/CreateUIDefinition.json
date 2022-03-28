@@ -146,7 +146,7 @@
               "type": "Microsoft.Common.TextBox",
               "label": "Resource Name Prefix",
               "toolTip": "Resource name prefix that will be used to derive all resource names. The suggested convention is companyName-inrule-environmentName, but other conventions are also allowed.",
-              "placeholder": "yourCompanyName-inrule-environment",
+              "placeholder": "yourcompanyname-inrule-environment",
               "visible": true,
               "constraints": {
                 "required": true,
@@ -240,7 +240,9 @@
                   "toolTip": "The server admin password for the Azure SQL server used to host the irCatalog database",
                   "visible": true,
                   "constraints": {
-                    "required": true
+                    "required": true,
+                    "regex": "^(?=.{8,128})((?=.*\\d)(?=.*[a-z])(?=.*[A-Z])|(?=.*\\d)(?=.*[a-zA-Z])(?=.*[\\W_])|(?=.*[a-z])(?=.*[A-Z])(?=.*[\\W_])).*",
+                    "validationMessage": "Your password must be at lest 8 characters and contain characters from three of the following categories – English uppercase letters, English lowercase letters, numbers (0-9), and non-alphanumeric characters (!, $, #, %, etc.)"
                   }
                 },
                 {
