@@ -15,6 +15,20 @@
         "description": "URI for your InRule Rule Catalog service, should follow this format: https://{Context}/Service.svc, with {Context} being replaced with the base catalog service URI. If you are setting deployCatalogResources to true, leave this value blank."
       }
     },
+    "catalogUser": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Login username to connect to your InRule Rule Catalog. If you are setting deployCatalogResources AND deployInitialCatalogDb to true, leave this value blank. The catalog will be set up with default username/password credentials of admin/password. It is suggested to change the password for this account once deployment is complete."
+      }
+    },
+    "catalogPassword": {
+      "type": "securestring",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Login password to connect to your InRule Rule Catalog. If you are setting deployCatalogResources AND deployInitialCatalogDb to true, leave this value blank. The catalog will be set up with default username/password credentials of admin/password. It is suggested to change the password for this account once deployment is complete."
+      }
+    },
     "createOrUpdateExecutionServicePlan": {
       "type": "bool",
       "defaultValue": true,
@@ -182,6 +196,13 @@
         "description": "Internal. Leave as false unless deploying from a combined Marketplace package"
       }
     },
+    "allowPerRequestCatalogCredentials": {
+      "type": "bool",
+      "defaultValue": false,
+      "metadata": {
+        "description": "Set this to true if you would like to require catalog credentials in the body of each request. Leave this as false to use the default credentials for authentication."
+      }
+    },
     "_artifactsLocation": {
       "type": "string",
       "metadata": {
@@ -201,6 +222,8 @@
     "use32Bit": "[or(equals(parameters('executionServicePlanSkuName'), 'F1'), equals(parameters('executionServicePlanSkuName'), 'D1'))]",
     "executionServicePlanName": "[if(empty(parameters('executionServicePlanName')), concat(parameters('executionServiceName'),'Plan'), parameters('executionServicePlanName'))]",
     "catalogUri": "[if(parameters('deployCatalogResources'), concat('https://', parameters('catalogServiceName'), '.azurewebsites.net/service.svc'), parameters('catalogUri'))]",
+    "catalogUser": "[if(and(parameters('deployCatalogResources'), parameters('deployInitialCatalogDb')), 'admin', parameters('catalogUser'))]",
+    "catalogPassword": "[if(and(parameters('deployCatalogResources'), parameters('deployInitialCatalogDb')), 'password', parameters('catalogPassword'))]",
     "packageAppPackageUri": "[uri(parameters('_artifactsLocation'), concat('artifacts/InRule.Runtime.Service.zip', parameters('_artifactsLocationSasToken')))]",
     "packageCatalogTemplateUri": "[uri(parameters('_artifactsLocation'), concat('nestedtemplates/InRule.Catalog.Service.json', parameters('_artifactsLocationSasToken')))]",
     "packageCatalogServiceUri": "[uri(parameters('_artifactsLocation'), concat('artifacts/InRule.Catalog.Service.zip', parameters('_artifactsLocationSasToken')))]",
@@ -360,6 +383,9 @@
           "catalogBacpacUri": {
             "value": "[variables('catalogBacpacUri')]"
           },
+          "allowPerRequestCatalogCredentials": {
+            "value": "[parameters('allowPerRequestCatalogCredentials')]"
+          }
           "location": {
             "value": "[parameters('location')]"
           }

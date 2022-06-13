@@ -210,6 +210,49 @@
               }
             },
             {
+              "name": "catalogCreds",
+              "type": "Microsoft.Common.Section",
+              "label": "Catalog Credentials",
+              "elements": [
+                {
+                  "name": "catalogUser",
+                  "type": "Microsoft.Common.TextBox",
+                  "label": "Catalog User",
+                  "toolTip": "Login username to connect to your InRule Rule Catalog",
+                  "visible": true,
+                  "constraints": {
+                    "required": true,
+                    "validations": [
+                      {
+                        "regex": ".*",
+                        "message": "Please provide a valid connection user"
+                      }
+                    ]
+                  }
+                },
+                {
+                  "name": "catalogPassword",
+                  "type": "Microsoft.Common.PasswordBox",
+                  "label": {
+                    "password": "Catalog Password",
+                    "confirmPassword": "Confirm Catalog Password"
+                  },
+                  "toolTip": "Login password to connect to your InRule Rule Catalog",
+                  "visible": true,
+                  "constraints": {
+                    "required": true,
+                    "validations": [
+                      {
+                        "regex": ".*",
+                        "message": "Please provide a valid password"
+                      }
+                    ]
+                  }
+                }
+              ],
+              "visible": "[equals(steps('catalogConfig').deployCatalogResources, 'credentialsOnly')]"
+            },
+            {
               "name": "catalogDb",
               "type": "Microsoft.Common.Section",
               "label": "Catalog Database",
@@ -357,13 +400,15 @@
         "location": "[location()]",
         "executionServiceName": "[concat(steps('servicePlan').resourceNamePrefix , '-execute')]",
         "createOrUpdateExecutionServicePlan": "[not(basics('appServicePlan').createOrUpdateAppServicePlan)]",
-  
+
         "executionServicePlanName": "[if(basics('appServicePlan').createOrUpdateAppServicePlan, basics('appServicePlan').selectedAppServicePlan.name, concat(steps('servicePlan').resourceNamePrefix, '-plan'))]",
         "executionServicePlanSkuName": "[basics('appServicePlan').appServicePlanSkuName]",
         "servicePlanResourceGroupName": "[last(take(split(basics('appServicePlan').selectedAppServicePlan.id, '/'),5))]",
-  
+
         "catalogUri": "[steps('catalogConfig').catalogUri]",
-  
+        "catalogUser": "[steps('catalogConfig').catalogCreds.catalogUser]",
+        "catalogPassword": "[steps('catalogConfig').catalogCreds.catalogPassword]",
+
         "deployCatalogResources": "[equals(steps('catalogConfig').deployCatalogResources, 'deployResources')]",
         "catalogServiceName": "[concat(steps('servicePlan').resourceNamePrefix , '-catalog')]",
         "catalogManagerServiceName": "[concat(steps('servicePlan').resourceNamePrefix , '-catalogmgr')]",
