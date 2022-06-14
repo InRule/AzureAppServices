@@ -368,7 +368,7 @@
   
         "catalogUri": "[steps('catalogConfig').catalogUri]",
   
-        "deployCatalogResources": "[equals(steps('catalogConfig').deployCatalogResources, 'deployResources')]",
+        "deployCatalogResources": "[or(equals(steps('catalogConfig').deployCatalogResources, 'deployResources'), equals(steps('catalogConfig').deployCatalogResources, 'updateResources'))]",
         "catalogServiceName": "[concat(steps('servicePlan').resourceNamePrefix , '-catalog')]",
         "catalogManagerServiceName": "[concat(steps('servicePlan').resourceNamePrefix , '-catalogmgr')]",
         "catalogSqlServerName": "[concat(steps('servicePlan').resourceNamePrefix , '-sqlsrv')]",
