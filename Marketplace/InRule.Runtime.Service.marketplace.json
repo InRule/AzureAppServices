@@ -385,7 +385,7 @@
           },
           "allowPerRequestCatalogCredentials": {
             "value": "[parameters('allowPerRequestCatalogCredentials')]"
-          }
+          },
           "location": {
             "value": "[parameters('location')]"
           }
