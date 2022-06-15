@@ -185,8 +185,12 @@
                     "value": "credentialsOnly"
                   },
                   {
-                    "label": "Deploy catalog service",
+                    "label": "Create catalog service",
                     "value": "deployResources"
+                  },
+                  {
+                    "label": "Update catalog service",
+                    "value": "updateResources"
                   }
                 ],
                 "required": true
@@ -348,7 +352,7 @@
                   }
                 }
               ],
-              "visible": "[equals(steps('catalogConfig').deployCatalogResources, 'deployResources')]"
+              "visible": "[or(equals(steps('catalogConfig').deployCatalogResources, 'deployResources'), equals(steps('catalogConfig').deployCatalogResources, 'updateResources'))]"
             }
           ]
         }
@@ -364,7 +368,7 @@
   
         "catalogUri": "[steps('catalogConfig').catalogUri]",
   
-        "deployCatalogResources": "[equals(steps('catalogConfig').deployCatalogResources, 'deployResources')]",
+        "deployCatalogResources": "[or(equals(steps('catalogConfig').deployCatalogResources, 'deployResources'), equals(steps('catalogConfig').deployCatalogResources, 'updateResources'))]",
         "catalogServiceName": "[concat(steps('servicePlan').resourceNamePrefix , '-catalog')]",
         "catalogManagerServiceName": "[concat(steps('servicePlan').resourceNamePrefix , '-catalogmgr')]",
         "catalogSqlServerName": "[concat(steps('servicePlan').resourceNamePrefix , '-sqlsrv')]",
