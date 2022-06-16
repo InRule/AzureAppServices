@@ -12,6 +12,26 @@
       },
       "basics": [
         {
+          "name": "irCatalogDeploymentDocumentation",
+          "type": "Microsoft.Common.Section",
+          "label": "Documentation",
+          "elements": [
+            {
+              "name": "irCatalogDeploymentDocumentationLink",
+              "type": "Microsoft.Common.TextBlock",
+              "visible": true,
+              "options": {
+                "text": "For additional information on deployment and configuration of InRule App Services, view our Github documentation.",
+                "link": {
+                  "label": "View Here",
+                  "uri": "https://github.com/InRule/AzureAppServices/"
+                }
+              }
+            }
+          ],
+          "visible": true
+        },
+        {
           "name": "appServicePlan",
           "type": "Microsoft.Common.Section",
           "label": "App Service Plan",
@@ -234,8 +254,7 @@
                   "name": "catalogPassword",
                   "type": "Microsoft.Common.PasswordBox",
                   "label": {
-                    "password": "Catalog Password",
-                    "confirmPassword": "Confirm Catalog Password"
+                    "password": "Catalog Password"                 
                   },
                   "toolTip": "Login password to connect to your InRule Rule Catalog",
                   "visible": true,
@@ -247,6 +266,9 @@
                         "message": "Please provide a valid password"
                       }
                     ]
+                  },
+                  "options": {
+                    "hideConfirmation":  true
                   }
                 }
               ],
