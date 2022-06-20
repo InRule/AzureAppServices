@@ -12,12 +12,12 @@
       },
       "basics": [
         {
-          "name": "irCatalogDeploymentDocumentation",
+          "name": "inruleDeploymentDocumentation",
           "type": "Microsoft.Common.Section",
           "label": "Documentation",
           "elements": [
             {
-              "name": "irCatalogDeploymentDocumentationLink",
+              "name": "inruleDeploymentDocumentationLink",
               "type": "Microsoft.Common.TextBlock",
               "visible": true,
               "options": {
