@@ -11,6 +11,12 @@
     "catalogUri": {
       "value": ""
     },
+    "catalogUser": {
+      "value": ""
+    },
+    "catalogPassword": {
+      "value": ""
+    },
     "inRuleVersion": {
       "value": "5.7.3"
     },
