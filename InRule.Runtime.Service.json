@@ -68,6 +68,20 @@
       "metadata": {
         "description": "URI for your InRule Rule Catalog service, should follow this format: https://{Context}/Service.svc, with {Context} being replaced with the base catalog service URI."
       }
+    },
+    "catalogUser": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Login username to connect to your InRule Rule Catalog. If you are setting deployCatalogResources AND deployInitialCatalogDb to true, leave this value blank. The catalog will be set up with default username/password credentials of admin/password. It is suggested to change the password for this account once deployment is complete."
+      }
+    },
+    "catalogPassword": {
+      "type": "securestring",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Login password to connect to your InRule Rule Catalog. If you are setting deployCatalogResources AND deployInitialCatalogDb to true, leave this value blank. The catalog will be set up with default username/password credentials of admin/password. It is suggested to change the password for this account once deployment is complete."
+      }
     }
   },
   "variables": {
