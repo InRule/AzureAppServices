@@ -311,6 +311,7 @@
             "[resourceId('Microsoft.Web/sites', parameters('executionServiceName'))]"
           ],
           "properties": {
+            "inrule:runtime:service:catalog:allowPerRequestCatalogCredentials": "[parameters('allowPerRequestCatalogCredentials')]",
             "inrule:runtime:service:catalog:catalogServiceUri": "[variables('catalogUri')]",
             "inrule:repository:licensing:licenseFolder": "D:\\home\\site\\wwwroot",
             "inrule:logging:level": "Warn"
@@ -382,9 +383,6 @@
           },
           "catalogBacpacUri": {
             "value": "[variables('catalogBacpacUri')]"
-          },
-          "allowPerRequestCatalogCredentials": {
-            "value": "[parameters('allowPerRequestCatalogCredentials')]"
           },
           "location": {
             "value": "[parameters('location')]"
