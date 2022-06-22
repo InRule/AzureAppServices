@@ -311,6 +311,8 @@
             "[resourceId('Microsoft.Web/sites', parameters('executionServiceName'))]"
           ],
           "properties": {
+            "inrule:runtime:service:catalog:userName": "[variables('catalogUser')]",
+            "inrule:runtime:service:catalog:password": "[variables('catalogPassword')]",
             "inrule:runtime:service:catalog:allowPerRequestCatalogCredentials": "[parameters('allowPerRequestCatalogCredentials')]",
             "inrule:runtime:service:catalog:catalogServiceUri": "[variables('catalogUri')]",
             "inrule:repository:licensing:licenseFolder": "D:\\home\\site\\wwwroot",
