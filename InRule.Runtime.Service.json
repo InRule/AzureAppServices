@@ -73,14 +73,21 @@
       "type": "string",
       "defaultValue": "",
       "metadata": {
-        "description": "Login username to connect to your InRule Rule Catalog. If you are setting deployCatalogResources AND deployInitialCatalogDb to true, leave this value blank. The catalog will be set up with default username/password credentials of admin/password. It is suggested to change the password for this account once deployment is complete."
+        "description": "Login username to connect to your InRule Rule Catalog."
       }
     },
     "catalogPassword": {
       "type": "securestring",
       "defaultValue": "",
       "metadata": {
-        "description": "Login password to connect to your InRule Rule Catalog. If you are setting deployCatalogResources AND deployInitialCatalogDb to true, leave this value blank. The catalog will be set up with default username/password credentials of admin/password. It is suggested to change the password for this account once deployment is complete."
+        "description": "Login password to connect to your InRule Rule Catalog."
+      }
+    },
+    "allowPerRequestCatalogCredentials": {
+      "type": "bool",
+      "defaultValue": false,
+      "metadata": {
+        "description": "Set this to true if you would like to require catalog credentials in the body of each request. Leave this as false to use the default credentials for authentication."
       }
     }
   },
@@ -167,7 +174,10 @@
             "[concat('Microsoft.Web/sites/', parameters('executionServiceName'))]"
           ],
           "properties": {
+            "inrule:runtime:service:catalog:userName": "[parameters('catalogUser')]",
+            "inrule:runtime:service:catalog:password": "[parameters('catalogPassword')]",
             "inrule:runtime:service:catalog:catalogServiceUri": "[parameters('catalogUri')]",
+            "inrule:runtime:service:catalog:allowPerRequestCatalogCredentials": "[parameters('allowPerRequestCatalogCredentials')]",
             "inrule:repository:licensing:licenseFolder": "D:\\home\\site\\wwwroot",
             "inrule:logging:level": "Warn"
           }
