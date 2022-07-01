@@ -68,6 +68,27 @@
       "metadata": {
         "description": "URI for your InRule Rule Catalog service, should follow this format: https://{Context}/Service.svc, with {Context} being replaced with the base catalog service URI."
       }
+    },
+    "catalogUser": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Login username to connect to your InRule Rule Catalog."
+      }
+    },
+    "catalogPassword": {
+      "type": "securestring",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Login password to connect to your InRule Rule Catalog."
+      }
+    },
+    "allowPerRequestCatalogCredentials": {
+      "type": "bool",
+      "defaultValue": false,
+      "metadata": {
+        "description": "Set this to true if you would like to require catalog credentials in the body of each request. Leave this as false to use the default credentials for authentication."
+      }
     }
   },
   "variables": {
@@ -153,7 +174,10 @@
             "[concat('Microsoft.Web/sites/', parameters('executionServiceName'))]"
           ],
           "properties": {
+            "inrule:runtime:service:catalog:userName": "[parameters('catalogUser')]",
+            "inrule:runtime:service:catalog:password": "[parameters('catalogPassword')]",
             "inrule:runtime:service:catalog:catalogServiceUri": "[parameters('catalogUri')]",
+            "inrule:runtime:service:catalog:allowPerRequestCatalogCredentials": "[parameters('allowPerRequestCatalogCredentials')]",
             "inrule:repository:licensing:licenseFolder": "D:\\home\\site\\wwwroot",
             "inrule:logging:level": "Warn"
           }
