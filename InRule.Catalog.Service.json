@@ -119,7 +119,10 @@
     },
     "deployInitialDb": {
       "type": "bool",
-      "defaultValue": true
+      "defaultValue": true,
+      "metadata": {
+        "description": "This will deploy an initial catalog database. We strongly suggest changing the default credentials after the database is created to prevent a security risk. If you are using this script in an upgrade scenario and the SQL DB already exists, this must be set to false, otherwise the deployment will fail."
+      }
     },
     "catalogBacpacUri": {
       "type": "string",
