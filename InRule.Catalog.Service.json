@@ -91,7 +91,7 @@
       }
     },
     "catalogSqlServerPassword": {
-      "type": "string",
+      "type": "securestring",
       "metadata": {
         "description": "The server admin password for the Azure SQL server used to host the irCatalog database(s)."
       }
