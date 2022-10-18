@@ -73,7 +73,7 @@
     },
     "inRuleVersion": {
       "type": "string",
-      "defaultValue": "5.7.3",
+      "defaultValue": "5.8.0",
       "metadata": {
         "description": "Defines what version of the InRule Execution Service to deploy"
       }
