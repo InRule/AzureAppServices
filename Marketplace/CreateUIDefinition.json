@@ -258,7 +258,8 @@
                   "name": "catalogPassword",
                   "type": "Microsoft.Common.PasswordBox",
                   "label": {
-                    "password": "Catalog Password"                 
+                    "password": "Catalog Password",
+                    "confirmPassword": "Confirm Catalog Password"
                   },
                   "toolTip": "Login password to connect to your InRule Rule Catalog",
                   "visible": true,
@@ -270,9 +271,6 @@
                         "message": "Please provide a valid password"
                       }
                     ]
-                  },
-                  "options": {
-                    "hideConfirmation":  true
                   }
                 }
               ],
