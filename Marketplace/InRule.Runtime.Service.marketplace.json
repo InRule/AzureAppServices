@@ -285,6 +285,7 @@
         "[resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Resources/deployments', 'AppServicePlanTemplate')]"
       ],
       "properties": {
+        "clientAffinityEnabled": false,
         "serverFarmId": "[resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', variables('executionServicePlanName'))]",
         "siteConfig": {
           "use32BitWorkerProcess": "[variables('use32Bit')]"
