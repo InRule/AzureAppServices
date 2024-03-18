@@ -217,7 +217,8 @@
       "inrule:sf:api:securityToken": "[parameters('sfSecurityToken')]",
       "inrule:sf:api:consumerKey": "[parameters('sfConsumerKey')]",
       "inrule:sf:api:consumerSecret": "[parameters('sfConsumerSecret')]",
-      "inrule:sf:ruleService:apiKey": "[parameters('executionServiceApiKey')]"
+      "inrule:sf:ruleService:apiKey": "[parameters('executionServiceApiKey')]",
+      "inrule:sf:ruleService:authType": "apikey"
     },
     "saasAppSettings": {
       "inrule:api:appconfigurationservice": "[parameters('appConfigurationServiceConnectionString')]",
