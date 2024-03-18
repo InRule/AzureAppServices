@@ -35,10 +35,7 @@
     "ruleAppLabel": {
       "value": ""
     },
-    "executionServiceBasicUsername": {
-      "value": ""
-    },
-    "executionServiceBasicPassword": {
+    "executionServiceApiKey": {
       "value": ""
     },
     "appServicePlanName": {
