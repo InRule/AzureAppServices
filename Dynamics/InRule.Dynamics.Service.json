@@ -88,7 +88,7 @@
     },
     "inRuleVersion": {
       "type": "string",
-      "defaultValue": "5.8.0",
+      "defaultValue": "5.8.1",
       "metadata": {
         "description": "Defines what version of the InRule Execution Service to deploy"
       }
@@ -173,7 +173,7 @@
       "inrule:crm:serviceBus:owner": "RootManageSharedAccessKey",
       "inrule:crm:serviceBus:path": "ruleexecution",
       "inrule:repository:licensing:licenseFolder": "D:\\home\\site\\wwwroot",
-      "inrule:logging:level": "Warn"
+      "inrule:logging:level": "Info"
     },
     "saasAppSettings": {
       "inrule:api:appconfigurationservice": "[parameters('appConfigurationServiceConnectionString')]",
@@ -331,6 +331,10 @@
     }
   ],
   "outputs": {
+    "relayKey": {
+      "type": "string",
+      "value": "[listKeys(resourceId('Microsoft.Relay/namespaces/authorizationRules', parameters('relayName'), 'RootManageSharedAccessKey'), '2017-04-01').primaryKey]"
+    },
     "relayNamespaceAddress": {
       "type": "string",
       "value": "[concat(reference(resourceId('Microsoft.Relay/namespaces', parameters('relayName'))).serviceBusEndpoint, 'ruleexecution')]"
