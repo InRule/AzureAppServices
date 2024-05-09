@@ -1,9 +1,9 @@
 InRule Cloud Deployment Options for Microsoft Azure
 ====
 
-InRule provides cloud deployment options that allow you to run [irCatalog](https://www.inrule.com/products/inrule-components/ircatalog/), irCatalog Manager Website, and Decision Services inside of the Microsoft Azure App Service environment with minimal configuration and setup. Below you will find additional information on deployment options and their repsective deployment process.
+InRule provides cloud deployment options that allow you to run [irCatalog](https://www.inrule.com/products/inrule-components/ircatalog/), irCatalog Manager Website, and Decision Services inside of the Microsoft Azure App Service environment with minimal configuration and setup. For a store-front UI enabled deployment experience, visit our [InRule Decision Services marketplace listing](). For additional information on other deployment options and their repsective deployment process, please see below.
 
-<!-- Ask mark about the link - see if there's any other links we could use. Also, figure out how to work in the storefront azuremarketplace stuff in the PBI into this opening paragraph.. or find a good alternative.-->
+<!-- Ask mark about the catalog link - see if there's any other links we could use. Also, need to add the marketplace listing link when it exists. -->
 
 # Prerequisites
 
@@ -61,7 +61,6 @@ With Decision Services, you can call business rules from a variety of systems in
 
 There are three options for deploying Decision Services: deploying with an Azure Resource Manager Template, deploying through the Azure Marketplace, or deploying resource individually via the Azure CLI. All options will deploy the same set of resources, but the ARM template and Azure Marketplace deploys them all in a single step.
 
-<!-- Probably need to write up new documentation for these links. Ask if it needs to be included in this PBI or separate. Double check to see if we need instructions for deploying via marketplace. -->
 #### Deploying via Azure Resource Manager Template:
 
 * [ARM Template Deployment](doc/decision-services-arm-template-deployment.md)
