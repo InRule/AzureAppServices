@@ -11,7 +11,6 @@ Get the template and parameters file from the `source.zip` [here](https://github
 Before deploying the ARM template, we need to define certain parameters.
 
 Locate the _InRule.DecisionService.parameters.json_ file downloaded above. 
-<!-- double check the name and ask if I should push a commit up with a template / param.json file. -->
 
 Open the file with your text editor of choice and edit the parameters listed below:
 
@@ -23,9 +22,7 @@ Open the file with your text editor of choice and edit the parameters listed bel
 | catalogUri | https://{catalogAppService}/Service.svc | Provide the uri for the catalog service. |
 | inRuleVersion | 5.8.1 | Provide the inRule version you wish to deploy, default value is the latest inRule version. |
 | decisionServicePlanName | inruleDecisionServicePlan | The name for the app Service Plan.  Leave blank for the value to be derived as `decisionServiceName` + `Plan`|
-| apiKey | "" | Provide an api key value that will be used to authenticate to the Decision Service. |
-
-<!-- Do I need to mention API Key here? Probably. Be sure name in param.json matches name listed here.-->
+| apiKeyPrimary | "" | Provide an api key value that will be used to authenticate to Decision Services. |
 
 # Deploy ARM Template with Azure CLI
 
@@ -57,8 +54,8 @@ Replace __RESOURCE_GROUP_NAME__ with the name of the Azure Resource Group you wa
 az deployment group create -g RESOURCE_GROUP_NAME --template-file .\InRule.Runtime.Service.json --parameters .\InRule.Runtime.Service.parameters.json
 ```
 
-## Verify with apply rules
-Follow the steps to verify rules in the [Decision Services Web App Deployment](decision-services.md#verify-with-apply-rules)
+## Verify by getting status details
+Follow the steps to verify rules in the [Decision Services Web App Deployment](decision-services.md#verify-by-getting-status-details)
 
 # Execution of Rules
 Follow the steps for executing rules in the [Decision Services App Deployment](decision-services.md#execution-of-rules)
