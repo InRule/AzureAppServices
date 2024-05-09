@@ -62,31 +62,30 @@ Then, upload the license file using those retrieved values:
 $client = New-Object System.Net.WebClient;$client.Credentials = New-Object System.Net.NetworkCredential($creds.userName,$creds.userPWD);$uri = New-Object System.Uri($creds.publishUrl + "/InRuleLicense.xml");$client.UploadFile($uri, "LICENSE_FILE_ABSOLUTE_PATH");
 ```
 
-## Verify with apply rules
-As a final verification that Decision Services is properly functioning, a REST call can be made to ApplyRules on the MortgageCalculator rule application.
+## Verify by getting status details
+As a final verification that Decision Services is properly functioning, a REST call can be made to the status details endpoint.
 
-Then call ApplyRules on your Decision Services instance:
+Get status details from your Decision Services instance:
 ```powershell
-#Example: Invoke-RestMethod -Method 'Post' -ContentType 'application/json' -Headers @{"Accept"="application/json"; "inrule-apikey"="SampleApiKey"} -Uri https://contoso-decision-prod-wa.azurewebsites.net/HttpService.svc/ApplyRules -Body '{"RuleApp":{"FileName":"MortgageCalculator.ruleappx", "RuleAppName": "MortgageCalculator"},"EntityState":"{\"LoanInfo\": {\"Lender\": \"EZL\",\"Principal\": 300000, \"APR\": 6, \"TermInYears\": 30}}", "EntityName": "Mortgage"}'
-Invoke-RestMethod -Method 'Post' -ContentType 'application/json' -Headers @{"Accept"="application/json"; "inrule-apikey"="YOUR_API_KEY"} -Uri https://WEB_APP_NAME.azurewebsites.net/HttpService.svc/ApplyRules -Body '{"RuleApp":{"FileName":"MortgageCalculator.ruleappx", "RuleAppName": "MortgageCalculator"},"EntityState":"{\"LoanInfo\": {\"Lender\": \"EZL\",\"Principal\": 300000, \"APR\": 6, \"TermInYears\": 30}}", "EntityName": "Mortgage"}'
+#Example: Invoke-RestMethod -Method 'Get' -ContentType 'application/json' -Headers @{"Accept"="application/json"; "inrule-apikey"="SampleApiKey"} -Uri https://contoso-decision-prod-wa.azurewebsites.net/api/status/details
+
+Invoke-RestMethod -Method 'Get' -ContentType 'application/json' -Headers @{"Accept"="application/json"; "inrule-apikey"="YOUR_API_KEY"} -Uri https://WEB_APP_NAME.azurewebsites.net/api/status/details
 ```
 
-If ApplyRules was successful, you should see the following result:
+If the request was successful, you should see results similiar to the following:
 ```
-EntityState         : {"LoanInfo":{"Lender":"EZL","Principal":300000.0,"APR":6.0,"TermInYears":30,"TermInMonths":360,"MonthlyInterestRate":0.005},"PaymentS
-                      ummary":{}}
-Parameters          :
-RequestId           : e3dac65b-4875-49b8-9bd1-e38e5669c422
-RuleSessionState    :
-RuleExecutionLog    :
-ActiveNotifications : {}
-ActiveValidations   : {}
-SessionId           : 77915515-1cbc-42dc-8177-c181fc01c0c5
-HasRuntimeErrors    : False
-HasCompileErrors    : False
-Overrides           :
-ErrorMessage        :
-ExecutionStatistics :
+IsAvailable              : True
+ProcessorCount           : 1
+InRuleRuntimeVersion     : 5.8.1.614
+InRuleRepositoryVersion  : 5.8.1.614
+ProcessUpTimeMinutes     : 4.01
+CacheUpTimeMinutes       : 0.63
+MaxRuleAppCacheDepth     : 25
+CurrentRuleAppCacheDepth : 0
+ErrorMessages            : {}
+PrecompileStatus         : NotConfigured
+PrecompileSeconds        : 0
+MachineName              : dw1sdwk000QCC
 ```
 # Execution of Rules
 
