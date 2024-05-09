@@ -1,0 +1,202 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "decisionServiceName": {
+        "type": "string",
+        "metadata": {
+          "description": "Name of the App Service resource the decision service will be installed on"
+        }
+      },
+      "createOrUpdatedecisionServicePlan": {
+        "type": "bool",
+        "defaultValue": true,
+        "metadata": {
+          "description": "If set to false, provide the name and resource group of an existing service plan in the 'decisionServicePlanName' and 'servicePlanResourceGroupName' parameters. Otherwise a new plan will be created with the supplied name"
+        }
+      },
+      "decisionServicePlanName": {
+        "type": "string",
+        "defaultValue": "[concat(parameters('decisionServiceName'),'Plan')]",
+        "metadata": {
+          "description": "Name for the App Service Plan, defaulting to the value of the App Service's name with 'Plan' appended to the end"
+        }
+      },
+      "decisionServicePlanSkuName": {
+        "type": "string",
+        "allowedValues": [
+          "F1",
+          "D1",
+          "B1",
+          "B2",
+          "B3",
+          "S1",
+          "S2",
+          "S3",
+          "P1",
+          "P2",
+          "P3",
+          "P4"
+        ],
+        "metadata": {
+          "description": "Describes plan's pricing tier and capacity. Check details at https://azure.microsoft.com/en-us/pricing/details/app-service/"
+        }
+      },
+      "servicePlanResourceGroupName": {
+        "type": "string",
+        "defaultValue": "[resourceGroup().name]",
+        "metadata": {
+          "description": "Optional name of the resource group for the existing app service plan. If creating a new plan, leave as the default value"
+        }
+      },
+      "inRuleVersion": {
+        "type": "string",
+        "defaultValue": "5.8.1",
+        "metadata": {
+          "description": "Version of the decision service to deploy"
+        }
+      },
+      "packageUri": {
+        "type": "string",
+        "defaultValue": "[concat('https://github.com/InRule/AzureAppServices/releases/download/v', parameters('inRuleVersion'),'/InRule.Runtime.DecisionService.zip')]",
+        "metadata": {
+          "description": "Download URI for the decision service package, default to calculated from the inRuleVersion parameter. Leave as default unless deploying a custom package"
+        }
+      },
+      "catalogUri": {
+        "type": "string",
+        "metadata": {
+          "description": "URI for your InRule Rule Catalog service, should follow this format: https://{Context}/Service.svc, with {Context} being replaced with the base catalog service URI."
+        }
+      },
+      "catalogUser": {
+        "type": "string",
+        "defaultValue": "",
+        "metadata": {
+          "description": "Login username to connect to your InRule Rule Catalog."
+        }
+      },
+      "catalogPassword": {
+        "type": "securestring",
+        "defaultValue": "",
+        "metadata": {
+          "description": "Login password to connect to your InRule Rule Catalog."
+        }
+      },
+      "allowPerRequestCatalogCredentials": {
+        "type": "bool",
+        "defaultValue": false,
+        "metadata": {
+          "description": "Set this to true if you would like to require catalog credentials in the body of each request. Leave this as false to use the default credentials for authentication."
+        }
+      },
+      "apiKeyPrimary": {
+        "type": "string",
+        "metadata": {
+          "description": "A user defined value that will serve as the primary API key for authenticating to the Decision Service."
+        }
+      },
+      "appInsightsConnectionString": {
+        "type": "string",
+        "defaultValue": "",
+        "metadata": {
+          "description": "Optional Application Insights connection string. The Decision Service will use this a log source if provided."
+        }
+      }
+    },
+    "variables": {
+      "decisionServicePlanName": "[if(empty(parameters('decisionServicePlanName')), concat(parameters('decisionServiceName'),'Plan'), parameters('decisionServicePlanName'))]"
+    },
+    "resources": [
+      {
+        "condition": "[parameters('createOrUpdateDecisionServicePlan')]",
+        "name": "AppServicePlanTemplate",
+        "apiVersion": "2017-05-10",
+        "type": "Microsoft.Resources/deployments",
+        "resourceGroup": "[parameters('servicePlanResourceGroupName')]",
+        "properties": {
+          "mode": "Incremental",
+          "template": {
+            "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+            "contentVersion": "1.0.0.0",
+            "resources": [
+              {
+                "name": "[variables('decisionServicePlanName')]",
+                "type": "Microsoft.Web/serverfarms",
+                "apiVersion": "2016-09-01",
+                "location": "[resourceGroup().location]",
+                "properties": {
+                  "name": "[variables('decisionServicePlanName')]"
+                },
+                "sku": {
+                  "name": "[parameters('decisionServicePlanSkuName')]"
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
+        "name": "[parameters('decisionServiceName')]",
+        "type": "Microsoft.Web/sites",
+        "apiVersion": "2021-02-01",
+        "location": "[resourceGroup().location]",
+        "dependsOn": [
+          "[resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Resources/deployments', 'AppServicePlanTemplate')]"
+        ],
+        "tags": {
+          "[concat('hidden-related:', resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', variables('decisionServicePlanName')))]": "Resource"
+        },
+        "properties": {
+          "clientAffinityEnabled": false,
+          "serverFarmId": "[resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', variables('decisionServicePlanName'))]",
+          "siteConfig": {
+            "use32BitWorkerProcess": "[or(equals(if(parameters('createOrUpdatedecisionServicePlan'), parameters('decisionServicePlanSkuName'), reference(resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', variables('decisionServicePlanName')), '2021-02-01', 'Full').sku.name), 'F1'), equals(if(parameters('createOrUpdateDecisionServicePlan'), parameters('decisionServicePlanSkuName'), reference(resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', variables('decisionServicePlanName')), '2021-02-01', 'Full').sku.name), 'D1'))]",
+            "healthCheckPath": "/api/status/alive",
+            "httpsOnly": "true"
+          }
+        },
+        "resources": [
+          {
+            "name": "MSDeploy",
+            "type": "extensions",
+            "apiVersion": "2020-12-01",
+            "dependsOn": [
+              "[concat('Microsoft.Web/sites/', parameters('decisionServiceName'))]"
+            ],
+            "properties": {
+              "packageUri": "[parameters('packageUri')]"
+            }
+          },
+          {
+            "name": "appsettings",
+            "type": "config",
+            "apiVersion": "2020-12-01",
+            "dependsOn": [
+              "[concat('Microsoft.Web/Sites/', parameters('decisionServiceName'), '/Extensions/MSDeploy')]",
+              "[concat('Microsoft.Web/sites/', parameters('decisionServiceName'))]"
+            ],
+            "properties": {
+              "inrule:runtime:service:catalog:userName": "[parameters('catalogUser')]",
+              "inrule:runtime:service:catalog:password": "[parameters('catalogPassword')]",
+              "inrule:runtime:service:catalog:catalogServiceUri": "[parameters('catalogUri')]",
+              "inrule:runtime:service:catalog:allowPerRequestCatalogCredentials": "[parameters('allowPerRequestCatalogCredentials')]",
+              "inrule:runtime:service:apiKeyPrimary": "[parameters('apiKeyPrimary')]",
+              "inrule:runtime:service:defaultSource": "primaryCatalog",
+              "inrule:runtime:service:sources:primaryCatalog:preCompileAllRuleApps": "false",
+              "inrule:repository:licensing:licenseFolder": "C:\\home\\site\\wwwroot",
+              "inrule:logging:level": "Info",
+              "inrule:runtime:ruleEngine:compiledApplicationCacheDepth": "25",
+              "inrule:runtime:catalogRuleApplication:label": "",
+              "inrule:runtime:catalogRuleApplication:enableBackgroundCompilation": "true",
+              "APPLICATIONINSIGHTS_CONNECTION_STRING": "[parameters('appInsightsConnectionString')]",
+              "serilog:using:ApplicationInsights": "Serilog.Sinks.ApplicationInsights",
+              "serilog:WriteTo:0:Name": "ApplicationInsights",
+              "serilog:WriteTo:0:Args:telemetryConverter": "Serilog.Sinks.ApplicationInsights.TelemetryConverters.TraceTelemetryConverter, Serilog.Sinks.ApplicationInsights"
+            }
+          }
+        ]
+      }
+    ],
+    "outputs": {}
+  }
