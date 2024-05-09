@@ -43,7 +43,7 @@ az webapp create --name WEB_APP_NAME --plan APP_SERVICE_PLAN_NAME --resource-gro
 ## Deploy package
 First, [download](https://github.com/InRule/AzureAppServices/releases/latest) the latest Decision Services package (`InRule.Runtime.DecisionService.zip`) from GitHub. Then [deploy the zip file](https://docs.microsoft.com/en-us/azure/app-service/app-service-deploy-zip) package to the Web App with the [az webapp deployment source](https://docs.microsoft.com/en-us/cli/azure/webapp/deployment/source#az-webapp-deployment-source-config-zip) command:
 ```powershell
-# Example: az webapp deployment source config-zip --name contoso-decision-prod-wa --resource-group inrule-prod-rg --src InRule.Runtime.Service.zip
+# Example: az webapp deployment source config-zip --name contoso-decision-prod-wa --resource-group inrule-prod-rg --src InRule.Runtime.DecisionService.zip
 az webapp deployment source config-zip --name WEB_APP_NAME --resource-group RESOURCE_GROUP_NAME --src FILE_PATH
 ```
 

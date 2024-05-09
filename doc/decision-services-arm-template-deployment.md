@@ -10,11 +10,11 @@ Get the template and parameters file from the `source.zip` [here](https://github
 
 Before deploying the ARM template, we need to define certain parameters.
 
-Locate the _InRule.DecisionService.parameters.json_ file downloaded above. 
+Locate the _InRule.Runtime.DecisionService.parameters.json_ file downloaded above. 
 
 Open the file with your text editor of choice and edit the parameters listed below:
 
-#### InRule.Runtime.Service.parameters.json
+#### InRule.Runtime.DecisionService.parameters.json
 | Parameter | Example Values | Description |
 | --------- | -------------- | ----------- |
 | decisionServiceName | inruleRuntimeAppService | Provide a name for the Azure App Service that the decision service will run on. |
@@ -51,7 +51,7 @@ az group create --name RESOURCE_GROUP_NAME --location LOCATION
 ## Execute the following command to deploy the ARM template
 Replace __RESOURCE_GROUP_NAME__ with the name of the Azure Resource Group you want to deploy to:
 ```powershell
-az deployment group create -g RESOURCE_GROUP_NAME --template-file .\InRule.Runtime.Service.json --parameters .\InRule.Runtime.Service.parameters.json
+az deployment group create -g RESOURCE_GROUP_NAME --template-file .\InRule.Runtime.DecisionService.json --parameters .\InRule.Runtime.DecisionService.parameters.json
 ```
 
 ## Verify by getting status details
