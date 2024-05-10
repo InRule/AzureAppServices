@@ -47,11 +47,11 @@ There are three options for deploying Decision Services: deploying with an Azure
 
 #### Deploying with manual steps:
 
-* [irServer Web App Deployment](doc/decision-services.md)
+* [Decision Services Web App Deployment](doc/decision-services.md)
 
-For more information on rules execution, refer to the following links:
-* [Execution of Rules](doc/decision-services.md#execution-of-rules-and-decisions)
-* [SDK Developer Guide](https://support.inrule.com/help/irSDKHelp50/index.html?irsoa_-_rules_as_services.htm)
+For more information on decisions and rules execution, refer to the following links:
+* [Execution of Decisions and Rules](doc/decision-services.md#execution-of-rules-and-decisions)
+* [SDK Developer Guide](https://support.inrule.com/hc/en-us/articles/13140368354445-Introduction-to-Decision-Services)
 
 # Log retrieval
 Once Web Apps have been deployed, their individual log files can be retrieved.
@@ -59,6 +59,7 @@ Once Web Apps have been deployed, their individual log files can be retrieved.
 * [Web App log retrieval](doc/webapp-log-retrieval.md)
 
 # Legacy irServer Rule Execution Service
+
 For more information regarding the irServer Excution Service, you can visit the documentation [here](doc/irserver-rule-execution-service.md). For instructions on deploying the irServer Execution Service with an ARM template, see the documentation [here](doc/ircatalog-arm-template-deployment.md).
 
 
