@@ -58,4 +58,4 @@ az deployment group create -g RESOURCE_GROUP_NAME --template-file .\InRule.Runti
 Follow the steps to verify rules in the [Decision Services Web App Deployment](decision-services.md#verify-by-getting-status-details)
 
 # Execution of Rules
-Follow the steps for executing rules in the [Decision Services App Deployment](decision-services.md#execution-of-rules)
+Follow the steps for executing rules in the [Decision Services App Deployment](decision-services.md#execution-of-rules-and-decisions)

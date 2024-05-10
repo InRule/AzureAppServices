@@ -1,13 +1,11 @@
 InRule Cloud Deployment Options for Microsoft Azure
 ====
 
-InRule provides cloud deployment options that allow you to run [irCatalog](https://www.inrule.com/products/inrule-components/ircatalog/), irCatalog Manager Website, and [Decision Services](https://support.inrule.com/hc/en-us/articles/13140368354445-Introduction-to-Decision-Services) inside of the Microsoft Azure App Service environment with minimal configuration and setup. For a store-front UI enabled deployment experience, visit our [InRule Decision Services marketplace listing](). For additional information on other deployment options and their repsective deployment process, please see below.
-
-<!-- Ask mark about the catalog link - see if there's any other links we could use. Also, need to add the marketplace listing link when it exists. -->
+InRule provides cloud deployment options that allow you to run irCatalog, irCatalog Manager Website, and [Decision Services](https://support.inrule.com/hc/en-us/articles/13140368354445-Introduction-to-Decision-Services) inside of the Microsoft Azure App Service environment with minimal configuration and setup. For a store-front UI enabled deployment experience, visit our [InRule Decision Services marketplace listing](). For additional information on other deployment options and their repsective deployment process, please see below.
 
 # Prerequisites
 
-Before you get started, you'll need the make sure you have the following:
+Before you get started, you'll need to make sure you have the following:
 
 * Knowledge and familiarity with Microsoft Azure, specifically around [Azure Resource Management](https://docs.microsoft.com/en-us/azure/azure-resource-manager/), [Azure App Service Web Apps](https://docs.microsoft.com/en-us/azure/app-service/), and [Azure SQL Databases](https://docs.microsoft.com/en-us/azure/sql-database/).
 
@@ -37,24 +35,6 @@ There are two options for deploying the Catalog and Catalog Manager, deploying w
 * [irCatalog Web App Deployment](doc/ircatalog.md#web-app-deployment)
 * [irCatalog Manager Web App Deployment](doc/ircatalog-manager.md)
 
-# irServer Rule Execution Service
-
-With irServer Rule Execution Service, you can call business rules from a variety of systems including J2EE applications, BPM processes and ESB orchestrations. Execute any rules stored in irCatalog or in the App Service Web App itself. Access is available via REST or SOAP.
-
-There are two options for deploying the Execution Service, deploying with an Azure Resource Manager Template or deploying resource individually via the Azure CLI. Both options will deploy the same set of resources, but the ARM template deploys them all in a single step.
-
-#### Deploying via Azure Resource Manager Template:
-
-* [ARM Template Deployment](doc/irserver-arm-template-deployment.md)
-
-#### Deploying with manual steps:
-
-* [irServer Web App Deployment](doc/irserver-rule-execution-service.md)
-
-For more information on rules execution, refer to the following links:
-* [Execution of Rules](doc/irserver-rule-execution-service.md#execution-of-rules)
-* [SDK Developer Guide](https://support.inrule.com/help/irSDKHelp50/index.html?irsoa_-_rules_as_services.htm)
-
 # Decision Services
 
 With Decision Services, you can call business rules from a variety of systems including J2EE applications, BPM processes and ESB orchestrations. Decision Services allows you to execute any rules stored in irCatalog or in the App Service Web App itself. Decision Services can be accessed through the Decision Service API via REST, or through the provided Swagger UI. 
@@ -70,7 +50,7 @@ There are three options for deploying Decision Services: deploying with an Azure
 * [irServer Web App Deployment](doc/decision-services.md)
 
 For more information on rules execution, refer to the following links:
-* [Execution of Rules](doc/decision-services.md#execution-of-rules)
+* [Execution of Rules](doc/decision-services.md#execution-of-rules-and-decisions)
 * [SDK Developer Guide](https://support.inrule.com/help/irSDKHelp50/index.html?irsoa_-_rules_as_services.htm)
 
 # Log retrieval

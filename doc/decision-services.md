@@ -87,69 +87,10 @@ PrecompileStatus         : NotConfigured
 PrecompileSeconds        : 0
 MachineName              : dw1sdwk000QCC
 ```
-# Execution of Rules
+# Execution of Rules and Decisions
 
-After deployment, you have different options on how to execute rules. You can choose to execute rules against rule applications that are stored directly on Microsoft Azure App Service Web App itself, or against rule applications stored in an irCatalog instance.
-
-<!-- Change this rule app to Mortgage Calculator -->
-
-The examples below are using the [Chicago Food Tax Generator sample](https://github.com/InRule/Samples/tree/master/Authoring%20Samples/Chicago%20Food%20Tax%20Generator) and they each have different assumptions in order for you to use each.
-
-## File-based Rule Application
-
-This example assumes the following:
-* You have the `Chicago Food Tax Generator.ruleapp` from the sample saved in your current directory,
-* Your Microsoft Azure Azure Resource Group is named `inrule-prod-rg`, and
-* Your Microsoft Azure Azure Web App is named `contoso-decision-prod-wa`.
-
-You may adjust the examples below to fit your actual use case.
-
-### Upload a rule application
-
-First, retrieve the FTP deployment profile (url and credentials) with the [az webapp deployment list-publishing-profiles](https://docs.microsoft.com/en-us/cli/azure/webapp/deployment#az-webapp-deployment-list-publishing-profiles) command and put the values into a variable:
-```powershell
-az webapp deployment list-publishing-profiles --name contoso-decision-prod-wa --resource-group inrule-prod-rg --query "[?contains(publishMethod, 'FTP')].{publishUrl:publishUrl,userName:userName,userPWD:userPWD}[0]" | ConvertFrom-Json -OutVariable creds | Out-Null
-```
-
-Then, upload the rule application using those retrieved values:
-```powershell
-$client = New-Object System.Net.WebClient;$client.Credentials = New-Object System.Net.NetworkCredential($creds.userName,$creds.userPWD);$uri = New-Object System.Uri($creds.publishUrl + "/RuleApps/Chicago%20Food%20Tax%20Generator.ruleapp");$client.UploadFile($uri, "$pwd\Chicago Food Tax Generator.ruleapp");
-```
-
-### Apply rules
-Then call ApplyRules on your Decision Services instance:
-```powershell
-Invoke-RestMethod -Method 'Post' -ContentType 'application/json' -Headers @{"Accept"="application/json"} -Uri https://contoso-decision-prod-wa.azurewebsites.net/HttpService.svc/ApplyRules -Body '{"RuleApp":{"FileName":"Chicago Food Tax Generator.ruleapp"},"EntityState":"{\"IsPlaceforEating\":true,\"ZIPCode\":\"60661\",\"OrderItems\":[{\"ItemType\":\"PreparedHot\",\"ItemCost\":7.0},{\"ItemType\":\"SyrupSoftDrink\",\"ItemCost\":1.5}]}","EntityName":"Order"}'
-```
-
-## irCatalog-based Rule Application
-
-This example assumes the following:
-* You have the `Chicago Food Tax Generator.ruleapp` from the sample saved to your irCatalog instance,
-* Your Azure Resource Group is named `inrule-prod-rg`,
-* Your irServer Azure Web App is named `contoso-decision-prod-wa`,
-* Your irCatalog url is `https://contoso-catalog-prod-wa.azurewebsites.net/Service.svc`, and
-* Your irCatalog username is `exampleUsername` and your password is `examplePassword`
-
-### Provide irCatalog on each request
-
-This allows providing the irCatalog instance in the request and Decision Services will retrieve the specified rule application from that irCatalog instance.
-```powershell
-Invoke-RestMethod -Method 'Post' -ContentType 'application/json' -Headers @{"Accept"="application/json"} -Uri https://contoso-decision-prod-wa.azurewebsites.net/HttpService.svc/ApplyRules -Body '{"RuleApp":{"Password":"examplePassword","RepositoryRuleAppRevisionSpec":{"RuleApplicationName":"ChicagoFoodTaxGenerator"},"RepositoryServiceUri":"https://contoso-catalog-prod-wa.azurewebsites.net/Service.svc","UserName":"exampleUsername"},"EntityState":"{\"IsPlaceforEating\":true,\"ZIPCode\":\"60661\",\"OrderItems\":[{\"ItemType\":\"PreparedHot\",\"ItemCost\":7.0},{\"ItemType\":\"SyrupSoftDrink\",\"ItemCost\":1.5}]}","EntityName":"Order"}'
-```
-
-### Provide a default irCatalog
-A default irCatalog instance can be configured so Decision Services will use that catalog if you do not want to pass in its url for each request.
-
-First, configure the appropriate application setting for the Microsoft Azure Azure App Service Web App:
-```powershell
-az webapp config appsettings set --name contoso-decision-prod-wa --resource-group inrule-prod-rg --settings inrule:runtime:service:catalog:catalogServiceUri="https://contoso-catalog-prod-wa.azurewebsites.net/Service.svc"
-```
-
-Then call ApplyRules on your Decision Services instance:
-```powershell
-Invoke-RestMethod -Method 'Post' -ContentType 'application/json' -Headers @{"Accept"="application/json"} -Uri https://contoso-decision-prod-wa.azurewebsites.net/HttpService.svc/ApplyRules -Body '{"RuleApp":{"Password":"examplePassword","RepositoryRuleAppRevisionSpec":{"RuleApplicationName":"ChicagoFoodTaxGenerator"},"UserName":"exampleUsername"},"EntityState":"{\"IsPlaceforEating\":true,\"ZIPCode\":\"60661\",\"OrderItems\":[{\"ItemType\":\"PreparedHot\",\"ItemCost\":7.0},{\"ItemType\":\"SyrupSoftDrink\",\"ItemCost\":1.5}]}","EntityName":"Order"}'
-```
+After deployment, you have different options on how to execute rules. For detailed instructions on executing rules and decisions,
+visit the [Decision API](https://support.inrule.com/hc/en-us/articles/17532346873101-Decision-API) and/or [Rule Execution API](https://support.inrule.com/hc/en-us/articles/13377054188557-Rule-Execution-API) support articles.
 
 ### Calling irServer Rule Execution Service from a browser
 By default, CORS is not enabled in an Microsoft Azure Azure App Service Web App. This prevents you from making calls to your Decision Services instance via JavaScript in a browser.
