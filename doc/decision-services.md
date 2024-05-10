@@ -92,7 +92,7 @@ MachineName              : dw1sdwk000QCC
 After deployment, you have different options on how to execute rules. For detailed instructions on executing rules and decisions,
 visit the [Decision API](https://support.inrule.com/hc/en-us/articles/17532346873101-Decision-API) and/or [Rule Execution API](https://support.inrule.com/hc/en-us/articles/13377054188557-Rule-Execution-API) support articles.
 
-### Calling irServer Rule Execution Service from a browser
+### Calling Decision Services from a browser
 By default, CORS is not enabled in an Microsoft Azure Azure App Service Web App. This prevents you from making calls to your Decision Services instance via JavaScript in a browser.
 To enable CORS for any calling domain you can use the following command:
 ```powershell
