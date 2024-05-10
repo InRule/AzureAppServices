@@ -58,6 +58,8 @@ Once Web Apps have been deployed, their individual log files can be retrieved.
 
 * [Web App log retrieval](doc/webapp-log-retrieval.md)
 
+# Legacy irServer Rule Execution Service
+For more information regarding the irServer Excution Service, you can visit the documentation [here](doc/irserver-rule-execution-service.md). For instructions on deploying the irServer Execution Service with an ARM template, see the documentation [here](doc/ircatalog-arm-template-deployment.md).
 
 
 _InRule, InRule Technology, irAuthor, irVerify, irServer, irCatalog, irSDK and  irX are registered trademarks of InRule Technology, Inc. irDistribution and irWord are trademarks of InRule Technology, Inc. All other trademarks and trade names mentioned herein may be the trademarks of their respective owners and are hereby acknowledged._
