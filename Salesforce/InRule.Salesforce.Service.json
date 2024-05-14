@@ -126,7 +126,7 @@
     },
     "inRuleVersion": {
       "type": "string",
-      "defaultValue": "5.8.0",
+      "defaultValue": "5.8.1",
       "metadata": {
         "description": "Defines what version of the InRule Execution Service to deploy"
       }
@@ -208,7 +208,7 @@
       "inrule:sf:catalog:ruleAppDirectory": "C:\\RuleApps",
       "inrule:sf:catalog:useInRuleCatalog": "true",
       "inrule:repository:licensing:licenseFolder": "D:\\home\\site\\wwwroot",
-      "inrule:logging:level": "Warn"
+      "inrule:logging:level": "Info"
     },
     "selfDeployAppSettings": {
       "inrule:sf:api:loginUrl": "[parameters('sfLoginUrl')]",
