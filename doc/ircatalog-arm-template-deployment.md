@@ -1,6 +1,6 @@
 irCatalog and irCatalog Manager Arm Template Deployment
 ====
-In this section we will be deploying the irCatalog® as well as the irCatalog Manager.  This will create a database and two app services.  To make this process easier, we'll be using an Azure Resource Manager (ARM) template, which allows us to deploy and configure all the Azure resources needed for both the irCatalog and irCatalog Manager.
+In this section we will be deploying the irCatalog as well as the irCatalog Manager.  This will create a database and two app services.  To make this process easier, we'll be using an Azure Resource Manager (ARM) template, which allows us to deploy and configure all the Azure resources needed for both the irCatalog and irCatalog Manager.
 
 If you have not done so already, please read the [prerequisites](../README.md#prerequisites) before you get started.
 

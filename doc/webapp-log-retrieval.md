@@ -1,16 +1,16 @@
 ﻿Web App Log Retrieval
 ====
 
-You can retrieve the logs from your individual InRule® App Service Web Apps via the Microsoft® Azure® CLI.
+You can retrieve the logs from your individual InRule App Service Web Apps via the Microsoft Azure CLI.
 
-## Sign in to Microsoft® Azure®
-First, [open a PowerShell prompt](https://docs.microsoft.com/en-us/powershell/scripting/setup/starting-windows-powershell) and use the Azure CLI to [sign in](https://docs.microsoft.com/en-us/cli/azure/authenticate-azure-cli) to your Microsoft® Azure® subscription:
+## Sign in to Microsoft Azure
+First, [open a PowerShell prompt](https://docs.microsoft.com/en-us/powershell/scripting/setup/starting-windows-powershell) and use the Azure CLI to [sign in](https://docs.microsoft.com/en-us/cli/azure/authenticate-azure-cli) to your Microsoft Azure subscription:
 ```powershell
 az login
 ```
 
 ## Set active subscription
-If your Microsoft® Azure® account has access to multiple subscriptions, you will need to [set your active subscription](https://docs.microsoft.com/en-us/cli/azure/account#az-account-set) to where you create your Microsoft® Azure® resources:
+If your Microsoft Azure account has access to multiple subscriptions, you will need to [set your active subscription](https://docs.microsoft.com/en-us/cli/azure/account#az-account-set) to where you create your Microsoft Azure resources:
 ```powershell
 # Example: az account set --subscription "Contoso Subscription 1"
 az account set --subscription SUBSCRIPTION_NAME
