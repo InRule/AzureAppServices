@@ -47,12 +47,6 @@
     "inRuleVersion": {
       "value": "5.8.1"
     },
-    "appInsightsResourceName": {
-      "value": ""
-    },
-    "appInsightsInstrumentationKey": {
-      "value": ""
-    },
     "appInsightsConnectionString": {
       "value": ""
     }
