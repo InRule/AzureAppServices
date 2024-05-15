@@ -93,39 +93,11 @@
         "description": "Defines what version of the InRule Execution Service to deploy"
       }
     },
-    "createOrUpdateAppInsightsResource": {
-      "type": "bool",
-      "defaultValue": false,
-      "metadata": {
-        "description": "(Deprecated, now conditionally triggered based on appInsightsInstrumentationKey) If set to true, provide a value for the appInsightsResourceName parameter. If set to false, you can provide a value for the appInsightsIntrumentationKey to associate your App Service with an existing App Insights resource"
-      }
-    },
-    "appInsightsInstrumentationKey": {
+    "appInsightsConnectionString": {
       "type": "string",
       "defaultValue": "",
       "metadata": {
-        "description": "Provide an Instrumentation Key if you have an existing App Insights resource you'd like to use for logging and telemetry. If you are configuring this in a nonstandard azure environment, please additionally provide an App Insights Connection String. Otherwise, leave this value blank and provide a value for the 'appInsightsResourceName' parameter, which will create the resource for you"
-      }
-    },
-    "appInsightsConnectionString": {
-      "type": "string",
-      "defaultValue": "[concat('InstrumentationKey=', parameters('appInsightsInstrumentationKey'), ';')]",
-      "metadata": {
-        "description": "Only override the default value here if you have an existing App Insights resource you'd like to use, AND you need to use a non-standard connection string. If you need to supply your own connection string, be sure to set that value here, as well as providing your instrumentation key in the appInsightsInstrumentationKey parameter. If you want this template to manage the App Insights resource for you, or only need to provide an instrumentation key, leave this value as the default and provide values for appInsightsResourceName or appInsightsInstrumentationKey instead"
-      }
-    },
-    "appInsightsResourceName": {
-      "type": "string",
-      "defaultValue": "[concat(parameters('appServiceName'),'AppInsights')]",
-      "metadata": {
-        "description": "Provide a name if you do not have an existing App Insights resource you'd like to use for logging and telemetry. Setting this value will create a new App Insights resource with the provided name. This defaults to appending 'AppInsights' to the App Service resource name, but you can provide your own name. If you have an existing resource you'd like to use, leave this value blank and provide one for the 'appInsightsInstrumentationKey' parameter"
-      }
-    },
-    "appInsightsLocation": {
-      "type": "string",
-      "defaultValue": "[resourceGroup().location]",
-      "metadata": {
-        "description": "Defines what Azure region to deploy the Application Insights resource to. Check details at https://azure.microsoft.com/en-us/global-infrastructure/services/?products=monitor"
+        "description": "Optional Application Insights connection string. The Dynamics integration will use this a log source if provided."
       }
     },
     "appConfigurationServiceConnectionString": {
@@ -159,8 +131,6 @@
   },
   "variables": {
     "appServicePlanName": "[if(empty(parameters('appServicePlanName')), concat(parameters('appServiceName'),'Plan'), parameters('appServicePlanName'))]",
-    "appInsightsResourceName": "[if(empty(parameters('appInsightsResourceName')), concat(parameters('appServiceName'),'Insights'), parameters('appInsightsResourceName'))]",
-    "appInsightsLocation": "[if(empty(parameters('appInsightsLocation')), if(empty(parameters('location')), resourceGroup().location, parameters('location')), parameters('appInsightsLocation'))]",
     "baseAppSettings": {
       "inrule:crm:catalog:label": "[parameters('ruleAppLabel')]",
       "inrule:crm:catalog:user": "[parameters('catalogUser')]",
@@ -173,7 +143,8 @@
       "inrule:crm:serviceBus:owner": "RootManageSharedAccessKey",
       "inrule:crm:serviceBus:path": "ruleexecution",
       "inrule:repository:licensing:licenseFolder": "D:\\home\\site\\wwwroot",
-      "inrule:logging:level": "Info"
+      "inrule:logging:level": "Info",
+      "APPLICATIONINSIGHTS_CONNECTION_STRING": "[parameters('appInsightsConnectionString')]"
     },
     "saasAppSettings": {
       "inrule:api:appconfigurationservice": "[parameters('appConfigurationServiceConnectionString')]",
@@ -187,10 +158,6 @@
         "complexAppSettings": {
           "parameters": [
             {
-              "name": "appInsightsConnectionString",
-              "type": "string"
-            },
-            {
               "name": "serviceBusKey",
               "type": "string"
             }
@@ -198,7 +165,6 @@
           "output": {
             "type": "object",
             "value": {
-              "APPLICATIONINSIGHTS_CONNECTION_STRING": "[parameters('appInsightsConnectionString')]",
               "inrule:crm:serviceBus:key": "[parameters('serviceBusKey')]"
             }
           }
@@ -225,21 +191,6 @@
       "type": "Microsoft.Relay/namespaces",
       "apiVersion": "2018-01-01-preview",
       "location": "[parameters('location')]",
-      "properties": {}
-    },
-    {
-      "condition": "[or(empty(parameters('appInsightsInstrumentationKey')), parameters('createOrUpdateAppInsightsResource'))]",
-      "name": "[variables('appInsightsResourceName')]",
-      "type": "Microsoft.Insights/components",
-      "apiVersion": "2020-02-02",
-      "location": "[variables('appInsightsLocation')]",
-      "dependsOn": [
-        "[resourceId('Microsoft.Relay/namespaces', parameters('relayName'))]"
-      ],
-      "kind": "web",
-      "tags": {
-        "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/sites/', parameters('appInsightsResourceName'))]": "Resource"
-      },
       "properties": {}
     },
     {
@@ -309,7 +260,7 @@
             "[resourceId('Microsoft.Web/sites/extensions', parameters('appServiceName'), 'MSDeploy')]",
             "[resourceId('Microsoft.Web/sites', parameters('appServiceName'))]"
           ],
-          "properties": "[union(if(not(empty(parameters('appConfigurationServiceConnectionString'))), union(variables('baseAppSettings'), variables('saasAppSettings')), variables('baseAppSettings')), inrule.complexAppSettings(if(or(empty(parameters('appInsightsInstrumentationKey')), parameters('createOrUpdateAppInsightsResource')), reference(resourceId('Microsoft.Insights/components', variables('appInsightsResourceName')), '2018-05-01-preview').ConnectionString, parameters('appInsightsConnectionString')), listKeys(resourceId('Microsoft.Relay/namespaces/authorizationRules', parameters('relayName'), 'RootManageSharedAccessKey'), '2017-04-01').primaryKey))]"
+          "properties": "[union(if(not(empty(parameters('appConfigurationServiceConnectionString'))), union(variables('baseAppSettings'), variables('saasAppSettings')), variables('baseAppSettings')), inrule.complexAppSettings(listKeys(resourceId('Microsoft.Relay/namespaces/authorizationRules', parameters('relayName'), 'RootManageSharedAccessKey'), '2017-04-01').primaryKey))]"
         },
         {
           "condition": "[not(equals(parameters('crmConnectionString'), ''))]",
