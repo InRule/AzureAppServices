@@ -146,10 +146,3 @@ Then call ApplyRules on your irServer Rule Execution Service instance:
 ```powershell
 Invoke-RestMethod -Method 'Post' -ContentType 'application/json' -Headers @{"Accept"="application/json"} -Uri https://contoso-execution-prod-wa.azurewebsites.net/HttpService.svc/ApplyRules -Body '{"RuleApp":{"Password":"examplePassword","RepositoryRuleAppRevisionSpec":{"RuleApplicationName":"ChicagoFoodTaxGenerator"},"UserName":"exampleUsername"},"EntityState":"{\"IsPlaceforEating\":true,\"ZIPCode\":\"60661\",\"OrderItems\":[{\"ItemType\":\"PreparedHot\",\"ItemCost\":7.0},{\"ItemType\":\"SyrupSoftDrink\",\"ItemCost\":1.5}]}","EntityName":"Order"}'
 ```
-
-### Calling irServer Rule Execution Service from a browser
-By default, CORS is not enabled in an Microsoft Azure Azure App Service Web App. This prevents you from making calls to your irServer Rule Execution Service via JavaScript in a browser.
-To enable CORS for any calling domain you can use the following command:
-```powershell
-az resource update --name web --resource-group inrule-prod-rg --namespace Microsoft.Web --resource-type config --parent sites/contoso-execution-prod-wa --set properties.cors.allowedOrigins="['*']" --api-version 2015-06-01
-```

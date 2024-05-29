@@ -38,17 +38,14 @@ There are two options for deploying the Catalog and Catalog Manager, deploying w
 
 InRule is proud to release its latest APIs for discoverable and frictionless execution of decisions and rules. Decision Services are provided as two APIs-in-one including the newly designed [Decision API](https://support.inrule.com/hc/en-us/articles/17532346873101-Decision-API) and a modernized version of our classic [Rule Execution API](https://support.inrule.com/hc/en-us/articles/13377054188557-Rule-Execution-API).
 
-There are three options for deploying Decision Services: deploying with an Azure Resource Manager Template, deploying through the Azure Marketplace, or deploying resource individually via the Azure CLI. All options will deploy the same set of resources, but the ARM template and Azure Marketplace deploys them all in a single step.
+There are two options for deploying Decision Services: deploying through the Azure Marketplace or deploying with an Azure Resource Manager Template - both options will deploy the same set of resources. If deploying with the ARM template, you can choose to deploy via the [Azure Portal](https://portal.azure.com/#create/Microsoft.Template) or through the Azure CLI.
 
 #### Deploying via Azure Resource Manager Template:
 
 * [ARM Template Deployment](doc/decision-services-arm-template-deployment.md)
 
-#### Deploying with manual steps:
-
-* [Decision Services Web App Deployment](doc/decision-services.md)
-
-For more information on decisions and rules execution, refer to the following links:
+# Decision and Rule Execution
+For more information on executing decisions and rules, refer to the following documentation:
 * [Decision Services API Guide](https://support.inrule.com/hc/en-us/articles/13140368354445-Introduction-to-Decision-Services)
 
 # Log retrieval

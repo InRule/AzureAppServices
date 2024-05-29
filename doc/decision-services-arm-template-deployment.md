@@ -4,7 +4,7 @@ In this section we will be deploying Decision Services. To make this process eas
 
 If you have not done so already, please read the [prerequisites](../README.md#prerequisites) before you get started.
 
-Get the template and parameters file from the `source.zip` [here](https://github.com/InRule/AzureAppServices/releases). Both will be needed to continue with this deployment option. The steps that follow will show how to deploy using the Azure CLI, but the provided template can also be deployed through the Azure portal.
+Get the template and parameters file from the `source.zip` [here](https://github.com/InRule/AzureAppServices/releases). Both will be needed to continue with this deployment option. The steps that follow will show how to deploy using the Azure CLI, but the provided template can also be deployed through the [Azure portal](https://portal.azure.com/#create/Microsoft.Template).
 
 # Update the template parameters
 
@@ -54,8 +54,46 @@ Replace __RESOURCE_GROUP_NAME__ with the name of the Azure Resource Group you wa
 az deployment group create -g RESOURCE_GROUP_NAME --template-file .\InRule.Runtime.DecisionService.json --parameters .\InRule.Runtime.DecisionService.parameters.json
 ```
 
+## Upload valid license file
+
+In order for Decision Services to properly function, you must upload the InRuleLicense.xml file provided to you by InRule to the web app. The simplest way to upload the license file is via the App Service Editor available on the Azure portal. 
+
+First, navigate to the [App Services](https://portal.azure.com/#browse/Microsoft.Web%2Fsites) listing page on the Azure portal and find your newly deployed web app in the list. Click the web app's name to be taken to its' overview page. On the left-hand nav-bar, scroll down until you find the App Service Editor option, under the Development Tools header:
+
+![screen shot of the App Service Editor location on the web app overview page](images/AppServiceEditorScreenshot.png)
+
+On the resulting page, click "Open Editor".
+
+To upload the license file, you will need to drag and drop the InRuleLicense.xml file from your local machine into the top level wwwroot folder. You should be able to see a blue highlight when you are dragging the file into the correct location.
+
+![screen shot of dragging and dropping the license file](images/DragAndDropLicenseScreenshot.png)
+
 ## Verify by getting status details
-Follow the steps to verify rules in the [Decision Services Web App Deployment](decision-services.md#verify-by-getting-status-details)
+As a final verification that Decision Services is properly functioning, a REST call can be made to the status details endpoint.
+
+Get status details from your Decision Services instance:
+```powershell
+#Example: Invoke-RestMethod -Method 'Get' -ContentType 'application/json' -Headers @{"Accept"="application/json"; "inrule-apikey"="SampleApiKey"} -Uri https://contoso-decision-prod-wa.azurewebsites.net/api/status/details
+
+Invoke-RestMethod -Method 'Get' -ContentType 'application/json' -Headers @{"Accept"="application/json"; "inrule-apikey"="YOUR_API_KEY"} -Uri https://WEB_APP_NAME.azurewebsites.net/api/status/details
+```
+
+If the request was successful, you should see results similiar to the following:
+```
+IsAvailable              : True
+ProcessorCount           : 1
+InRuleRuntimeVersion     : 5.8.1.614
+InRuleRepositoryVersion  : 5.8.1.614
+ProcessUpTimeMinutes     : 4.01
+CacheUpTimeMinutes       : 0.63
+MaxRuleAppCacheDepth     : 25
+CurrentRuleAppCacheDepth : 0
+ErrorMessages            : {}
+PrecompileStatus         : NotConfigured
+PrecompileSeconds        : 0
+MachineName              : dw1sdwk000QCC
+```
 
 # Execution of Rules
-Follow the steps for executing rules in the [Decision Services App Deployment](decision-services.md#execution-of-rules-and-decisions)
+After deployment, you have different options on how to execute rules. For detailed instructions on executing rules and decisions,
+visit the [Decision API](https://support.inrule.com/hc/en-us/articles/17532346873101-Decision-API) and/or [Rule Execution API](https://support.inrule.com/hc/en-us/articles/13377054188557-Rule-Execution-API) support articles.
