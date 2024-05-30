@@ -73,7 +73,6 @@ As a final verification that Decision Services is properly functioning, a REST c
 
 Get status details from your Decision Services instance:
 ```powershell
-#Example: Invoke-RestMethod -Method 'Get' -ContentType 'application/json' -Headers @{"Accept"="application/json"; "inrule-apikey"="SampleApiKey"} -Uri https://contoso-decision-prod-wa.azurewebsites.net/api/status/details
 
 Invoke-RestMethod -Method 'Get' -ContentType 'application/json' -Headers @{"Accept"="application/json"; "inrule-apikey"="YOUR_API_KEY"} -Uri https://WEB_APP_NAME.azurewebsites.net/api/status/details
 ```
