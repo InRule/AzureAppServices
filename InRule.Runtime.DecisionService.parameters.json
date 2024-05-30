@@ -8,17 +8,11 @@
     "createOrUpdatedecisionServicePlan": {
       "value": true
     },
-    "decisionServicePlanName": {
-      "value": ""
-    },
     "decisionServicePlanSkuName": {
       "value": "B1"
     },
     "inRuleVersion": {
       "value": "5.8.1"
-    },
-    "packageUri": {
-      "value": ""
     },
     "catalogUri": {
       "value": ""
@@ -28,9 +22,6 @@
     },
     "catalogPassword": {
       "value": ""
-    },
-    "allowPerRequestCatalogCredentials": {
-      "value": false
     },
     "apiKeyPrimary": {
       "value": ""
