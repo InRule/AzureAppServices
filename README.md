@@ -1,6 +1,6 @@
 InRule Cloud Deployment Options for Microsoft Azure
 ====
-InRule provides cloud deployment options that allow you to run irCatalog, irCatalog Manager Website, and [Decision Services](https://support.inrule.com/hc/en-us/articles/13140368354445-Introduction-to-Decision-Services) inside of the Microsoft Azure App Service environment with minimal configuration and setup. For a store-front UI enabled deployment experience, visit our InRule Decision Services [marketplace listing](). For additional information on other deployment options and their repsective deployment process, please see below.
+InRule provides cloud deployment options that allow you to run irCatalog, irCatalog Manager Website, and [Decision Services](https://support.inrule.com/hc/en-us/articles/13140368354445-Introduction-to-Decision-Services) inside of the Microsoft Azure App Service environment with minimal configuration and setup. For a store-front UI enabled deployment experience, visit our InRule Decision Services [marketplace listing](https://azuremarketplace.microsoft.com/en-us/marketplace/apps/inruletechnology-1043512.inrule-execution). For additional information on other deployment options and their respective deployment process, please see below.
 
 # Prerequisites
 
