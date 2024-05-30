@@ -58,7 +58,7 @@ az deployment group create -g RESOURCE_GROUP_NAME --template-file .\InRule.Runti
 
 In order for Decision Services to properly function, you must upload the InRuleLicense.xml file provided to you by InRule to the web app. The simplest way to upload the license file is via the App Service Editor available on the Azure portal. 
 
-First, navigate to the [App Services](https://portal.azure.com/#browse/Microsoft.Web%2Fsites) listing page on the Azure portal and find your newly deployed web app in the list. Click the web app's name to be taken to its' overview page. On the left-hand nav-bar, scroll down until you find the App Service Editor option, under the Development Tools header:
+First, navigate to the [App Services](https://portal.azure.com/#browse/Microsoft.Web%2Fsites) listing page on the Azure portal and find your newly deployed web app in the list. Click the web app's name to be taken to its overview page. On the left-hand nav-bar, scroll down until you find the App Service Editor option, under the Development Tools header:
 
 ![screen shot of the App Service Editor location on the web app overview page](images/AppServiceEditorScreenshot.png)
 
