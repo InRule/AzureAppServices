@@ -1,45 +1,33 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
-    "contentVersion": "1.0.0.0",
-    "parameters": {
-      "decisionServiceName": {
-        "value": null
-      },
-      "createOrUpdatedecisionServicePlan": {
-        "value": true
-      },
-      "decisionServicePlanName": {
-        "value": "[concat(parameters('decisionServiceName'),'Plan')]"
-      },
-      "decisionServicePlanSkuName": {
-        "value": null
-      },
-      "servicePlanResourceGroupName": {
-        "value": "[resourceGroup().name]"
-      },
-      "inRuleVersion": {
-        "value": "5.8.1"
-      },
-      "packageUri": {
-        "value": "[concat('https://github.com/InRule/AzureAppServices/releases/download/v', parameters('inRuleVersion'),'/InRule.Runtime.DecisionService.zip')]"
-      },
-      "catalogUri": {
-        "value": null
-      },
-      "catalogUser": {
-        "value": null
-      },
-      "catalogPassword": {
-        "value": null
-      },
-      "allowPerRequestCatalogCredentials": {
-        "value": null
-      },
-      "apiKeyPrimary": {
-        "value": null
-      },
-      "appInsightsConnectionString": {
-        "value": null
-      }
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "decisionServiceName": {
+      "value": ""
+    },
+    "createOrUpdatedecisionServicePlan": {
+      "value": true
+    },
+    "decisionServicePlanSkuName": {
+      "value": "B1"
+    },
+    "inRuleVersion": {
+      "value": "5.8.1"
+    },
+    "catalogUri": {
+      "value": ""
+    },
+    "catalogUser": {
+      "value": ""
+    },
+    "catalogPassword": {
+      "value": ""
+    },
+    "apiKeyPrimary": {
+      "value": ""
+    },
+    "appInsightsConnectionString": {
+      "value": ""
     }
   }
+}

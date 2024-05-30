@@ -1,7 +1,6 @@
 InRule Cloud Deployment Options for Microsoft Azure
 ====
-
-InRule provides cloud deployment options that allow you to run irCatalog, irCatalog Manager Website, and [Decision Services](https://support.inrule.com/hc/en-us/articles/13140368354445-Introduction-to-Decision-Services) inside of the Microsoft Azure App Service environment with minimal configuration and setup. For a store-front UI enabled deployment experience, visit our [InRule Decision Services marketplace listing](). For additional information on other deployment options and their repsective deployment process, please see below.
+InRule provides cloud deployment options that allow you to run irCatalog, irCatalog Manager Website, and [Decision Services](https://support.inrule.com/hc/en-us/articles/13140368354445-Introduction-to-Decision-Services) inside of the Microsoft Azure App Service environment with minimal configuration and setup. For a store-front UI enabled deployment experience, visit our InRule Decision Services [marketplace listing](https://azuremarketplace.microsoft.com/en-us/marketplace/apps/inruletechnology-1043512.inrule-execution). For additional information on other deployment options and their respective deployment process, please see below.
 
 # Prerequisites
 
@@ -37,21 +36,17 @@ There are two options for deploying the Catalog and Catalog Manager, deploying w
 
 # Decision Services
 
-With Decision Services, you can call business rules from a variety of systems including J2EE applications, BPM processes and ESB orchestrations. Decision Services allows you to execute any rules stored in irCatalog or in the App Service Web App itself. Decision Services can be accessed through the Decision Service API via REST, or through the provided Swagger UI. 
+InRule is proud to release its latest APIs for discoverable and frictionless execution of decisions and rules. Decision Services are provided as two APIs-in-one including the newly designed [Decision API](https://support.inrule.com/hc/en-us/articles/17532346873101-Decision-API) and a modernized version of our classic [Rule Execution API](https://support.inrule.com/hc/en-us/articles/13377054188557-Rule-Execution-API).
 
-There are three options for deploying Decision Services: deploying with an Azure Resource Manager Template, deploying through the Azure Marketplace, or deploying resource individually via the Azure CLI. All options will deploy the same set of resources, but the ARM template and Azure Marketplace deploys them all in a single step.
+There are two options for deploying Decision Services: deploying through the Azure Marketplace or deploying with an Azure Resource Manager Template - both options will deploy the same set of resources. If deploying with the ARM template, you can choose to deploy via the [Azure Portal](https://portal.azure.com/#create/Microsoft.Template) or through the Azure CLI.
 
 #### Deploying via Azure Resource Manager Template:
 
 * [ARM Template Deployment](doc/decision-services-arm-template-deployment.md)
 
-#### Deploying with manual steps:
-
-* [Decision Services Web App Deployment](doc/decision-services.md)
-
-For more information on decisions and rules execution, refer to the following links:
-* [Execution of Decisions and Rules](doc/decision-services.md#execution-of-rules-and-decisions)
-* [SDK Developer Guide](https://support.inrule.com/hc/en-us/articles/13140368354445-Introduction-to-Decision-Services)
+# Decision and Rule Execution
+For more information on executing decisions and rules, refer to the following documentation:
+* [Decision Services API Guide](https://support.inrule.com/hc/en-us/articles/13140368354445-Introduction-to-Decision-Services)
 
 # Log retrieval
 Once Web Apps have been deployed, their individual log files can be retrieved.
