@@ -1,6 +1,6 @@
-irCatalog and irCatalog Manager Arm Template Deployment
+Catalog and Catalog Manager Arm Template Deployment
 ====
-In this section we will be deploying the irCatalog as well as the irCatalog Manager.  This will create a database and two app services.  To make this process easier, we'll be using an Azure Resource Manager (ARM) template, which allows us to deploy and configure all the Azure resources needed for both the irCatalog and irCatalog Manager.
+In this section we will be deploying the Catalog as well as the Catalog Manager.  This will create a database and two app services.  To make this process easier, we'll be using an Azure Resource Manager (ARM) template, which allows us to deploy and configure all the Azure resources needed for both the Catalog and Catalog Manager.
 
 If you have not done so already, please read the [prerequisites](../README.md#prerequisites) before you get started.
 
@@ -20,14 +20,16 @@ Open the file with your text editor of choice and edit the parameters listed bel
 | catalogServiceName | catalogAppService | Provide a name for the Azure App Service that the catalog service will run on. |
 | catalogManagerServiceName | catalogManagerAppService | Provide a name for the Azure App Service that the catalog manager service will run on. |
 | catalogServicePlanSkuName | B1 | Describes catalog services plan's pricing tier and capacity. [Plan Details](https://azure.microsoft.com/en-us/pricing/details/app-service/)|
-| catalogSqlServerName | catalogsqldbservername | The server name for the Azure SQL server used to host the irCatalog database(s). |
-| catalogSqlServerUsername | sqlDbServerUser | The server admin username for the Azure SQL server used to host the irCatalog database(s). |
-| catalogSqlServerPassword | sqlDbServerPassword | The server admin password for the Azure SQL server used to host the irCatalog database(s). |
-| catalogSqlDbName | catalogSqlDbName | The name for the irCatalog database. |
-| catalogSqlDbEdition | Basic | The Azure SQL database edition used for the irCatalog database. Use Basic for less demanding workloads, Standard for most production workloads, and Premium for IO-intensive workloads. |
-| catalogSqlDbPerformanceLevel | Basic | The Azure SQL database performance level for the irCatalog. These correspond to the specific Azure SQL database edition. |
+| catalogSqlServerName | catalogsqldbservername | The server name for the Azure SQL server used to host the Catalog database(s). |
+| catalogSqlServerUsername | sqlDbServerUser | The server admin username for the Azure SQL server used to host the Catalog database(s). |
+| catalogSqlServerPassword | sqlDbServerPassword | The server admin password for the Azure SQL server used to host the Catalog database(s). |
+| catalogSqlDbName | catalogSqlDbName | The name for the Catalog database. |
+| catalogSqlDbEdition | Basic | The Azure SQL database edition used for the Catalog database. Use Basic for less demanding workloads, Standard for most production workloads, and Premium for IO-intensive workloads. |
+| catalogSqlDbPerformanceLevel | Basic | The Azure SQL database performance level for the Catalog. These correspond to the specific Azure SQL database edition. |
 | inRuleVersion | 5.4.1 | Provide the inRule version you wish to deploy, default value is the latest inRule version. |
 | catalogServicePlanName | inruleCatalogAppServicePlan | The name for the app Service Plan.  Leave blank for the value to be derived as `catalogServiceName` + `Plan`|
+
+__Save copy of the parameters after deployment to refer to and use for future upgrades__
 
 # Deploy ARM Template with Azure CLI
 
@@ -60,13 +62,13 @@ az deployment group create -g RESOURCE_GROUP_NAME --template-file .\InRule.Catal
 ```
 
 ## Allow Your Local Machine Access via Firewall Rule
-You'll need to temporarily allow access to your local machine to deploy the schema and data for the database. This step can be found in the irCatalog web app deployment guide [irCatalog Web App Deployment](ircatalog.md#allow-ircatalog-server-access-via-firewall-rule)
+You'll need to temporarily allow access to your local machine to deploy the schema and data for the database. This step can be found in the Catalog web app deployment guide [Catalog Web App Deployment](ircatalog.md#allow-ircatalog-server-access-via-firewall-rule)
 
-## Deploy the irCatalog Database
-After opening the firewall, you'll need to use the provided tool to setup the database. This step can be found in the irCatalog web app deployment guide [irCatalog Web App Deployment](ircatalog.md#deploy-the-ircatalog-database)
+## Deploy the Catalog Database
+After opening the firewall, you'll need to use the provided tool to setup the database. This step can be found in the Catalog web app deployment guide [Catalog Web App Deployment](ircatalog.md#deploy-the-ircatalog-database)
 
 ## Upload valid license file
-In order for irCatalog Service to properly function, a valid license file must be uploaded to the web app. The simplest way to upload the license file is via FTP.
+In order for Catalog Service to properly function, a valid license file must be uploaded to the web app. The simplest way to upload the license file is via FTP.
 
 First, retrieve the FTP deployment profile (url and credentials) with the [az webapp deployment list-publishing-profiles](https://docs.microsoft.com/en-us/cli/azure/webapp/deployment#az-webapp-deployment-list-publishing-profiles) command and put the values into a variable:
 ```powershell

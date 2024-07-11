@@ -1,6 +1,6 @@
 ﻿﻿irServer Rule Execution Service
 ====
-With irServer Rule Execution Service, you can call business rules from a variety of systems including J2EE applications, BPM processes and ESB orchestrations. Execute any rules stored in irCatalog or in the App Service Web App itself. Access is available via REST or SOAP.
+With irServer Rule Execution Service, you can call business rules from a variety of systems including J2EE applications, BPM processes and ESB orchestrations. Execute any rules stored in Catalog or in the App Service Web App itself. Access is available via REST or SOAP.
 
 If you have not done so already, please read the [prerequisites](../README.md#prerequisites) before you get started.
 
@@ -87,7 +87,7 @@ SessionId           : 1ac58648-9c3a-4d79-83c5-2c31d2eb32d7
 
 # Execution of Rules
 
-After deployment, you have different options on how to execute rules. You can choose to execute rules against rule applications that are stored directly on Microsoft Azure App Service Web App itself, or against rule applications stored in an irCatalog instance.
+After deployment, you have different options on how to execute rules. You can choose to execute rules against rule applications that are stored directly on Microsoft Azure App Service Web App itself, or against rule applications stored in an Catalog instance.
 
 The examples below are using the [Chicago Food Tax Generator sample](https://github.com/InRule/Samples/tree/master/Authoring%20Samples/Chicago%20Food%20Tax%20Generator) and they each have different assumptions in order for you to use each.
 
@@ -118,24 +118,24 @@ Then call ApplyRules on your irServer Rule Execution Service instance:
 Invoke-RestMethod -Method 'Post' -ContentType 'application/json' -Headers @{"Accept"="application/json"} -Uri https://contoso-execution-prod-wa.azurewebsites.net/HttpService.svc/ApplyRules -Body '{"RuleApp":{"FileName":"Chicago Food Tax Generator.ruleapp"},"EntityState":"{\"IsPlaceforEating\":true,\"ZIPCode\":\"60661\",\"OrderItems\":[{\"ItemType\":\"PreparedHot\",\"ItemCost\":7.0},{\"ItemType\":\"SyrupSoftDrink\",\"ItemCost\":1.5}]}","EntityName":"Order"}'
 ```
 
-## irCatalog-based Rule Application
+## Catalog-based Rule Application
 
 This example assumes the following:
-* You have the `Chicago Food Tax Generator.ruleapp` from the sample saved to your irCatalog instance,
+* You have the `Chicago Food Tax Generator.ruleapp` from the sample saved to your Catalog instance,
 * Your Azure Resource Group is named `inrule-prod-rg`,
 * Your irServer Azure Web App is named `contoso-execution-prod-wa`,
-* Your irCatalog url is `https://contoso-catalog-prod-wa.azurewebsites.net/Service.svc`, and
-* Your irCatalog username is `exampleUsername` and your password is `examplePassword`
+* Your Catalog url is `https://contoso-catalog-prod-wa.azurewebsites.net/Service.svc`, and
+* Your Catalog username is `exampleUsername` and your password is `examplePassword`
 
-### Provide irCatalog on each request
+### Provide Catalog on each request
 
-This allows providing the irCatalog instance in the request and irServer Rule Execution Service will retrieve the specified rule application from that irCatalog instance.
+This allows providing the Catalog instance in the request and irServer Rule Execution Service will retrieve the specified rule application from that Catalog instance.
 ```powershell
 Invoke-RestMethod -Method 'Post' -ContentType 'application/json' -Headers @{"Accept"="application/json"} -Uri https://contoso-execution-prod-wa.azurewebsites.net/HttpService.svc/ApplyRules -Body '{"RuleApp":{"Password":"examplePassword","RepositoryRuleAppRevisionSpec":{"RuleApplicationName":"ChicagoFoodTaxGenerator"},"RepositoryServiceUri":"https://contoso-catalog-prod-wa.azurewebsites.net/Service.svc","UserName":"exampleUsername"},"EntityState":"{\"IsPlaceforEating\":true,\"ZIPCode\":\"60661\",\"OrderItems\":[{\"ItemType\":\"PreparedHot\",\"ItemCost\":7.0},{\"ItemType\":\"SyrupSoftDrink\",\"ItemCost\":1.5}]}","EntityName":"Order"}'
 ```
 
-### Provide a default irCatalog
-A default irCatalog instance can be configured so irServer Rule Execution Service will use that catalog if you do not want to pass in its url for each request.
+### Provide a default Catalog
+A default Catalog instance can be configured so irServer Rule Execution Service will use that catalog if you do not want to pass in its url for each request.
 
 First, configure the appropriate application setting for the Microsoft Azure Azure App Service Web App:
 ```powershell
