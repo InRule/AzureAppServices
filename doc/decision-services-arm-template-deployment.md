@@ -10,23 +10,25 @@ Get the template and parameters file from the `source.zip` [here](https://github
 
 Before deploying the ARM template, we need to define certain parameters.
 
-Locate the _InRule.Runtime.DecisionService.parameters.json_ file downloaded above. 
+Locate the _InRule.Runtime.DecisionService.parameters.json_ file downloaded above.
 
 Open the file with your text editor of choice and edit the parameters listed below:
 
 #### InRule.Runtime.DecisionService.parameters.json
 | Parameter | Example Values | Description |
 | --------- | -------------- | ----------- |
-| decisionServiceName | inruleRuntimeAppService | Provide a name for the Azure App Service that the decision service will run on. |
+| decisionServiceName | yourcompanyname-inrule-environment-decision | Provide a name for the Azure App Service that the decision service will run on. |
 | decisionServicePlanSkuName | B1 | Describes runtime services plan's pricing tier and capacity. [Plan Details](https://azure.microsoft.com/en-us/pricing/details/app-service/)|
 | catalogUri | https://{catalogAppService}/Service.svc | Provide the uri for the catalog service. |
 | inRuleVersion | 5.8.1 | Provide the inRule version you wish to deploy, default value is the latest inRule version. |
 | decisionServicePlanName | inruleDecisionServicePlan | The name for the app Service Plan.  Leave blank for the value to be derived as `decisionServiceName` + `Plan`|
 | apiKeyPrimary | "" | Provide an api key value that will be used to authenticate to Decision Services. |
 
+__Save copy of the parameters after deployment to refer to and use for future upgrades__
+
 # Deploy ARM Template with Azure CLI
 
-Now that the ARM template is configured, we’ll deploy it to get the resources up and running. The following will detail how to use the Azure CLI to deploy the ARM template (Note, this section assumes Azure CLI has already been installed): 
+Now that the ARM template is configured, we’ll deploy it to get the resources up and running. The following will detail how to use the Azure CLI to deploy the ARM template (Note, this section assumes Azure CLI has already been installed):
 
 ## Sign in to Azure
 First, [open a PowerShell prompt](https://docs.microsoft.com/en-us/powershell/scripting/setup/starting-windows-powershell) and use the Azure CLI to [sign in](https://docs.microsoft.com/en-us/cli/azure/authenticate-azure-cli) to your Azure subscription:
@@ -56,7 +58,7 @@ az deployment group create -g RESOURCE_GROUP_NAME --template-file .\InRule.Runti
 
 ## Upload valid license file
 
-In order for Decision Services to properly function, you must upload the InRuleLicense.xml file provided to you by InRule to the web app. The simplest way to upload the license file is via the App Service Editor available on the Azure portal. 
+In order for Decision Services to properly function, you must upload the InRuleLicense.xml file provided to you by InRule to the web app. The simplest way to upload the license file is via the App Service Editor available on the Azure portal.
 
 First, navigate to the [App Services](https://portal.azure.com/#browse/Microsoft.Web%2Fsites) listing page on the Azure portal and find your newly deployed web app in the list. Click the web app's name to be taken to its overview page. On the left-hand nav-bar, scroll down until you find the App Service Editor option, under the Development Tools header:
 

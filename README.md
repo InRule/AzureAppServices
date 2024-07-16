@@ -1,6 +1,6 @@
 InRule Cloud Deployment Options for Microsoft Azure
 ====
-InRule provides cloud deployment options that allow you to run irCatalog, irCatalog Manager Website, and [Decision Services](https://support.inrule.com/hc/en-us/articles/13140368354445-Introduction-to-Decision-Services) inside of the Microsoft Azure App Service environment with minimal configuration and setup. For a store-front UI enabled deployment experience, visit our InRule Decision Services [marketplace listing](https://azuremarketplace.microsoft.com/en-us/marketplace/apps/inruletechnology-1043512.inrule-execution). For additional information on other deployment options and their respective deployment process, please see below.
+InRule provides cloud deployment options that allow you to run Catalog, Catalog Manager, and [Decision Services](https://support.inrule.com/hc/en-us/articles/13140368354445-Introduction-to-Decision-Services) inside of the Microsoft Azure App Service environment with minimal configuration and setup. For a store-front UI enabled deployment experience, visit the InRule Decision Services [marketplace listing](https://azuremarketplace.microsoft.com/en-us/marketplace/apps/inruletechnology-1043512.inrule-execution). For additional information on other deployment options and their respective deployment process, please see below.
 
 # Prerequisites
 
@@ -10,29 +10,22 @@ Before you get started, you'll need to make sure you have the following:
 
 * A Microsoft Azure Subscription. If you do not have an Azure subscription, create a [free account](https://azure.microsoft.com/en-us/free/) before you begin.
 
-* A valid InRule license file, usually named `InRuleLicense.xml`. If you do not have a valid InRule license file for InRule, please contact [Support](mailto:support@inrule.com?subject=InRule®%20for%20Microsoft%20Azure%20-%20App%20Service%20Web%20Apps).
+* A valid InRule license file, named __`InRuleLicense.xml`__. If you do not have a valid InRule license file for InRule, please contact [Support](mailto:support@inrule.com?subject=InRule®%20for%20Microsoft%20Azure%20-%20App%20Service%20Web%20Apps).
 
 * [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli) is installed.
 
-* [PowerShell](https://docs.microsoft.com/en-us/powershell/scripting/powershell-scripting) is installed.
 
-# irCatalog and irCatalog Manager
+# Catalog and Catalog Manager
 
-irCatalog is a business rule management tool that provides centralized management of rules to ensure the integrity of business rules, keep everyone working on the latest version of rules, and promote sharing of common rules across customers, processes or applications.
+InRule’s catalog provides centralized rule management and administration to store, version, set permissions, check-in and check-out rules—all at a granular level. The Catalog Manager makes it easy to promote rules from one environment to another.
 
-The Catalog Manager is a stand-alone web application that provides an administrative interface to an irCatalog repository. It is used to manage and migrate Rule Applications across an organization's various staging environments including production. It also provides an interface for managing users, roles, and permissions.
+The Catalog Manager is a stand-alone web application that provides an administrative interface to an Catalog repository. It is used to manage and migrate Rule Applications across an organization's various staging environments including production. It also provides an interface for managing users, roles, and permissions.
 
-There are two options for deploying the Catalog and Catalog Manager, deploying with an Azure Resource Manager Template or deploying resources individually via the Azure CLI. Both options will deploy the same set of resources, but the ARM template deploys them all in a single step.
 
 #### Deploying via Azure Resource Manager Template:
 
 * [ARM Template Deployment](doc/ircatalog-arm-template-deployment.md)
 
-#### Deploying with manual steps:
-
-* [Database Deployment](doc/ircatalog.md)
-* [irCatalog Web App Deployment](doc/ircatalog.md#web-app-deployment)
-* [irCatalog Manager Web App Deployment](doc/ircatalog-manager.md)
 
 # Decision Services
 
@@ -53,9 +46,11 @@ Once Web Apps have been deployed, their individual log files can be retrieved.
 
 * [Web App log retrieval](doc/webapp-log-retrieval.md)
 
+# Upgrade Considerations
+Be sure to backup the AppSettings file because it will be overwritten during an upgrade deployment.
+
 # Legacy irServer Rule Execution Service
 
-For more information regarding the irServer Excution Service, you can visit the documentation [here](doc/irserver-rule-execution-service.md). For instructions on deploying the irServer Execution Service with an ARM template, see the documentation [here](doc/ircatalog-arm-template-deployment.md).
+The classic irServer Rule Execution Service is flagged for retirement at the end of 2024. Please plan on transitioning your calling application to use either the new Decision API or the backward-compatible Rule Execution API.
 
-
-_InRule, InRule Technology, irAuthor, irVerify, irServer, irCatalog, irSDK and  irX are registered trademarks of InRule Technology, Inc. irDistribution and irWord are trademarks of InRule Technology, Inc. All other trademarks and trade names mentioned herein may be the trademarks of their respective owners and are hereby acknowledged._
+For instructions on deploying the irServer Execution Service with an ARM template, see the documentation [here](https://github.com/InRule/AzureAppServices/blob/master/doc/irserver-arm-template-deployment.md).

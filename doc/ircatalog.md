@@ -1,12 +1,12 @@
-﻿﻿irCatalog
+﻿﻿Catalog
 ====
-irCatalog is a business rule management tool that provides centralized management of rules to ensure the integrity of business rules, keep everyone working on the latest version of rules, and promote sharing of common rules across customers, processes or applications.
+Catalog is a business rule management tool that provides centralized management of rules to ensure the integrity of business rules, keep everyone working on the latest version of rules, and promote sharing of common rules across customers, processes or applications.
 
 If you have not done so already, please read the [prerequisites](../README.md#prerequisites) before you get started.
 
 # Database Deployment
 
-irCatalog supports both Microsoft SQL Server (which includes Microsoft Azure SQL Databases) and Oracle Database.  This section explains how to provision a new Microsoft Azure SQL Database for irCatalog. If you have an existing database, you may skip to the the [Web App Deployment](#web-app-deployment) section.
+Catalog supports both Microsoft SQL Server (which includes Microsoft Azure SQL Databases) and Oracle Database.  This section explains how to provision a new Microsoft Azure SQL Database for Catalog. If you have an existing database, you may skip to the the [Web App Deployment](#web-app-deployment) section.
 
 ## Sign in to Microsoft Azure
 First, [open a PowerShell prompt](https://docs.microsoft.com/en-us/powershell/scripting/setup/starting-windows-powershell) and use the Azure CLI to [sign in](https://docs.microsoft.com/en-us/cli/azure/authenticate-azure-cli) to your Microsoft Azure subscription:
@@ -42,8 +42,8 @@ Create the [Azure SQL Server Database](https://docs.microsoft.com/en-us/azure/sq
 az sql db create --name DATABASE_NAME --server SERVER_NAME --resource-group RESOURCE_GROUP_NAME
 ```
 
-## Allow irCatalog Server Access via Firewall Rule
-In order to allow the irCatalog Server access to the database, a firewall rule must be added to allow Azure services access to the Azure SQL Server.
+## Allow Catalog Server Access via Firewall Rule
+In order to allow the Catalog Server access to the database, a firewall rule must be added to allow Azure services access to the Azure SQL Server.
 
 Create a rule in the firewall to allow you to access the newly created database with the [az sql server firewall-rule create](https://docs.microsoft.com/en-us/cli/azure/sql/server/firewall-rule?view=azure-cli-latest#az-sql-server-firewall-rule-create) command:
 ```powershell
@@ -59,8 +59,8 @@ Create a rule in the firewall to allow you to access the newly created database 
 az sql server firewall-rule create --name FIREWALL_RULE_NAME --server SERVER_NAME --resource-group RESOURCE_GROUP_NAME --start-ip-address MY_EXTERNAL_IP --end-ip-address MY_EXTERNAL_IP
 ```
 
-## Deploy the irCatalog Database
-First, [download](https://github.com/InRule/AzureAppServices/releases/latest) the latest irCatalog Database package (`InRule.Catalog.Service.Database.zip`) from GitHub, and unzip into a directory of your choosing.
+## Deploy the Catalog Database
+First, [download](https://github.com/InRule/AzureAppServices/releases/latest) the latest Catalog Database package (`InRule.Catalog.Service.Database.zip`) from GitHub, and unzip into a directory of your choosing.
 
 Update the `appsettings.json` found in the newly unzipped directory with the connection string for your database. Be sure to set a valid user name and password. You can retrieve the connection string with the [az sql db show-connection-string](https://docs.microsoft.com/en-us/cli/azure/sql/db?view=azure-cli-latest#az-sql-db-show-connection-string) command:
 ```powershell
@@ -68,7 +68,7 @@ Update the `appsettings.json` found in the newly unzipped directory with the con
 az sql db show-connection-string --server SERVER_NAME --name DATABASE_NAME --client ado.net
 ```
 
-Then run the included executable to deploy the initial irCatalog database schema:
+Then run the included executable to deploy the initial Catalog database schema:
 ```powershell
 .\InRule.Catalog.Service.Database.exe
 ```
@@ -117,14 +117,14 @@ az webapp create --name WEB_APP_NAME --plan APP_SERVICE_PLAN_NAME --resource-gro
 ```
 
 ## Deploy package
-First, [download](https://github.com/InRule/AzureAppServices/releases/latest) the latest irCatalog package (`InRule.Catalog.Service.zip`) from GitHub. Then [deploy the zip file](https://docs.microsoft.com/en-us/azure/app-service/app-service-deploy-zip) package to the Web App with the [az webapp deployment source](https://docs.microsoft.com/en-us/cli/azure/webapp/deployment/source#az-webapp-deployment-source-config-zip) command:
+First, [download](https://github.com/InRule/AzureAppServices/releases/latest) the latest Catalog package (`InRule.Catalog.Service.zip`) from GitHub. Then [deploy the zip file](https://docs.microsoft.com/en-us/azure/app-service/app-service-deploy-zip) package to the Web App with the [az webapp deployment source](https://docs.microsoft.com/en-us/cli/azure/webapp/deployment/source#az-webapp-deployment-source-config-zip) command:
 ```powershell
 # Example: az webapp deployment source config-zip --name contoso-catalog-prod-wa --resource-group inrule-prod-rg --src InRule.Catalog.Service.zip
 az webapp deployment source config-zip --name WEB_APP_NAME --resource-group RESOURCE_GROUP_NAME --src FILE_PATH
 ```
 
 ## Upload valid license file
-In order for irCatalog Service to properly function, a valid license file must be uploaded to the web app. The simplest way to upload the license file is via FTP.
+In order for Catalog Service to properly function, a valid license file must be uploaded to the web app. The simplest way to upload the license file is via FTP.
 
 First, retrieve the FTP deployment profile (url and credentials) with the [az webapp deployment list-publishing-profiles](https://docs.microsoft.com/en-us/cli/azure/webapp/deployment#az-webapp-deployment-list-publishing-profiles) command and put the values into a variable:
 ```powershell
@@ -139,7 +139,7 @@ $client = New-Object System.Net.WebClient;$client.Credentials = New-Object Syste
 ```
 
 ## Change the connection string
-The irCatalog application now needs to be configured to point to your irCatalog database.
+The Catalog application now needs to be configured to point to your Catalog database.
 ```powershell
 # Example: az webapp config appsettings set --name contoso-catalog-prod-wa --resource-group inrule-prod-rg --settings inrule:repository:service:connectionString="Server=tcp:contoso-catalog-prod-sql.database.windows.net,1433;Initial Catalog=catalog-prod-db;Persist Security Info=False;User ID=admin;Password=%14TVpB*g$4b;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30";
 az webapp config appsettings set --name WEB_APP_NAME --resource-group RESOURCE_GROUP_NAME --settings inrule:repository:service:connectionString="Server=tcp:SERVER_NAME.database.windows.net,1433;Initial Catalog=DATABASE_NAME;Persist Security Info=False;User ID=USER_NAME;Password=USER_PASSWORD;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30";
