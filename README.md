@@ -31,7 +31,7 @@ The Catalog Manager is a stand-alone web application that provides an administra
 
 InRule is proud to release its latest APIs for discoverable and frictionless execution of decisions and rules. Decision Services are provided as two APIs-in-one including the newly designed [Decision API](https://docs.inrule.com/docs/decision-api) and a modernized version of our classic [Rule Execution API](https://docs.inrule.com/docs/rule-execution-api).
 
-There are two options for deploying Decision Services: deploying through the Azure Marketplace or deploying with an Azure Resource Manager Template - both options will deploy the same set of resources. If deploying with the ARM template, you can choose to deploy via the [Azure Portal](https://portal.azure.com/#create/Microsoft.Template) or through the Azure CLI.
+There are two options for deploying Decision Services: deploying through the [Azure Marketplace](https://azuremarketplace.microsoft.com/en-us/marketplace/apps/inruletechnology-1043512.inrule-execution) or deploying with an Azure Resource Manager Template - both options will deploy the same set of resources. If deploying with the ARM template, you can choose to deploy via the [Azure Portal](https://portal.azure.com/#create/Microsoft.Template) or through the Azure CLI.
 
 #### Deploying via Azure Resource Manager Template:
 
