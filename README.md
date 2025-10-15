@@ -71,6 +71,4 @@ Be sure to backup the AppSettings file because it will be overwritten during an 
 
 # Legacy irServer Rule Execution Service
 
-The classic irServer Rule Execution Service is flagged for retirement at the end of 2024. Please plan on transitioning your calling application to use either the new Decision API or the backward-compatible Rule Execution API.
-
-For instructions on deploying the irServer Execution Service with an ARM template, see the documentation [here](https://github.com/InRule/AzureAppServices/blob/master/doc/irserver-arm-template-deployment.md).
+The classic irServer Rule Execution Service is flagged for retirement at the end of 2025. Please plan on transitioning your calling application to use either the new Decision API or the backward-compatible Rule Execution API.
