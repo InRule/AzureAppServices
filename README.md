@@ -1,6 +1,6 @@
 InRule Cloud Deployment Options for Microsoft Azure
 ====
-InRule provides cloud deployment options that allow you to run Catalog, Catalog Manager, and [Decision Services](https://support.inrule.com/hc/en-us/articles/13140368354445-Introduction-to-Decision-Services) inside of the Microsoft Azure App Service environment with minimal configuration and setup. For a store-front UI enabled deployment experience, visit the InRule Decision Services [marketplace listing](https://azuremarketplace.microsoft.com/en-us/marketplace/apps/inruletechnology-1043512.inrule-execution). For additional information on other deployment options and their respective deployment process, please see below.
+InRule provides cloud deployment options that allow you to run Catalog, Catalog Manager, and [Decision Services](https://docs.inrule.com/docs/introduction-to-decision-services) inside of the Microsoft Azure App Service environment with minimal configuration and setup. For a store-front UI enabled deployment experience, visit the InRule Decision Services [marketplace listing](https://azuremarketplace.microsoft.com/en-us/marketplace/apps/inruletechnology-1043512.inrule-execution). For additional information on other deployment options and their respective deployment process, please see below.
 
 # Prerequisites
 
@@ -29,9 +29,9 @@ The Catalog Manager is a stand-alone web application that provides an administra
 
 # Decision Services
 
-InRule is proud to release its latest APIs for discoverable and frictionless execution of decisions and rules. Decision Services are provided as two APIs-in-one including the newly designed [Decision API](https://support.inrule.com/hc/en-us/articles/17532346873101-Decision-API) and a modernized version of our classic [Rule Execution API](https://support.inrule.com/hc/en-us/articles/13377054188557-Rule-Execution-API).
+InRule is proud to release its latest APIs for discoverable and frictionless execution of decisions and rules. Decision Services are provided as two APIs-in-one including the newly designed [Decision API](https://docs.inrule.com/docs/decision-api) and a modernized version of our classic [Rule Execution API](https://docs.inrule.com/docs/rule-execution-api).
 
-There are two options for deploying Decision Services: deploying through the Azure Marketplace or deploying with an Azure Resource Manager Template - both options will deploy the same set of resources. If deploying with the ARM template, you can choose to deploy via the [Azure Portal](https://portal.azure.com/#create/Microsoft.Template) or through the Azure CLI.
+There are two options for deploying Decision Services: deploying through the [Azure Marketplace](https://azuremarketplace.microsoft.com/en-us/marketplace/apps/inruletechnology-1043512.inrule-execution) or deploying with an Azure Resource Manager Template - both options will deploy the same set of resources. If deploying with the ARM template, you can choose to deploy via the [Azure Portal](https://portal.azure.com/#create/Microsoft.Template) or through the Azure CLI.
 
 #### Deploying via Azure Resource Manager Template:
 
@@ -39,7 +39,27 @@ There are two options for deploying Decision Services: deploying through the Azu
 
 # Decision and Rule Execution
 For more information on executing decisions and rules, refer to the following documentation:
-* [Decision Services API Guide](https://support.inrule.com/hc/en-us/articles/13140368354445-Introduction-to-Decision-Services)
+* [Decision Services API Guide](https://docs.inrule.com/docs/introduction-to-decision-services)
+
+# Rule Execution with Dynamics 365 and Power Platform
+
+InRule for Microsoft Dynamics 365 enables rich rule integration with Dynamics 365 and Power Platform. The end-to-end solution includes irAuthor with irX for Dynamics 365, InRule Solution for Dynamics 365 (available from Microsoft AppSource), and Rule Execution Service for Dynamics 365.
+
+For complete product information and deployment instructions, see the [InRule for Microsoft Dynamics 365 & Power Platform documentation](https://docs.inrule.com/docs/inrule-for-microsoft-dynamics-365-power-platform).
+
+#### Deploying via Azure Resource Manager Template:
+
+* ARM template and parameters file are located in the [Dynamics](Dynamics/) folder.
+
+# Rule Execution with Salesforce
+
+InRule for Salesforce enables rich rule integration with Salesforce. The end-to-end solution includes irAuthor with irX for Salesforce, InRule App for Salesforce (available from the Salesforce AppExchange), and Rule Execution Service for Salesforce.
+
+For complete product information and deployment instructions, see the [InRule for Salesforce documentation](https://docs.inrule.com/docs/inrule-for-salesforce).
+
+#### Deploying via Azure Resource Manager Template:
+
+* ARM template and parameters file are located in the [Salesforce](Salesforce/) folder.
 
 # Log retrieval
 Once Web Apps have been deployed, their individual log files can be retrieved.
