@@ -134,6 +134,74 @@
       "metadata": {
         "description": "Optional for resources. By default the location of the resource group will be used"
       }
+    },
+    "enableOidc": {
+      "type": "bool",
+      "defaultValue": false,
+      "metadata": {
+        "description": "Enable OIDC authentication for Catalog Manager. If enabled, provide oidcBaseUri, oidcClientId, and oidcConfigServiceBase parameters"
+      }
+    },
+    "oidcBaseUri": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Base URI for OIDC provider (e.g., Auth0 tenant URL). Only used if enableOidc is true"
+      }
+    },
+    "oidcClientId": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Client ID for OIDC authentication. Only used if enableOidc is true"
+      }
+    },
+    "oidcConfigServiceBase": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Config service base URL for OIDC. Only used if enableOidc is true"
+      }
+    },
+    "enableAuth0ForCatalogService": {
+      "type": "bool",
+      "defaultValue": false,
+      "metadata": {
+        "description": "Enable Auth0 authentication for Catalog Service. If enabled, must also set AuthenticationType to Custom and provide Auth0 parameters"
+      }
+    },
+    "catalogServiceAuthenticationType": {
+      "type": "string",
+      "defaultValue": "Basic",
+      "allowedValues": [
+        "Basic",
+        "Windows",
+        "Custom"
+      ],
+      "metadata": {
+        "description": "Authentication type for Catalog Service. Use 'Custom' for Auth0/OIDC integration"
+      }
+    },
+    "auth0ValidAudiences": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Valid audiences for Auth0 JWT validation. Only used if enableAuth0ForCatalogService is true"
+      }
+    },
+    "auth0ValidIssuer": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Valid issuer for Auth0 JWT validation. Only used if enableAuth0ForCatalogService is true"
+      }
+    },
+    "auth0DiscoveryUrl": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Auth0 discovery URL for OIDC. Only used if enableAuth0ForCatalogService is true"
+      }
     }
   },
   "variables": {
@@ -219,9 +287,25 @@
             "[resourceId('Microsoft.Web/sites', parameters('catalogServiceName'))]"
           ],
           "properties": {
-            "inrule:repository:service:connectionString": "[concat('Server=tcp:', reference(resourceId('Microsoft.Sql/servers', parameters('catalogSqlServerName'))).fullyQualifiedDomainName, ',1433;Database=', parameters('catalogSqlDbName'), ';User Id=', parameters('catalogSqlServerUsername'), ';Password=', parameters('catalogSqlServerPassword'), ';')]",
-            "inrule:repository:licensing:licenseFolder": "D:\\home\\site\\wwwroot",
-            "inrule:logging:level": "Warn"
+            "CatalogService__SqlServerConnectionString": "[concat('Server=tcp:', reference(resourceId('Microsoft.Sql/servers', parameters('catalogSqlServerName'))).fullyQualifiedDomainName, ',1433;Database=', parameters('catalogSqlDbName'), ';User Id=', parameters('catalogSqlServerUsername'), ';Password=', parameters('catalogSqlServerPassword'), ';')]",
+            "CatalogService__Hostname": "[concat(parameters('catalogServiceName'), '.azurewebsites.net')]",
+            "CatalogService__CommandTimeout": "180",
+            "CatalogService__AuthenticationType": "[parameters('catalogServiceAuthenticationType')]",
+            "CatalogService__CustomAuthenticationProviderTypeName": "[if(parameters('enableAuth0ForCatalogService'), 'InRule.Repository.Service.Providers.SqlServerWithOpenIdConnectAuthenticationProvider, InRule.Catalog.Service', '')]",
+            "CatalogService__LockAcquisitionTimeoutInSeconds": "20",
+            "CatalogService__EnableRepositoryServiceAggrStats": "false",
+            "CatalogService__MaxItemsInObjectGraph": "2147483647",
+            "CatalogService__Wcf__MaxItemsInObjectGraph": "2147483647",
+            "CatalogService__Wcf__MaxReceivedMessageSize": "2147483647",
+            "CatalogService__Wcf__MaxStringContentLength": "2147483647",
+            "CatalogService__Kestrel__MaxRequestBodySize": "2147483647",
+            "CatalogService__Auth0__ValidAudiences": "[if(parameters('enableAuth0ForCatalogService'), parameters('auth0ValidAudiences'), '')]",
+            "CatalogService__Auth0__ValidIssuer": "[if(parameters('enableAuth0ForCatalogService'), parameters('auth0ValidIssuer'), '')]",
+            "CatalogService__Auth0__DiscoveryUrl": "[if(parameters('enableAuth0ForCatalogService'), parameters('auth0DiscoveryUrl'), '')]",
+            "CatalogService__Auth0__RequireHttps": "true",
+            "InRuleLoggingOptions__Level": "Warn",
+            "Serilog__MinimumLevel": "Information",
+            "Serilog__WriteTo__0__Name": "Console"
           }
         }
       ]
@@ -264,7 +348,26 @@
             "[resourceId('Microsoft.Web/sites', parameters('catalogManagerServiceName'))]"
           ],
           "properties": {
-            "InRule.Catalog.Uri": "[concat('https://', parameters('catalogServiceName') ,'.azurewebsites.net/service.svc')]"
+            "InRule__Catalog__Uri": "[concat('https://', parameters('catalogServiceName') ,'.azurewebsites.net/service.svc/core')]",
+            "InRule__Catalog__SingleSignOnEnabled": "[if(parameters('enableOidc'), 'true', 'false')]",
+            "InRule__Catalog__AuthCookieExpire": "08:00:00",
+            "InRule__Catalog__Oidc__Enabled": "[if(parameters('enableOidc'), 'true', 'false')]",
+            "InRule__Catalog__Oidc__BaseUri": "[parameters('oidcBaseUri')]",
+            "InRule__Catalog__Oidc__ClientId": "[parameters('oidcClientId')]",
+            "InRule__Catalog__Oidc__Audience": "master_service",
+            "InRule__Catalog__Oidc__ConfigServiceBase": "[parameters('oidcConfigServiceBase')]",
+            "InRule__Catalog__Oidc__TokenRefreshThresholdTimeSpan": "00:10:00",
+            "InRule__Catalog__Oidc__LicenseKey": "",
+            "InRule__Catalog__Oidc__SelfHostedBaseUri": "[concat('https://', parameters('catalogManagerServiceName') ,'.azurewebsites.net/')]",
+            "InRule__Catalog__AddUser__AdvancedSettings": "false",
+            "InRule__Catalog__AddUser__ShowEmailNotification": "false",
+            "InRule__Catalog__AddUser__PasswordComplexityEnabled": "false",
+            "InRule__DigitalAdoptionUri": "",
+            "Session__CookieName": "InRuleCatalogManagerSession",
+            "Session__IdleTimeout": "00:30:00",
+            "Serilog__MinimumLevel": "Information",
+            "Serilog__WriteTo__0__Name": "Console",
+            "ASPNETCORE_FORWARDEDHEADERS_ENABLED": "true"
           }
         }
       ]
