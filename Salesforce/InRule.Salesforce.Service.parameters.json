@@ -35,19 +35,19 @@
     "ruleAppLabel": {
       "value": ""
     },
-    "executionServiceApiKey": {
-      "value": ""
-    },
     "appServicePlanName": {
       "value": ""
     },
     "createOrUpdateAppServicePlan": {
-      "value": true
+      "value": false
     },
     "inRuleVersion": {
       "value": "5.8.1"
     },
-    "appInsightsConnectionString": {
+    "primaryApiKey": {
+      "value": ""
+    },
+    "secondaryApiKey": {
       "value": ""
     }
   }

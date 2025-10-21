@@ -1,5 +1,5 @@
 {
-  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
     "appServiceName": {
@@ -8,10 +8,25 @@
         "description": "Name of the App Service to deploy that the Rule Execution Service will be installed on"
       }
     },
-    "relayName": {
+    "inRuleVersion": {
       "type": "string",
+      "defaultValue": "5.9.0",
       "metadata": {
-        "description": "Name of the Azure Relay to deploy that will function as the service bus between the Rule Execution Service and Dynamics"
+        "description": "Defines what version of the InRule Execution Service to deploy"
+      }
+    },
+    "appInsightsConnectionString": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Optional Application Insights connection string. The Dynamics integration will use this a log source if provided."
+      }
+    },
+    "packageUri": {
+      "type": "string",
+      "defaultValue": "[format('https://github.com/InRule/AzureAppServices/releases/download/v{0}/InRule.Crm.Api.zip', parameters('inRuleVersion'))]",
+      "metadata": {
+        "description": "Download URI for the Execution Service package. Calculated from the inRuleVersion parameter."
       }
     },
     "crmConnectionString": {
@@ -24,7 +39,7 @@
     "catalogUri": {
       "type": "string",
       "metadata": {
-        "description": "URI for your InRule Rule Catalog service, should follow this format: https://{Context}/Service.svc, with {Context} being replaced with the base catalog service URI."
+        "description": "URI for your InRule Rule Catalog service, should follow this format: https://{Context}/Service.svc/core, with {Context} being replaced with the base catalog service URI."
       }
     },
     "catalogUser": {
@@ -55,9 +70,23 @@
     },
     "appServicePlanName": {
       "type": "string",
-      "defaultValue": "[concat(parameters('appServiceName'),'Plan')]",
+      "defaultValue": "[format('{0}Plan', parameters('appServiceName'))]",
       "metadata": {
         "description": "Defines the App Service Plan's name, defaulting to the value of the App Service's name with 'Plan' appended to the end"
+      }
+    },
+    "primaryApiKey": {
+      "type": "securestring",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Self-Hosted Only: Primary API key for the execution service"
+      }
+    },
+    "secondaryApiKey": {
+      "type": "securestring",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Self-Hosted Only: Secondary API key for the execution service"
       }
     },
     "appServicePlanSkuName": {
@@ -86,41 +115,6 @@
         "description": "Optional name of the resource group for the existing app service plan. If creating a new plan, leave as the default value"
       }
     },
-    "inRuleVersion": {
-      "type": "string",
-      "defaultValue": "5.8.1",
-      "metadata": {
-        "description": "Defines what version of the InRule Execution Service to deploy"
-      }
-    },
-    "appInsightsConnectionString": {
-      "type": "string",
-      "defaultValue": "",
-      "metadata": {
-        "description": "Optional Application Insights connection string. The Dynamics integration will use this a log source if provided."
-      }
-    },
-    "appConfigurationServiceConnectionString": {
-      "type": "string",
-      "defaultValue": "",
-      "metadata": {
-        "description": "SaaS Only: Provide a connection string for a azure app configuration resource to pull app configuration settings from."
-      }
-    },
-    "appConfigurationServiceLabel": {
-      "type": "string",
-      "defaultValue": "",
-      "metadata": {
-        "description": "SaaS Only: Provide a label for the group of app settings to pull from your azure app configuration resource"
-      }
-    },
-    "packageUri": {
-      "type": "string",
-      "defaultValue": "[concat('https://github.com/InRule/AzureAppServices/releases/download/v', parameters('inRuleVersion'),'/InRule.Crm.WebJob.zip')]",
-      "metadata": {
-        "description": "Download URI for the Execution Service package. Calculated from the inRuleVersion parameter."
-      }
-    },
     "location": {
       "type": "string",
       "defaultValue": "[resourceGroup().location]",
@@ -130,169 +124,381 @@
     }
   },
   "variables": {
-    "appServicePlanName": "[if(empty(parameters('appServicePlanName')), concat(parameters('appServiceName'),'Plan'), parameters('appServicePlanName'))]",
-    "baseAppSettings": {
-      "inrule:crm:catalog:label": "[parameters('ruleAppLabel')]",
-      "inrule:crm:catalog:user": "[parameters('catalogUser')]",
-      "inrule:crm:catalog:password": "[parameters('catalogPassword')]",
-      "inrule:crm:catalog:sso": "false",
-      "inrule:crm:catalog:uri": "[parameters('catalogUri')]",
-      "inrule:crm:catalog:ruleAppDirectory": "C:\\RuleApps",
-      "inrule:crm:catalog:useInRuleCatalog": "true",
-      "inrule:crm:serviceBus:namespace": "[parameters('relayName')]",
-      "inrule:crm:serviceBus:owner": "RootManageSharedAccessKey",
-      "inrule:crm:serviceBus:path": "ruleexecution",
-      "inrule:repository:licensing:licenseFolder": "D:\\home\\site\\wwwroot",
-      "inrule:logging:level": "Info",
-      "APPLICATIONINSIGHTS_CONNECTION_STRING": "[parameters('appInsightsConnectionString')]"
-    },
-    "saasAppSettings": {
-      "inrule:api:appconfigurationservice": "[parameters('appConfigurationServiceConnectionString')]",
-      "inrule:api:appconfigurationservice:label": "[parameters('appConfigurationServiceLabel')]"
-    }
+    "computedAppServicePlanName": "[if(empty(parameters('appServicePlanName')), format('{0}Plan', parameters('appServiceName')), parameters('appServicePlanName'))]"
   },
-  "functions": [
-    {
-      "namespace": "inrule",
-      "members": {
-        "complexAppSettings": {
-          "parameters": [
-            {
-              "name": "serviceBusKey",
-              "type": "string"
-            }
-          ],
-          "output": {
-            "type": "object",
-            "value": {
-              "inrule:crm:serviceBus:key": "[parameters('serviceBusKey')]"
-            }
-          }
-        }
-      }
-    }
-  ],
   "resources": [
     {
-      "apiVersion": "2021-04-01",
-      "name": "pid-ae9ef593-f96f-43ec-9ea6-1d0a79b2f395-partnercenter",
       "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2025-04-01",
+      "name": "dynamics",
       "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
         "mode": "Incremental",
+        "parameters": {
+          "ruleAppLabel": {
+            "value": "[parameters('ruleAppLabel')]"
+          },
+          "catalogUri": {
+            "value": "[parameters('catalogUri')]"
+          },
+          "catalogUser": {
+            "value": "[parameters('catalogUser')]"
+          },
+          "catalogPassword": {
+            "value": "[parameters('catalogPassword')]"
+          },
+          "appInsightsConnectionString": {
+            "value": "[parameters('appInsightsConnectionString')]"
+          },
+          "appServiceName": {
+            "value": "[parameters('appServiceName')]"
+          },
+          "crmConnectionString": {
+            "value": "[parameters('crmConnectionString')]"
+          },
+          "createOrUpdateAppServicePlan": {
+            "value": "[parameters('createOrUpdateAppServicePlan')]"
+          },
+          "appServicePlanName": {
+            "value": "[variables('computedAppServicePlanName')]"
+          },
+          "appServicePlanSkuName": {
+            "value": "[parameters('appServicePlanSkuName')]"
+          },
+          "servicePlanResourceGroupName": {
+            "value": "[parameters('servicePlanResourceGroupName')]"
+          },
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "packageUri": {
+            "value": "[parameters('packageUri')]"
+          },
+          "primaryApiKey": {
+            "value": "[parameters('primaryApiKey')]"
+          },
+          "secondaryApiKey": {
+            "value": "[parameters('secondaryApiKey')]"
+          }
+        },
         "template": {
-          "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
           "contentVersion": "1.0.0.0",
-          "resources": []
-        }
-      }
-    },
-    {
-      "name": "[parameters('relayName')]",
-      "type": "Microsoft.Relay/namespaces",
-      "apiVersion": "2018-01-01-preview",
-      "location": "[parameters('location')]",
-      "properties": {}
-    },
-    {
-      "condition": "[parameters('createOrUpdateAppServicePlan')]",
-      "name": "AppServicePlanTemplate",
-      "apiVersion": "2021-04-01",
-      "type": "Microsoft.Resources/deployments",
-      "resourceGroup": "[parameters('servicePlanResourceGroupName')]",
-      "dependsOn": [
-        "[resourceId('Microsoft.Relay/namespaces', parameters('relayName'))]"
-      ],
-      "properties": {
-        "mode": "Incremental",
-        "template": {
-          "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-          "contentVersion": "1.0.0.0",
+          "parameters": {
+            "ruleAppLabel": {
+              "type": "string"
+            },
+            "catalogUser": {
+              "type": "string"
+            },
+            "catalogPassword": {
+              "type": "securestring"
+            },
+            "catalogUri": {
+              "type": "string"
+            },
+            "appInsightsConnectionString": {
+              "type": "string",
+              "defaultValue": ""
+            },
+            "appConfigurationServiceLabel": {
+              "type": "string",
+              "defaultValue": "",
+              "metadata": {
+                "description": "SaaS Only: Provide a label for the group of dynamics-related app settings to pull from your azure app configuration resource"
+              }
+            },
+            "appConfigurationServiceCommonLabel": {
+              "type": "string",
+              "defaultValue": "",
+              "metadata": {
+                "description": "SaaS Only: Provide a label for the group of app settings to pull from your azure app configuration resource"
+              }
+            },
+            "appConfigurationServiceConnectionString": {
+              "type": "string",
+              "defaultValue": "",
+              "metadata": {
+                "description": "SaaS Only: Provide a connection string for a azure app configuration resource to pull app configuration settings from."
+              }
+            },
+            "appServiceName": {
+              "type": "string",
+              "metadata": {
+                "description": "Name of the App Service to deploy that the Rule Execution Service will be installed on"
+              }
+            },
+            "crmConnectionString": {
+              "type": "securestring",
+              "defaultValue": "",
+              "metadata": {
+                "description": "Connection string for the Dynamics CRM instance used with the integration framework. Refer to this link for more details and formatting: https://docs.microsoft.com/en-us/powerapps/developer/common-data-service/xrm-tooling/use-connection-strings-xrm-tooling-connect"
+              }
+            },
+            "createOrUpdateAppServicePlan": {
+              "type": "bool",
+              "defaultValue": true,
+              "metadata": {
+                "description": "If set to false, provide the name and resource group of an existing service plan in the 'appServicePlanName' and 'servicePlanResourceGroupName' parameters. Otherwise a new plan will be created with the supplied name"
+              }
+            },
+            "appServicePlanSkuName": {
+              "type": "string",
+              "defaultValue": "B1",
+              "allowedValues": [
+                "B1",
+                "B2",
+                "B3",
+                "S1",
+                "S2",
+                "S3",
+                "P1",
+                "P2",
+                "P3",
+                "P4"
+              ],
+              "metadata": {
+                "description": "Describes plan's pricing tier and capacity. Check details at https://azure.microsoft.com/en-us/pricing/details/app-service/. The included web job requires 'Always On' to be enabled to function properly, which is not supported on tiers below Basic."
+              }
+            },
+            "servicePlanResourceGroupName": {
+              "type": "string",
+              "defaultValue": "[resourceGroup().name]",
+              "metadata": {
+                "description": "Optional name of the resource group for the existing app service plan. If creating a new plan, leave as the default value"
+              }
+            },
+            "packageUri": {
+              "type": "string",
+              "defaultValue": "",
+              "metadata": {
+                "description": "Download URI for the Execution Service package."
+              }
+            },
+            "location": {
+              "type": "string",
+              "defaultValue": "[resourceGroup().location]",
+              "metadata": {
+                "description": "Optional for resources. By default the location of the resource group will be used"
+              }
+            },
+            "sumoLogicEndpointUrl": {
+              "type": "securestring",
+              "defaultValue": "",
+              "metadata": {
+                "description": "SaaS Only: Sumo Logic endpoint URL for logging"
+              }
+            },
+            "sumoLogicSourceCategory": {
+              "type": "string",
+              "defaultValue": "",
+              "metadata": {
+                "description": "SaaS Only: Sumo Logic source category for log organization"
+              }
+            },
+            "tenantAlias": {
+              "type": "string",
+              "defaultValue": "",
+              "metadata": {
+                "description": "SaaS Only: Tenant alias for the deployment"
+              }
+            },
+            "primaryApiKey": {
+              "type": "securestring",
+              "defaultValue": "",
+              "metadata": {
+                "description": "Self-Hosted Only: Primary API key for the execution service"
+              }
+            },
+            "secondaryApiKey": {
+              "type": "securestring",
+              "defaultValue": "",
+              "metadata": {
+                "description": "Self-Hosted Only: Secondary API key for the execution service"
+              }
+            },
+            "appServicePlanName": {
+              "type": "string"
+            }
+          },
+          "variables": {
+            "selfDeployAppSettings": {
+              "APPLICATIONINSIGHTS_CONNECTION_STRING": "[parameters('appInsightsConnectionString')]",
+              "inrule__crm__catalog__label": "[parameters('ruleAppLabel')]",
+              "inrule__crm__catalog__user": "[parameters('catalogUser')]",
+              "inrule__crm__catalog__password": "[parameters('catalogPassword')]",
+              "inrule__crm__catalog__sso": "false",
+              "inrule__crm__catalog__uri": "[parameters('catalogUri')]",
+              "inrule__crm__catalog__ruleAppDirectory": "C:\\RuleApps",
+              "inrule__crm__catalog__useInRuleCatalog": "true",
+              "inrule__crm__DynamicsCRM": "[parameters('crmConnectionString')]",
+              "inrule__logging__level": "Info",
+              "inrule__runtime__service__apiKey__primaryKey": "[parameters('primaryApiKey')]",
+              "inrule__runtime__service__apiKey__secondaryKey": "[parameters('secondaryApiKey')]"
+            },
+            "saasAppSettings": {
+              "inrule__api__appconfigurationservice": "[parameters('appConfigurationServiceConnectionString')]",
+              "inrule__api__appconfigurationservice__label": "[parameters('appConfigurationServiceLabel')]",
+              "inrule__api__appconfigurationservice__commonlabel": "[parameters('appConfigurationServiceCommonLabel')]",
+              "inrule__runtime__service__catalog__catalogserviceuri": "[parameters('catalogUri')]",
+              "serilog__writeTo__1__name": "BufferedSumoLogic",
+              "serilog__writeTo__1__args__endpointUrl": "[parameters('sumoLogicEndpointUrl')]",
+              "serilog__writeTo__1__args__sourceHost": "[parameters('tenantAlias')]",
+              "serilog__writeTo__1__args__sourceCategory": "[parameters('sumoLogicSourceCategory')]"
+            },
+            "finalAppSettings": "[if(not(empty(parameters('appConfigurationServiceConnectionString'))), variables('saasAppSettings'), variables('selfDeployAppSettings'))]"
+          },
           "resources": [
             {
-              "name": "[variables('appServicePlanName')]",
-              "type": "Microsoft.Web/serverfarms",
-              "apiVersion": "2020-12-01",
+              "type": "Microsoft.Web/sites",
+              "apiVersion": "2022-09-01",
+              "name": "[parameters('appServiceName')]",
               "location": "[parameters('location')]",
               "properties": {
-                "name": "[variables('appServicePlanName')]"
+                "serverFarmId": "[if(parameters('createOrUpdateAppServicePlan'), reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('servicePlanResourceGroupName')), 'Microsoft.Resources/deployments', 'AppServicePlanTemplate'), '2025-04-01').outputs.appServicePlanId.value, extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('servicePlanResourceGroupName')), 'Microsoft.Web/serverfarms', parameters('appServicePlanName')))]",
+                "httpsOnly": true,
+                "siteConfig": {
+                  "alwaysOn": true,
+                  "use32BitWorkerProcess": false
+                }
               },
-              "sku": {
-                "name": "[parameters('appServicePlanSkuName')]"
+              "dependsOn": [
+                "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('servicePlanResourceGroupName')), 'Microsoft.Resources/deployments', 'AppServicePlanTemplate')]"
+              ]
+            },
+            {
+              "type": "Microsoft.Web/sites/extensions",
+              "apiVersion": "2020-12-01",
+              "name": "[format('{0}/{1}', parameters('appServiceName'), 'MSDeploy')]",
+              "properties": {
+                "packageUri": "[parameters('packageUri')]"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('appServiceName'))]"
+              ]
+            },
+            {
+              "type": "Microsoft.Web/sites/config",
+              "apiVersion": "2020-12-01",
+              "name": "[format('{0}/{1}', parameters('appServiceName'), 'appsettings')]",
+              "properties": "[variables('finalAppSettings')]",
+              "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('appServiceName'))]",
+                "[resourceId('Microsoft.Web/sites/extensions', parameters('appServiceName'), 'MSDeploy')]"
+              ]
+            },
+            {
+              "type": "Microsoft.Resources/deployments",
+              "apiVersion": "2025-04-01",
+              "name": "pid-ae9ef593-f96f-43ec-9ea6-1d0a79b2f395-partnercenter",
+              "properties": {
+                "expressionEvaluationOptions": {
+                  "scope": "inner"
+                },
+                "mode": "Incremental",
+                "parameters": {},
+                "template": {
+                  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                  "contentVersion": "1.0.0.0",
+                  "resources": []
+                }
+              }
+            },
+            {
+              "condition": "[parameters('createOrUpdateAppServicePlan')]",
+              "type": "Microsoft.Resources/deployments",
+              "apiVersion": "2025-04-01",
+              "name": "AppServicePlanTemplate",
+              "resourceGroup": "[parameters('servicePlanResourceGroupName')]",
+              "properties": {
+                "expressionEvaluationOptions": {
+                  "scope": "inner"
+                },
+                "mode": "Incremental",
+                "parameters": {
+                  "appServicePlanName": {
+                    "value": "[parameters('appServicePlanName')]"
+                  },
+                  "location": {
+                    "value": "[parameters('location')]"
+                  },
+                  "appServicePlanSkuName": {
+                    "value": "[parameters('appServicePlanSkuName')]"
+                  }
+                },
+                "template": {
+                  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                  "contentVersion": "1.0.0.0",
+                  "parameters": {
+                    "appServicePlanName": {
+                      "type": "string"
+                    },
+                    "location": {
+                      "type": "string",
+                      "metadata": {
+                        "description": "Optional for resources. By default the location of the resource group will be used"
+                      }
+                    },
+                    "appServicePlanSkuName": {
+                      "type": "string",
+                      "allowedValues": [
+                        "B1",
+                        "B2",
+                        "B3",
+                        "S1",
+                        "S2",
+                        "S3",
+                        "P1",
+                        "P2",
+                        "P3",
+                        "P4"
+                      ],
+                      "metadata": {
+                        "description": "Describes plan's pricing tier and capacity. Check details at https://azure.microsoft.com/en-us/pricing/details/app-service/. The included web job requires 'Always On' to be enabled to function properly, which is not supported on tiers below Basic."
+                      }
+                    }
+                  },
+                  "resources": [
+                    {
+                      "type": "Microsoft.Web/serverfarms",
+                      "apiVersion": "2020-12-01",
+                      "name": "[parameters('appServicePlanName')]",
+                      "location": "[parameters('location')]",
+                      "sku": {
+                        "name": "[parameters('appServicePlanSkuName')]"
+                      }
+                    }
+                  ],
+                  "outputs": {
+                    "appServicePlanId": {
+                      "type": "string",
+                      "value": "[resourceId('Microsoft.Web/serverfarms', parameters('appServicePlanName'))]"
+                    }
+                  }
+                }
               }
             }
-          ]
-        }
-      }
-    },
-    {
-      "name": "[parameters('appServiceName')]",
-      "type": "Microsoft.Web/sites",
-      "apiVersion": "2020-12-01",
-      "location": "[parameters('location')]",
-      "dependsOn": [
-        "[resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Resources/deployments', 'AppServicePlanTemplate')]",
-        "[resourceId('Microsoft.Relay/namespaces', parameters('relayName'))]"
-      ],
-      "properties": {
-        "serverFarmId": "[resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', variables('appServicePlanName'))]",
-        "siteConfig": {
-          "AlwaysOn": true,
-          "use32BitWorkerProcess": false
-        }
-      },
-      "resources": [
-        {
-          "name": "MSDeploy",
-          "type": "extensions",
-          "apiVersion": "2020-12-01",
-          "dependsOn": [
-            "[resourceId('Microsoft.Web/sites', parameters('appServiceName'))]"
           ],
-          "properties": {
-            "packageUri": "[parameters('packageURI')]"
-          }
-        },
-        {
-          "name": "appsettings",
-          "type": "config",
-          "apiVersion": "2020-12-01",
-          "dependsOn": [
-            "[resourceId('Microsoft.Web/sites/extensions', parameters('appServiceName'), 'MSDeploy')]",
-            "[resourceId('Microsoft.Web/sites', parameters('appServiceName'))]"
-          ],
-          "properties": "[union(if(not(empty(parameters('appConfigurationServiceConnectionString'))), union(variables('baseAppSettings'), variables('saasAppSettings')), variables('baseAppSettings')), inrule.complexAppSettings(listKeys(resourceId('Microsoft.Relay/namespaces/authorizationRules', parameters('relayName'), 'RootManageSharedAccessKey'), '2017-04-01').primaryKey))]"
-        },
-        {
-          "condition": "[not(equals(parameters('crmConnectionString'), ''))]",
-          "name": "connectionstrings",
-          "type": "config",
-          "apiVersion": "2020-12-01",
-          "dependsOn": [
-            "[resourceId('Microsoft.Web/sites/extensions', parameters('appServiceName'), 'MSDeploy')]",
-            "[resourceId('Microsoft.Web/sites', parameters('appServiceName'))]"
-          ],
-          "properties": {
-            "DynamicsCRM": {
-              "value": "[parameters('crmConnectionString')]",
-              "type": "Custom"
+          "outputs": {
+            "appServicePublishingCredentials": {
+              "type": "object",
+              "value": "[list(resourceId('Microsoft.Web/sites/config', parameters('appServiceName'), 'publishingcredentials'), '2020-06-01')]"
+            },
+            "dynamicsExecutionServiceURL": {
+              "type": "string",
+              "value": "[format('https://{0}', reference(resourceId('Microsoft.Web/sites', parameters('appServiceName')), '2022-09-01').defaultHostName)]"
             }
           }
         }
-      ]
+      }
     }
   ],
   "outputs": {
-    "relayKey": {
+    "dynamicsExecutionServiceURL": {
       "type": "string",
-      "value": "[listKeys(resourceId('Microsoft.Relay/namespaces/authorizationRules', parameters('relayName'), 'RootManageSharedAccessKey'), '2017-04-01').primaryKey]"
-    },
-    "relayNamespaceAddress": {
-      "type": "string",
-      "value": "[concat(reference(resourceId('Microsoft.Relay/namespaces', parameters('relayName'))).serviceBusEndpoint, 'ruleexecution')]"
-    },
-    "appServicePublishingCredentials": {
-      "type": "object",
-      "value": "[list(resourceId('Microsoft.Web/sites/config', parameters('appServiceName'), 'publishingcredentials'), '2020-06-01')]"
+      "value": "[reference(resourceId('Microsoft.Resources/deployments', 'dynamics'), '2025-04-01').outputs.dynamicsExecutionServiceURL.value]"
     }
   }
 }

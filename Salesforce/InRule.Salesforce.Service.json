@@ -53,7 +53,7 @@
     "catalogUri": {
       "type": "string",
       "metadata": {
-        "description": "URI for your InRule Rule Catalog service, should follow this format: https://{Context}/Service.svc, with {Context} being replaced with the base catalog service URI."
+        "description": "URI for your InRule Rule Catalog service, should follow this format: https://{Context}/Service.svc/core, with {Context} being replaced with the base catalog service URI."
       }
     },
     "catalogUser": {
@@ -75,13 +75,6 @@
         "description": "Optionally supply a default label used by the execution service to identify the ruleapp version to run. It is recommended to use a label such as \"LIVE\" to denote a production-ready rule application"
       }
     },
-    "executionServiceApiKey": {
-      "type": "string",
-      "defaultValue": "",
-      "metadata": {
-        "description": "Api key used to secure the rule service. This same key will need to be provided to Salesforce during configuration"
-      }
-    },
     "createOrUpdateAppServicePlan": {
       "type": "bool",
       "defaultValue": true,
@@ -91,9 +84,23 @@
     },
     "appServicePlanName": {
       "type": "string",
-      "defaultValue": "[concat(parameters('appServiceName'),'Plan')]",
+      "defaultValue": "[format('{0}Plan', parameters('appServiceName'))]",
       "metadata": {
         "description": "Defines the App Service Plan's name, defaulting to the value of the App Service's name with 'Plan' appended to the end"
+      }
+    },
+    "inRuleVersion": {
+      "type": "string",
+      "defaultValue": "5.8.1",
+      "metadata": {
+        "description": "Defines what version of the InRule Execution Service to deploy"
+      }
+    },
+    "packageUri": {
+      "type": "string",
+      "defaultValue": "[format('https://github.com/InRule/AzureAppServices/releases/download/v{0}/InRule.Salesforce.Api.zip', parameters('inRuleVersion'))]",
+      "metadata": {
+        "description": "Download URI for the Execution Service package. Calculated from the inRuleVersion parameter."
       }
     },
     "appServicePlanSkuName": {
@@ -124,39 +131,11 @@
         "description": "Optional name of the resource group for the existing app service plan. If creating a new plan, leave as the default value"
       }
     },
-    "inRuleVersion": {
-      "type": "string",
-      "defaultValue": "5.8.1",
-      "metadata": {
-        "description": "Defines what version of the InRule Execution Service to deploy"
-      }
-    },
     "appInsightsConnectionString": {
       "type": "string",
       "defaultValue": "",
       "metadata": {
         "description": "Optional Application Insights connection string. The Salesforce integration will use this a log source if provided."
-      }
-    },
-    "appConfigurationServiceConnectionString": {
-      "type": "string",
-      "defaultValue": "",
-      "metadata": {
-        "description": "SaaS Only: Provide a connection string for a azure app configuration resource to pull app configuration settings from."
-      }
-    },
-    "appConfigurationServiceLabel": {
-      "type": "string",
-      "defaultValue": "",
-      "metadata": {
-        "description": "SaaS Only: Provide a label for the group of app settings to pull from your azure app configuration resource"
-      }
-    },
-    "packageUri": {
-      "type": "string",
-      "defaultValue": "[concat('https://github.com/InRule/AzureAppServices/releases/download/v', parameters('inRuleVersion'),'/InRule.Salesforce.WebService.zip')]",
-      "metadata": {
-        "description": "Download URI for the Execution Service package. Calculated from the inRuleVersion parameter."
       }
     },
     "location": {
@@ -165,128 +144,472 @@
       "metadata": {
         "description": "Optional for resources. By default the location of the resource group will be used"
       }
-    }
-  },
-  "variables": {
-    "appServicePlanName": "[if(empty(parameters('appServicePlanName')), concat(parameters('appServiceName'),'Plan'), parameters('appServicePlanName'))]",
-    "baseAppSettings": {
-      "inrule:sf:catalog:label": "[parameters('ruleAppLabel')]",
-      "inrule:sf:catalog:user": "[parameters('catalogUser')]",
-      "inrule:sf:catalog:password": "[parameters('catalogPassword')]",
-      "inrule:sf:catalog:sso": "false",
-      "inrule:sf:catalog:uri": "[parameters('catalogUri')]",
-      "inrule:sf:catalog:ruleAppDirectory": "C:\\RuleApps",
-      "inrule:sf:catalog:useInRuleCatalog": "true",
-      "inrule:repository:licensing:licenseFolder": "D:\\home\\site\\wwwroot",
-      "inrule:logging:level": "Info"
     },
-    "selfDeployAppSettings": {
-      "inrule:sf:api:loginUrl": "[parameters('sfLoginUrl')]",
-      "inrule:sf:api:username": "[parameters('sfUsername')]",
-      "inrule:sf:api:password": "[parameters('sfPassword')]",
-      "inrule:sf:api:securityToken": "[parameters('sfSecurityToken')]",
-      "inrule:sf:api:consumerKey": "[parameters('sfConsumerKey')]",
-      "inrule:sf:api:consumerSecret": "[parameters('sfConsumerSecret')]",
-      "inrule:sf:ruleService:apiKey": "[parameters('executionServiceApiKey')]",
-      "APPLICATIONINSIGHTS_CONNECTION_STRING": "[parameters('appInsightsConnectionString')]"
+    "primaryApiKey": {
+      "type": "securestring",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Self-Hosted Only: Primary API key to authenticate with the Salesforce API"
+      }
     },
-    "saasAppSettings": {
-      "inrule:api:appconfigurationservice": "[parameters('appConfigurationServiceConnectionString')]",
-      "inrule:api:appconfigurationservice:label": "[parameters('appConfigurationServiceLabel')]"
+    "secondaryApiKey": {
+      "type": "securestring",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Self-Hosted Only: Secondary API key to authenticate with the Salesforce API"
+      }
     }
   },
   "resources": [
     {
-      "apiVersion": "2021-04-01",
-      "name": "pid-33e2dfaf-aab8-4fa0-94fb-3e0b7f491cbd",
       "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2025-04-01",
+      "name": "salesforce",
       "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
         "mode": "Incremental",
+        "parameters": {
+          "appServiceName": {
+            "value": "[parameters('appServiceName')]"
+          },
+          "sfLoginUrl": {
+            "value": "[parameters('sfLoginUrl')]"
+          },
+          "sfUsername": {
+            "value": "[parameters('sfUsername')]"
+          },
+          "sfPassword": {
+            "value": "[parameters('sfPassword')]"
+          },
+          "sfSecurityToken": {
+            "value": "[parameters('sfSecurityToken')]"
+          },
+          "sfConsumerKey": {
+            "value": "[parameters('sfConsumerKey')]"
+          },
+          "sfConsumerSecret": {
+            "value": "[parameters('sfConsumerSecret')]"
+          },
+          "catalogUri": {
+            "value": "[parameters('catalogUri')]"
+          },
+          "catalogUser": {
+            "value": "[parameters('catalogUser')]"
+          },
+          "catalogPassword": {
+            "value": "[parameters('catalogPassword')]"
+          },
+          "ruleAppLabel": {
+            "value": "[parameters('ruleAppLabel')]"
+          },
+          "createOrUpdateAppServicePlan": {
+            "value": "[parameters('createOrUpdateAppServicePlan')]"
+          },
+          "appServicePlanName": {
+            "value": "[parameters('appServicePlanName')]"
+          },
+          "appServicePlanSkuName": {
+            "value": "[parameters('appServicePlanSkuName')]"
+          },
+          "servicePlanResourceGroupName": {
+            "value": "[parameters('servicePlanResourceGroupName')]"
+          },
+          "appInsightsConnectionString": {
+            "value": "[parameters('appInsightsConnectionString')]"
+          },
+          "packageUri": {
+            "value": "[parameters('packageUri')]"
+          },
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "primaryApiKey": {
+            "value": "[parameters('primaryApiKey')]"
+          },
+          "secondaryApiKey": {
+            "value": "[parameters('secondaryApiKey')]"
+          }
+        },
         "template": {
-          "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "parameters": {
+            "appServiceName": {
+              "type": "string",
+              "metadata": {
+                "description": "Name of the App Service to deploy that the Rule Execution Service will be installed on"
+              }
+            },
+            "sfLoginUrl": {
+              "type": "string",
+              "defaultValue": "",
+              "metadata": {
+                "description": "Login URL for the Salesforce instance used with the integration framework, ex: 'https://login.salesforce.com/services/oauth2/token'"
+              }
+            },
+            "sfUsername": {
+              "type": "string",
+              "defaultValue": "",
+              "metadata": {
+                "description": "Login username to connect to your Salesforce Account"
+              }
+            },
+            "sfPassword": {
+              "type": "securestring",
+              "defaultValue": "",
+              "metadata": {
+                "description": "Login password to connect to your Salesforce Account"
+              }
+            },
+            "sfSecurityToken": {
+              "type": "securestring",
+              "defaultValue": "",
+              "metadata": {
+                "description": "API token for the Salesforce service account"
+              }
+            },
+            "sfConsumerKey": {
+              "type": "string",
+              "defaultValue": "",
+              "metadata": {
+                "description": "OAuth consumer key for the connected app"
+              }
+            },
+            "sfConsumerSecret": {
+              "type": "securestring",
+              "defaultValue": "",
+              "metadata": {
+                "description": "OAuth consumer secret for the connected app"
+              }
+            },
+            "catalogUri": {
+              "type": "string",
+              "defaultValue": "",
+              "metadata": {
+                "description": "URI for your InRule Rule Catalog service, should follow this format: https://{Context}/Service.svc/core, with {Context} being replaced with the base catalog service URI. If you are setting deployCatalogResources to true, leave this value blank."
+              }
+            },
+            "catalogUser": {
+              "type": "string",
+              "defaultValue": "",
+              "metadata": {
+                "description": "Login username to connect to your InRule Rule Catalog. If you are setting deployCatalogResources AND deployInitialCatalogDb to true, leave this value blank. The catalog will be set up with default username/password credentials of admin/password. It is suggested to change the password for this account once deployment is complete."
+              }
+            },
+            "catalogPassword": {
+              "type": "securestring",
+              "defaultValue": "",
+              "metadata": {
+                "description": "Login password to connect to your InRule Rule Catalog. If you are setting deployCatalogResources AND deployInitialCatalogDb to true, leave this value blank. The catalog will be set up with default username/password credentials of admin/password. It is suggested to change the password for this account once deployment is complete."
+              }
+            },
+            "ruleAppLabel": {
+              "type": "string",
+              "defaultValue": "",
+              "metadata": {
+                "description": "Optionally supply a default label used by the execution service to identify the ruleapp version to run. It is recommended to use a label such as \"LIVE\" to denote a production-ready rule application"
+              }
+            },
+            "createOrUpdateAppServicePlan": {
+              "type": "bool",
+              "defaultValue": true,
+              "metadata": {
+                "description": "If set to false, provide the name and resource group of an existing service plan in the 'appServicePlanName' and 'servicePlanResourceGroupName' parameters. Otherwise a new plan will be created with the supplied name"
+              }
+            },
+            "appServicePlanName": {
+              "type": "string",
+              "defaultValue": "[format('{0}Plan', parameters('appServiceName'))]",
+              "metadata": {
+                "description": "Defines the App Service Plan's name, defaulting to the value of the App Service's name with 'Plan' appended to the end"
+              }
+            },
+            "appServicePlanSkuName": {
+              "type": "string",
+              "defaultValue": "F1",
+              "allowedValues": [
+                "F1",
+                "D1",
+                "B1",
+                "B2",
+                "B3",
+                "S1",
+                "S2",
+                "S3",
+                "P1",
+                "P2",
+                "P3",
+                "P4"
+              ],
+              "metadata": {
+                "description": "Describes plan's pricing tier and capacity. Check details at https://azure.microsoft.com/en-us/pricing/details/app-service/"
+              }
+            },
+            "servicePlanResourceGroupName": {
+              "type": "string",
+              "defaultValue": "[resourceGroup().name]",
+              "metadata": {
+                "description": "Optional name of the resource group for the existing app service plan. If creating a new plan, leave as the default value"
+              }
+            },
+            "appInsightsConnectionString": {
+              "type": "string",
+              "defaultValue": "",
+              "metadata": {
+                "description": "Only override the default value here if you have an existing App Insights resource you'd like to use, AND you need to use a non-standard connection string. If you need to supply your own connection string, be sure to set that value here, as well as providing your instrumentation key in the appInsightsInstrumentationKey parameter. If you want this template to manage the App Insights resource for you, or only need to provide an instrumentation key, leave this value as the default and provide values for appInsightsResourceName or appInsightsInstrumentationKey instead"
+              }
+            },
+            "appConfigurationServiceConnectionString": {
+              "type": "string",
+              "defaultValue": "",
+              "metadata": {
+                "description": "SaaS Only: Provide a connection string for a azure app configuration resource to pull app configuration settings from."
+              }
+            },
+            "appConfigurationServiceLabel": {
+              "type": "string",
+              "defaultValue": "",
+              "metadata": {
+                "description": "SaaS Only: Provide a label for the group of app settings to pull from your azure app configuration resource"
+              }
+            },
+            "packageUri": {
+              "type": "string",
+              "defaultValue": "",
+              "metadata": {
+                "description": "Download URI for the Execution Service package. Calculated from the inRuleVersion parameter."
+              }
+            },
+            "sumoLogicEndpointUrl": {
+              "type": "securestring",
+              "defaultValue": "",
+              "metadata": {
+                "description": "SaaS Only: Sumo Logic endpoint URL for logging"
+              }
+            },
+            "sumoLogicSourceCategory": {
+              "type": "string",
+              "defaultValue": "",
+              "metadata": {
+                "description": "SaaS Only: Sumo Logic source category for log organization"
+              }
+            },
+            "tenantAlias": {
+              "type": "string",
+              "defaultValue": "",
+              "metadata": {
+                "description": "SaaS Only: Tenant alias for the deployment"
+              }
+            },
+            "location": {
+              "type": "string",
+              "defaultValue": "[resourceGroup().location]",
+              "metadata": {
+                "description": "Optional for resources. By default the location of the resource group will be used"
+              }
+            },
+            "primaryApiKey": {
+              "type": "securestring",
+              "defaultValue": "",
+              "metadata": {
+                "description": "Self-Hosted Only: Primary API key to authenticate with the Salesforce API"
+              }
+            },
+            "secondaryApiKey": {
+              "type": "securestring",
+              "defaultValue": "",
+              "metadata": {
+                "description": "Self-Hosted Only: Secondary API key to authenticate with the Salesforce API"
+              }
+            }
+          },
+          "variables": {
+            "selfDeployAppSettings": {
+              "APPLICATIONINSIGHTS_CONNECTION_STRING": "[parameters('appInsightsConnectionString')]",
+              "inrule__sf__api__loginUrl": "[parameters('sfLoginUrl')]",
+              "inrule__sf__api__username": "[parameters('sfUsername')]",
+              "inrule__sf__api__password": "[parameters('sfPassword')]",
+              "inrule__sf__api__securityToken": "[parameters('sfSecurityToken')]",
+              "inrule__sf__api__consumerKey": "[parameters('sfConsumerKey')]",
+              "inrule__sf__api__consumerSecret": "[parameters('sfConsumerSecret')]",
+              "inrule__sf__api__authType": "usernamePassword",
+              "inrule__sf__catalog__label": "[parameters('ruleAppLabel')]",
+              "inrule__sf__catalog__user": "[parameters('catalogUser')]",
+              "inrule__sf__catalog__password": "[parameters('catalogPassword')]",
+              "inrule__sf__catalog__sso": "false",
+              "inrule__sf__catalog__uri": "[parameters('catalogUri')]",
+              "inrule__sf__catalog__ruleAppDirectory": "/home/site/wwwroot/RuleApps",
+              "inrule__sf__catalog__useInRuleCatalog": "true",
+              "inrule__logging__level": "Info",
+              "inrule__runtime__service__apiKey__primaryKey": "[parameters('primaryApiKey')]",
+              "inrule__runtime__service__apiKey__secondaryKey": "[parameters('secondaryApiKey')]"
+            },
+            "saasAppSettings": {
+              "inrule__api__appconfigurationservice": "[parameters('appConfigurationServiceConnectionString')]",
+              "inrule__api__appconfigurationservice__label": "[parameters('appConfigurationServiceLabel')]",
+              "inrule__api__appconfigurationservice__commonlabel": "[parameters('tenantAlias')]",
+              "inrule__runtime__service__catalog__catalogserviceuri": "[parameters('catalogUri')]",
+              "serilog__writeTo__1__name": "BufferedSumoLogic",
+              "serilog__writeTo__1__args__endpointUrl": "[parameters('sumoLogicEndpointUrl')]",
+              "serilog__writeTo__1__args__sourceHost": "[parameters('tenantAlias')]",
+              "serilog__writeTo__1__args__sourceCategory": "[parameters('sumoLogicSourceCategory')]"
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Web/sites",
+              "apiVersion": "2020-12-01",
+              "name": "[parameters('appServiceName')]",
+              "location": "[parameters('location')]",
+              "properties": {
+                "serverFarmId": "[if(parameters('createOrUpdateAppServicePlan'), reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('servicePlanResourceGroupName')), 'Microsoft.Resources/deployments', 'AppServicePlanTemplate'), '2025-04-01').outputs.appServicePlanId.value, extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('servicePlanResourceGroupName')), 'Microsoft.Web/serverfarms', parameters('appServicePlanName')))]",
+                "siteConfig": {
+                  "use32BitWorkerProcess": "[or(equals(if(parameters('createOrUpdateAppServicePlan'), reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('servicePlanResourceGroupName')), 'Microsoft.Resources/deployments', 'AppServicePlanTemplate'), '2025-04-01').outputs.appServicePlanSkuName.value, reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('servicePlanResourceGroupName')), 'Microsoft.Web/serverfarms', parameters('appServicePlanName')), '2020-12-01', 'full').sku.name), 'F1'), equals(if(parameters('createOrUpdateAppServicePlan'), reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('servicePlanResourceGroupName')), 'Microsoft.Resources/deployments', 'AppServicePlanTemplate'), '2025-04-01').outputs.appServicePlanSkuName.value, reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('servicePlanResourceGroupName')), 'Microsoft.Web/serverfarms', parameters('appServicePlanName')), '2020-12-01', 'full').sku.name), 'D1'))]"
+                }
+              },
+              "dependsOn": [
+                "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('servicePlanResourceGroupName')), 'Microsoft.Resources/deployments', 'AppServicePlanTemplate')]"
+              ]
+            },
+            {
+              "type": "Microsoft.Web/sites/extensions",
+              "apiVersion": "2020-12-01",
+              "name": "[format('{0}/{1}', parameters('appServiceName'), 'MSDeploy')]",
+              "properties": {
+                "packageUri": "[parameters('packageUri')]"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('appServiceName'))]"
+              ]
+            },
+            {
+              "type": "Microsoft.Web/sites/config",
+              "apiVersion": "2020-12-01",
+              "name": "[format('{0}/{1}', parameters('appServiceName'), 'appsettings')]",
+              "properties": "[if(empty(parameters('appConfigurationServiceConnectionString')), variables('selfDeployAppSettings'), variables('saasAppSettings'))]",
+              "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('appServiceName'))]",
+                "[resourceId('Microsoft.Web/sites/extensions', parameters('appServiceName'), 'MSDeploy')]"
+              ]
+            },
+            {
+              "condition": "[parameters('createOrUpdateAppServicePlan')]",
+              "type": "Microsoft.Resources/deployments",
+              "apiVersion": "2025-04-01",
+              "name": "AppServicePlanTemplate",
+              "resourceGroup": "[parameters('servicePlanResourceGroupName')]",
+              "properties": {
+                "expressionEvaluationOptions": {
+                  "scope": "inner"
+                },
+                "mode": "Incremental",
+                "parameters": {
+                  "appServicePlanName": {
+                    "value": "[parameters('appServicePlanName')]"
+                  },
+                  "location": {
+                    "value": "[parameters('location')]"
+                  },
+                  "appServicePlanSkuName": {
+                    "value": "[parameters('appServicePlanSkuName')]"
+                  }
+                },
+                "template": {
+                  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                  "contentVersion": "1.0.0.0",
+                  "parameters": {
+                    "appServicePlanName": {
+                      "type": "string"
+                    },
+                    "location": {
+                      "type": "string",
+                      "metadata": {
+                        "description": "Optional for resources. By default the location of the resource group will be used"
+                      }
+                    },
+                    "appServicePlanSkuName": {
+                      "type": "string",
+                      "allowedValues": [
+                        "F1",
+                        "D1",
+                        "B1",
+                        "B2",
+                        "B3",
+                        "S1",
+                        "S2",
+                        "S3",
+                        "P1",
+                        "P2",
+                        "P3",
+                        "P4"
+                      ],
+                      "metadata": {
+                        "description": "Describes plan's pricing tier and capacity. Check details at https://azure.microsoft.com/en-us/pricing/details/app-service/"
+                      }
+                    }
+                  },
+                  "resources": [
+                    {
+                      "type": "Microsoft.Web/serverfarms",
+                      "apiVersion": "2020-12-01",
+                      "name": "[parameters('appServicePlanName')]",
+                      "location": "[parameters('location')]",
+                      "sku": {
+                        "name": "[parameters('appServicePlanSkuName')]"
+                      }
+                    }
+                  ],
+                  "outputs": {
+                    "appServicePlanId": {
+                      "type": "string",
+                      "value": "[resourceId('Microsoft.Web/serverfarms', parameters('appServicePlanName'))]"
+                    },
+                    "appServicePlanSkuName": {
+                      "type": "string",
+                      "value": "[reference(resourceId('Microsoft.Web/serverfarms', parameters('appServicePlanName')), '2020-12-01', 'full').sku.name]"
+                    }
+                  }
+                }
+              }
+            }
+          ],
+          "outputs": {
+            "salesforceRuleExecutionServiceURL": {
+              "type": "string",
+              "value": "[format('https://{0}', reference(resourceId('Microsoft.Web/sites', parameters('appServiceName')), '2020-12-01').defaultHostName)]"
+            },
+            "appServicePublishingCredentials": {
+              "type": "object",
+              "value": "[list(resourceId('Microsoft.Web/sites/config', parameters('appServiceName'), 'publishingcredentials'), '2020-12-01')]"
+            }
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2025-04-01",
+      "name": "pid-33e2dfaf-aab8-4fa0-94fb-3e0b7f491cbd",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {},
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
           "contentVersion": "1.0.0.0",
           "resources": []
         }
       }
-    },
-    {
-      "condition": "[parameters('createOrUpdateAppServicePlan')]",
-      "name": "AppServicePlanTemplate",
-      "apiVersion": "2021-04-01",
-      "type": "Microsoft.Resources/deployments",
-      "resourceGroup": "[parameters('servicePlanResourceGroupName')]",
-      "properties": {
-        "mode": "Incremental",
-        "template": {
-          "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-          "contentVersion": "1.0.0.0",
-          "resources": [
-            {
-              "name": "[variables('appServicePlanName')]",
-              "type": "Microsoft.Web/serverfarms",
-              "apiVersion": "2020-12-01",
-              "location": "[parameters('location')]",
-              "properties": {
-                "name": "[variables('appServicePlanName')]"
-              },
-              "sku": {
-                "name": "[parameters('appServicePlanSkuName')]"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "name": "[parameters('appServiceName')]",
-      "type": "Microsoft.Web/sites",
-      "apiVersion": "2020-12-01",
-      "location": "[parameters('location')]",
-      "dependsOn": [
-        "[resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Resources/deployments', 'AppServicePlanTemplate')]"
-      ],
-      "tags": {
-        "[concat('hidden-related:', resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', parameters('appServicePlanName')))]": "Resource"
-      },
-      "properties": {
-        "serverFarmId": "[resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', variables('appServicePlanName'))]",
-        "siteConfig": {
-          "use32BitWorkerProcess": "[or(equals(if(parameters('createOrUpdateAppServicePlan'), parameters('appServicePlanSkuName'), reference(resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', variables('appServicePlanName')), '2021-02-01', 'Full').sku.name), 'F1'), equals(if(parameters('createOrUpdateAppServicePlan'), parameters('appServicePlanSkuName'), reference(resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', variables('appServicePlanName')), '2021-02-01', 'Full').sku.name), 'D1'))]"
-        }
-      },
-      "resources": [
-        {
-          "name": "MSDeploy",
-          "type": "extensions",
-          "apiVersion": "2020-12-01",
-          "dependsOn": [
-            "[resourceId('Microsoft.Web/sites', parameters('appServiceName'))]"
-          ],
-          "properties": {
-            "packageUri": "[parameters('packageURI')]"
-          }
-        },
-        {
-          "name": "appsettings",
-          "type": "config",
-          "apiVersion": "2020-12-01",
-          "dependsOn": [
-            "[resourceId('Microsoft.Web/sites/extensions', parameters('appServiceName'), 'MSDeploy')]",
-            "[resourceId('Microsoft.Web/sites', parameters('appServiceName'))]"
-          ],
-          "properties": "[if(not(empty(parameters('appConfigurationServiceConnectionString'))), union(variables('baseAppSettings'), variables('saasAppSettings')), union(variables('baseAppSettings'), variables('selfDeployAppSettings'))))]"
-        }
-      ]
     }
   ],
   "outputs": {
     "appServicePublishingCredentials": {
       "type": "object",
-      "value": "[list(resourceId('Microsoft.Web/sites/config', parameters('appServiceName'), 'publishingcredentials'), '2020-12-01')]"
-    },
-    "salesforceRuleExecutionServiceURL": {
-      "type": "string",
-      "value": "[concat('https://', reference(resourceId('Microsoft.Web/sites', parameters('appServiceName')), '2020-12-01').defaultHostName)]"
+      "value": "[reference(resourceId('Microsoft.Resources/deployments', 'salesforce'), '2025-04-01').outputs.appServicePublishingCredentials.value]"
     }
   }
 }
