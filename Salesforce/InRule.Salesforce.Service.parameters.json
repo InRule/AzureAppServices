@@ -44,6 +44,9 @@
     "inRuleVersion": {
       "value": "5.9.0"
     },
+    "appInsightsConnectionString": {
+      "value": ""
+    },
     "primaryApiKey": {
       "value": ""
     },
