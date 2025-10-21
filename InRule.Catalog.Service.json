@@ -268,7 +268,8 @@
           "properties": {
             "InRule__Catalog__Uri": "[concat('https://', parameters('catalogServiceName') ,'.azurewebsites.net/service.svc/core')]",
             "Serilog__MinimumLevel": "Information",
-            "Serilog__WriteTo__0__Name": "Console"
+            "Serilog__WriteTo__0__Name": "Console",
+            "CatalogService__AuthenticationType": "Database"
           }
         }
       ]
