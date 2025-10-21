@@ -34,33 +34,6 @@
     },
     "catalogServicePlanName": {
       "value": ""
-    },
-    "catalogServiceAuthenticationType": {
-      "value": "Basic"
-    },
-    "enableAuth0ForCatalogService": {
-      "value": false
-    },
-    "auth0ValidAudiences": {
-      "value": ""
-    },
-    "auth0ValidIssuer": {
-      "value": ""
-    },
-    "auth0DiscoveryUrl": {
-      "value": ""
-    },
-    "enableOidc": {
-      "value": false
-    },
-    "oidcBaseUri": {
-      "value": ""
-    },
-    "oidcClientId": {
-      "value": ""
-    },
-    "oidcConfigServiceBase": {
-      "value": ""
     }
   }
 }
