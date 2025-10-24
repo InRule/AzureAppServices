@@ -219,9 +219,12 @@
             "[resourceId('Microsoft.Web/sites', parameters('catalogServiceName'))]"
           ],
           "properties": {
-            "inrule:repository:service:connectionString": "[concat('Server=tcp:', reference(resourceId('Microsoft.Sql/servers', parameters('catalogSqlServerName'))).fullyQualifiedDomainName, ',1433;Database=', parameters('catalogSqlDbName'), ';User Id=', parameters('catalogSqlServerUsername'), ';Password=', parameters('catalogSqlServerPassword'), ';')]",
-            "inrule:repository:licensing:licenseFolder": "D:\\home\\site\\wwwroot",
-            "inrule:logging:level": "Warn"
+            "CatalogService__SqlServerConnectionString": "[concat('Server=tcp:', reference(resourceId('Microsoft.Sql/servers', parameters('catalogSqlServerName'))).fullyQualifiedDomainName, ',1433;Database=', parameters('catalogSqlDbName'), ';User Id=', parameters('catalogSqlServerUsername'), ';Password=', parameters('catalogSqlServerPassword'), ';')]",
+            "CatalogService__Hostname": "[concat(parameters('catalogServiceName'), '.azurewebsites.net')]",
+            "CatalogService__AuthenticationType": "Database",
+            "InRuleLoggingOptions__Level": "Warn",
+            "Serilog__MinimumLevel": "Information",
+            "Serilog__WriteTo__0__Name": "Console"
           }
         }
       ]
@@ -264,7 +267,9 @@
             "[resourceId('Microsoft.Web/sites', parameters('catalogManagerServiceName'))]"
           ],
           "properties": {
-            "InRule.Catalog.Uri": "[concat('https://', parameters('catalogServiceName') ,'.azurewebsites.net/service.svc')]"
+            "InRule__Catalog__Uri": "[concat('https://', parameters('catalogServiceName') ,'.azurewebsites.net/service.svc/core')]",
+            "Serilog__MinimumLevel": "Information",
+            "Serilog__WriteTo__0__Name": "Console"
           }
         }
       ]
