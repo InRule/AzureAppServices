@@ -444,7 +444,16 @@
               "inrule__sf__catalog__useInRuleCatalog": "true",
               "inrule__logging__level": "Info",
               "inrule__runtime__service__apiKey__primaryKey": "[parameters('primaryApiKey')]",
-              "inrule__runtime__service__apiKey__secondaryKey": "[parameters('secondaryApiKey')]"
+              "inrule__runtime__service__apiKey__secondaryKey": "[parameters('secondaryApiKey')]",
+              "serilog__using__0": "Serilog.Sinks.ApplicationInsights",
+              "serilog__using__1": "Serilog.Sinks.Async",
+              "serilog__using__2": "Serilog.Sinks.EventLog",
+              "serilog__writeTo__0__name": "ApplicationInsights",
+              "serilog__writeTo__0__args__telemetryConverter": "Serilog.Sinks.ApplicationInsights.TelemetryConverters.TraceTelemetryConverter, Serilog.Sinks.ApplicationInsights",
+              "serilog__writeTo__1__name": "Async",
+              "serilog__writeTo__1__args__configure__0__name": "EventLog",
+              "serilog__writeTo__1__args__configure__0__args__source": "Application",
+              "serilog__writeTo__1__args__configure__0__args__logName": "Application"
             },
             "saasAppSettings": {
               "inrule__api__appconfigurationservice": "[parameters('appConfigurationServiceConnectionString')]",
