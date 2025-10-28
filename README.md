@@ -37,7 +37,7 @@ There are two options for deploying Decision Services: deploying through the [Az
 
 * [ARM Template Deployment](doc/decision-services-arm-template-deployment.md)
 
-# Decision and Rule Execution
+#### Decision and Rule Execution
 For more information on executing decisions and rules, refer to the following documentation:
 * [Decision Services API Guide](https://docs.inrule.com/docs/introduction-to-decision-services)
 
@@ -67,7 +67,7 @@ Once Web Apps have been deployed, their individual log files can be retrieved.
 * [Web App log retrieval](doc/webapp-log-retrieval.md)
 
 # Upgrade Considerations
-Be sure to backup the AppSettings file because it will be overwritten during an upgrade deployment.
+Be sure to backup the AppSettings file because it will be overwritten during an upgrade deployment. See [release notes](https://docs.inrule.com/docs/inrule-decisioning-version-590-release-notes) for more information.
 
 # Legacy irServer Rule Execution Service
 
