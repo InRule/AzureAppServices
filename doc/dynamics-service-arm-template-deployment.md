@@ -64,7 +64,7 @@ az deployment group create -g RESOURCE_GROUP_NAME --template-file .\InRule.Dynam
 ```
 
 ## Upload valid license file
-In order for the Dynamics API to properly function, a valid license file must be uploaded to the web app. For information on how to upload your license file please refer to our [documentation](/doc/upload-license-file.md).
+In order for the Dynamics API to properly function, a valid license file must be uploaded to the web app. For information on how to upload your license file please refer to our [license upload documentation](/doc/upload-license-file.md).
 
 ## Verify by getting status details
 As a final verification that Dynamics API is properly functioning, a REST call can be made to the status details endpoint.

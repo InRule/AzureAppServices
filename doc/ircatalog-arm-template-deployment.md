@@ -68,7 +68,7 @@ You'll need to temporarily allow access to your local machine to deploy the sche
 After opening the firewall, you'll need to use the provided tool to setup the database. This step can be found in the Catalog web app deployment guide [Catalog Web App Deployment](ircatalog.md#deploy-the-ircatalog-database)
 
 ## Upload valid license file
-In order for Catalog Service to properly function, a valid license file must be uploaded to the web app. For information on how to upload your license file please refer to our [documentation](/doc/upload-license-file.md).
+In order for Catalog Service to properly function, a valid license file must be uploaded to the web app. For information on how to upload your license file please refer to our [license upload documentation](/doc/upload-license-file.md).
 
 ## Verify using irAuthor
 Using irAuthor you should now be able to connect to your catalog using the url [https://catalogServiceName.azurewebsites.net/service.svc](https://catalogServiceName.azurewebsites.net/service.svc).

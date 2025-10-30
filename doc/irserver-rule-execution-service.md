@@ -48,7 +48,7 @@ az webapp deployment source config-zip --name WEB_APP_NAME --resource-group RESO
 ```
 
 ## Upload valid license file
-In order for irServer Rule Execution Service to properly function, a valid license file must be uploaded to the web app. For information on how to upload your license file please refer to our [documentation](/doc/upload-license-file.md).
+In order for irServer Rule Execution Service to properly function, a valid license file must be uploaded to the web app. For information on how to upload your license file please refer to our [license upload documentation](/doc/upload-license-file.md).
 
 ## Verify with apply rules
 As a final verification that irServer Rule Execution Service is properly functioning, a REST call can be made to ApplyRules on the InvoiceSample rule application.
