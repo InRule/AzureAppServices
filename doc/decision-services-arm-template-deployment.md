@@ -57,18 +57,7 @@ az deployment group create -g RESOURCE_GROUP_NAME --template-file .\InRule.Runti
 ```
 
 ## Upload valid license file
-
-In order for Decision Services to properly function, you must upload the InRuleLicense.xml file provided to you by InRule to the web app. The simplest way to upload the license file is via the App Service Editor available on the Azure portal.
-
-First, navigate to the [App Services](https://portal.azure.com/#browse/Microsoft.Web%2Fsites) listing page on the Azure portal and find your newly deployed web app in the list. Click the web app's name to be taken to its overview page. On the left-hand nav-bar, scroll down until you find the App Service Editor option, under the Development Tools header:
-
-![screen shot of the App Service Editor location on the web app overview page](images/AppServiceEditorScreenshot.png)
-
-On the resulting page, click "Open Editor".
-
-To upload the license file, you will need to drag and drop the InRuleLicense.xml file from your local machine into the top level wwwroot folder. You should be able to see a blue highlight when you are dragging the file into the correct location.
-
-![screen shot of dragging and dropping the license file](images/DragAndDropLicenseScreenshot.png)
+In order for Decision Services to properly function, a valid license file must be uploaded to the web app. For information on how to upload your license file please refer to our [license upload documentation](/doc/upload-license-file.md).
 
 ## Verify by getting status details
 As a final verification that Decision Services is properly functioning, a REST call can be made to the status details endpoint.
@@ -97,4 +86,4 @@ MachineName              : dw1sdwk000QCC
 
 # Execution of Rules
 After deployment, you have different options on how to execute rules. For detailed instructions on executing rules and decisions,
-visit the [Decision API](https://support.inrule.com/hc/en-us/articles/17532346873101-Decision-API) and/or [Rule Execution API](https://support.inrule.com/hc/en-us/articles/13377054188557-Rule-Execution-API) support articles.
+visit the [Decision API](https://docs.inrule.com/docs/decision-api) and/or [Rule Execution API](https://docs.inrule.com/docs/rule-execution-api) support articles.
