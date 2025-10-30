@@ -219,9 +219,17 @@
             "[resourceId('Microsoft.Web/sites', parameters('catalogServiceName'))]"
           ],
           "properties": {
-            "inrule:repository:service:connectionString": "[concat('Server=tcp:', reference(resourceId('Microsoft.Sql/servers', parameters('catalogSqlServerName'))).fullyQualifiedDomainName, ',1433;Database=', parameters('catalogSqlDbName'), ';User Id=', parameters('catalogSqlServerUsername'), ';Password=', parameters('catalogSqlServerPassword'), ';')]",
-            "inrule:repository:licensing:licenseFolder": "D:\\home\\site\\wwwroot",
-            "inrule:logging:level": "Warn"
+            "CatalogService__SqlServerConnectionString": "[concat('Server=tcp:', reference(resourceId('Microsoft.Sql/servers', parameters('catalogSqlServerName'))).fullyQualifiedDomainName, ',1433;Database=', parameters('catalogSqlDbName'), ';User Id=', parameters('catalogSqlServerUsername'), ';Password=', parameters('catalogSqlServerPassword'), ';')]",
+            "CatalogService__Hostname": "[concat(parameters('catalogServiceName'), '.azurewebsites.net')]",
+            "CatalogService__AuthenticationType": "Database",
+            "InRuleLoggingOptions__Level": "Warn",
+            "Serilog__MinimumLevel": "Information",
+            "Serilog__Using__0": "Serilog.Sinks.Async",
+            "Serilog__Using__1": "Serilog.Sinks.EventLog",
+            "Serilog__WriteTo__0__Name": "Async",
+            "Serilog__WriteTo__0__Args__Configure__0__Name": "EventLog",
+            "Serilog__WriteTo__0__Args__Configure__0__Args__Source": "Application",
+            "Serilog__WriteTo__0__Args__Configure__0__Args__LogName": "Application"
           }
         }
       ]
@@ -264,7 +272,14 @@
             "[resourceId('Microsoft.Web/sites', parameters('catalogManagerServiceName'))]"
           ],
           "properties": {
-            "InRule.Catalog.Uri": "[concat('https://', parameters('catalogServiceName') ,'.azurewebsites.net/service.svc')]"
+            "InRule__Catalog__Uri": "[concat('https://', parameters('catalogServiceName') ,'.azurewebsites.net/service.svc/core')]",
+            "Serilog__MinimumLevel": "Information",
+            "Serilog__Using__0": "Serilog.Sinks.Async",
+            "Serilog__Using__1": "Serilog.Sinks.EventLog",
+            "Serilog__WriteTo__0__Name": "Async",
+            "Serilog__WriteTo__0__Args__Configure__0__Name": "EventLog",
+            "Serilog__WriteTo__0__Args__Configure__0__Args__Source": "Application",
+            "Serilog__WriteTo__0__Args__Configure__0__Args__LogName": "Application"
           }
         }
       ]
