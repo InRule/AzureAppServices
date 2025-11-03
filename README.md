@@ -19,7 +19,7 @@ Before you get started, you'll need to make sure you have the following:
 
 InRule’s catalog provides centralized rule management and administration to store, version, set permissions, check-in and check-out rules—all at a granular level. The Catalog Manager makes it easy to promote rules from one environment to another.
 
-The Catalog Manager is a stand-alone web application that provides an administrative interface to an Catalog repository. It is used to manage and migrate Rule Applications across an organization's various staging environments including production. It also provides an interface for managing users, roles, and permissions.
+The Catalog Manager is a stand-alone web application that provides an administrative interface to a Catalog repository. It is used to manage and migrate Rule Applications across an organization's various staging environments including production. It also provides an interface for managing users, roles, and permissions.
 
 
 #### Deploying via Azure Resource Manager Template:
@@ -49,7 +49,7 @@ For complete product information and deployment instructions, see the [InRule fo
 
 #### Deploying via Azure Resource Manager Template:
 
-* ARM template and parameters file are located in the [Dynamics](Dynamics/) folder.
+* The ARM template and parameters file are located in the [Dynamics](Dynamics/) folder.
 
 # Rule Execution with Salesforce
 
@@ -59,7 +59,7 @@ For complete product information and deployment instructions, see the [InRule fo
 
 #### Deploying via Azure Resource Manager Template:
 
-* ARM template and parameters file are located in the [Salesforce](Salesforce/) folder.
+* The ARM template and parameters file are located in the [Salesforce](Salesforce/) folder.
 
 # Log retrieval
 Once Web Apps have been deployed, their individual log files can be retrieved.
