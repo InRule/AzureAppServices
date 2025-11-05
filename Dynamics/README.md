@@ -4,7 +4,7 @@ In this section, we will deploy the InRule Dynamics API to Azure using an Azure 
 
 If you have not done so already, please read the [prerequisites](../README.md#prerequisites) before you get started.
 
-The Dynamics [ARM template](/Dynamics/InRule.Dynamics.Service.json) and [parameters file](/Dynamics/InRule.Dynamics.Service.parameters.json) can both be found in this folder. Both will be needed to continue with this deployment option. The steps that follow will show how to deploy using the Azure CLI, but the provided template can also be deployed through the [Azure portal](https://portal.azure.com/#create/Microsoft.Template).
+Current versions of the Dynamics [ARM template](/Dynamics/InRule.Dynamics.Service.json) and [parameters file](/Dynamics/InRule.Dynamics.Service.parameters.json) can both be found in this folder. Specific versions of these files can be found in the `source.zip` [here](https://github.com/InRule/AzureAppServices/releases). Both files will be needed to continue with this deployment option. The steps that follow will show how to deploy using the Azure CLI, but the provided template can also be deployed through the [Azure portal](https://portal.azure.com/#create/Microsoft.Template).
 
 # Update the template parameters
 
