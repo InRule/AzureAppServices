@@ -20,7 +20,7 @@ Open the file with your text editor of choice and edit the parameters listed bel
 | decisionServiceName | yourcompanyname-inrule-environment-decision | Provide a name for the Azure App Service that the decision service will run on. |
 | decisionServicePlanSkuName | B1 | Describes runtime services plan's pricing tier and capacity. [Plan Details](https://azure.microsoft.com/en-us/pricing/details/app-service/)|
 | catalogUri | https://{catalogAppService}/Service.svc | Provide the uri for the catalog service. |
-| inRuleVersion | 5.8.1 | Provide the inRule version you wish to deploy, default value is the latest inRule version. |
+| inRuleVersion | 5.9.0 | Provide the inRule version you wish to deploy, default value is the latest inRule version. |
 | decisionServicePlanName | inruleDecisionServicePlan | The name for the app Service Plan.  Leave blank for the value to be derived as `decisionServiceName` + `Plan`|
 | apiKeyPrimary | "" | Provide an api key value that will be used to authenticate to Decision Services. |
 
@@ -72,8 +72,8 @@ If the request was successful, you should see results similiar to the following:
 ```
 IsAvailable              : True
 ProcessorCount           : 1
-InRuleRuntimeVersion     : 5.8.1.614
-InRuleRepositoryVersion  : 5.8.1.614
+InRuleRuntimeVersion     : 5.9.0.614
+InRuleRepositoryVersion  : 5.9.0.614
 ProcessUpTimeMinutes     : 4.01
 CacheUpTimeMinutes       : 0.63
 MaxRuleAppCacheDepth     : 25
