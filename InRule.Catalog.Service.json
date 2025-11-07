@@ -126,7 +126,10 @@
     },
     "catalogBacpacUri": {
       "type": "string",
-      "defaultValue": "[concat('https://inruleintegrations.blob.core.windows.net/catalog/', parameters('inRuleVersion'),'/InRule.Catalog.Service.Database.bacpac')]"
+      "defaultValue": "[concat('https://inruleintegrations.blob.core.windows.net/catalog/', parameters('inRuleVersion'),'/InRule.Catalog.Service.Database.bacpac')]",
+      "metadata": {
+        "description": "URI for the catalog database BACPAC file used for initial database deployment. Defaults to the official InRule release for the specified inRuleVersion. Only used when deployInitialDb is true."
+      }
     },
     "location": {
       "type": "string",
@@ -134,10 +137,37 @@
       "metadata": {
         "description": "Optional for resources. By default the location of the resource group will be used"
       }
+    },
+    "osType": {
+      "type": "string",
+      "defaultValue": "Windows",
+      "allowedValues": [
+        "Windows",
+        "Linux"
+      ],
+      "metadata": {
+        "description": "Operating system type for the App Service. Determines deployment method and logging configuration."
+      }
     }
   },
   "variables": {
-    "catalogServicePlanName": "[if(empty(parameters('catalogServicePlanName')), concat(parameters('catalogServiceName'),'Plan'), parameters('catalogServicePlanName'))]"
+    "catalogServicePlanName": "[if(empty(parameters('catalogServicePlanName')), concat(parameters('catalogServiceName'),'Plan'), parameters('catalogServicePlanName'))]",
+    "isLinux": "[equals(parameters('osType'), 'Linux')]",
+    "windowsSerilogSettings": {
+      "Serilog__Using__0": "Serilog.Sinks.Async",
+      "Serilog__Using__1": "Serilog.Sinks.EventLog",
+      "Serilog__WriteTo__0__Name": "Async",
+      "Serilog__WriteTo__0__Args__Configure__0__Name": "EventLog",
+      "Serilog__WriteTo__0__Args__Configure__0__Args__Source": "Application",
+      "Serilog__WriteTo__0__Args__Configure__0__Args__LogName": "Application"
+    },
+    "linuxSerilogSettings": {
+      "Serilog__Using__0": "Serilog.Sinks.Console",
+      "Serilog__WriteTo__0__Name": "Console"
+    },
+    "serilogSettings": "[if(variables('isLinux'), variables('linuxSerilogSettings'), variables('windowsSerilogSettings'))]",
+    "catalogServiceSiteConfig": "[if(variables('isLinux'), createObject('linuxFxVersion', 'DOTNETCORE|8.0', 'appCommandLine', 'dotnet InRule.Catalog.Service.dll'), createObject())]",
+    "catalogManagerSiteConfig": "[if(variables('isLinux'), createObject('linuxFxVersion', 'DOTNETCORE|8.0', 'appCommandLine', 'dotnet InRule.Catalog.Manager.WebCore.dll'), createObject())]"
   },
   "resources": [
     {
@@ -168,10 +198,12 @@
             {
               "name": "[variables('catalogServicePlanName')]",
               "type": "Microsoft.Web/serverfarms",
-              "apiVersion": "2020-12-01",
+              "apiVersion": "2021-02-01",
               "location": "[parameters('location')]",
+              "kind": "[if(variables('isLinux'), 'linux', 'app')]",
               "properties": {
-                "name": "[variables('catalogServicePlanName')]"
+                "name": "[variables('catalogServicePlanName')]",
+                "reserved": "[variables('isLinux')]"
               },
               "sku": {
                 "name": "[parameters('catalogServicePlanSkuName')]"
@@ -184,7 +216,7 @@
     {
       "name": "[parameters('catalogServiceName')]",
       "type": "Microsoft.Web/sites",
-      "apiVersion": "2020-12-01",
+      "apiVersion": "2021-02-01",
       "location": "[parameters('location')]",
       "dependsOn": [
         "[resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Resources/deployments', 'AppServicePlanTemplate')]"
@@ -194,15 +226,16 @@
       },
       "properties": {
         "serverFarmId": "[resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', variables('catalogServicePlanName'))]",
-        "siteConfig": {
-          "use32BitWorkerProcess": "[or(equals(if(parameters('createOrUpdateCatalogServicePlan'), parameters('catalogServicePlanSkuName'), reference(resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', variables('catalogServicePlanName')), '2021-02-01', 'Full').sku.name), 'F1'), equals(if(parameters('createOrUpdateCatalogServicePlan'), parameters('catalogServicePlanSkuName'), reference(resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', variables('catalogServicePlanName')), '2021-02-01', 'Full').sku.name), 'D1'))]"
-        }
+        "siteConfig": "[union(
+          createObject('use32BitWorkerProcess', or(equals(if(parameters('createOrUpdateCatalogServicePlan'), parameters('catalogServicePlanSkuName'), reference(resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', variables('catalogServicePlanName')), '2021-02-01', 'Full').sku.name), 'F1'), equals(if(parameters('createOrUpdateCatalogServicePlan'), parameters('catalogServicePlanSkuName'), reference(resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', variables('catalogServicePlanName')), '2021-02-01', 'Full').sku.name), 'D1'))),
+          variables('catalogServiceSiteConfig')
+        )]"
       },
       "resources": [
         {
-          "name": "MSDeploy",
+          "name": "ZipDeploy",
           "type": "extensions",
-          "apiVersion": "2020-12-01",
+          "apiVersion": "2021-02-01",
           "dependsOn": [
             "[resourceId('Microsoft.Web/sites', parameters('catalogServiceName'))]"
           ],
@@ -213,49 +246,53 @@
         {
           "name": "appsettings",
           "type": "config",
-          "apiVersion": "2020-12-01",
+          "apiVersion": "2021-02-01",
           "dependsOn": [
-            "[resourceId('Microsoft.Web/sites/extensions', parameters('catalogServiceName'), 'MSDeploy')]",
-            "[resourceId('Microsoft.Web/sites', parameters('catalogServiceName'))]"
+            "[resourceId('Microsoft.Web/sites/extensions', parameters('catalogServiceName'), 'ZipDeploy')]",
+            "[resourceId('Microsoft.Web/sites', parameters('catalogServiceName'))]",
+            "[resourceId('Microsoft.Sql/servers', parameters('catalogSqlServerName'))]"
           ],
-          "properties": {
-            "CatalogService__SqlServerConnectionString": "[concat('Server=tcp:', reference(resourceId('Microsoft.Sql/servers', parameters('catalogSqlServerName'))).fullyQualifiedDomainName, ',1433;Database=', parameters('catalogSqlDbName'), ';User Id=', parameters('catalogSqlServerUsername'), ';Password=', parameters('catalogSqlServerPassword'), ';')]",
-            "CatalogService__Hostname": "[concat(parameters('catalogServiceName'), '.azurewebsites.net')]",
-            "CatalogService__AuthenticationType": "Database",
-            "InRuleLoggingOptions__Level": "Warn",
-            "Serilog__MinimumLevel": "Information",
-            "Serilog__Using__0": "Serilog.Sinks.Async",
-            "Serilog__Using__1": "Serilog.Sinks.EventLog",
-            "Serilog__WriteTo__0__Name": "Async",
-            "Serilog__WriteTo__0__Args__Configure__0__Name": "EventLog",
-            "Serilog__WriteTo__0__Args__Configure__0__Args__Source": "Application",
-            "Serilog__WriteTo__0__Args__Configure__0__Args__LogName": "Application"
-          }
+          "properties": "[union(
+            variables('serilogSettings'),
+            createObject(
+              'CatalogService__SqlServerConnectionString',
+              concat('Server=tcp:', reference(resourceId('Microsoft.Sql/servers', parameters('catalogSqlServerName'))).fullyQualifiedDomainName, ',1433;Database=', parameters('catalogSqlDbName'), ';User Id=', parameters('catalogSqlServerUsername'), ';Password=', parameters('catalogSqlServerPassword'), ';'),
+              'CatalogService__Hostname',
+              concat(parameters('catalogServiceName'), '.azurewebsites.net'),
+              'CatalogService__AuthenticationType',
+              'Database',
+              'InRuleLoggingOptions__Level',
+              'Warn',
+              'Serilog__MinimumLevel',
+              'Information'
+            )
+          )]"
         }
       ]
     },
     {
       "name": "[parameters('catalogManagerServiceName')]",
       "type": "Microsoft.Web/sites",
-      "apiVersion": "2020-12-01",
+      "apiVersion": "2021-02-01",
       "location": "[parameters('location')]",
       "dependsOn": [
         "[resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Resources/deployments', 'AppServicePlanTemplate')]"
       ],
       "tags": {
-        "[concat('hidden-related:', resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', parameters('catalogServicePlanName')))]": "Resource"
+        "[concat('hidden-related:', resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', variables('catalogServicePlanName')))]": "Resource"
       },
       "properties": {
         "serverFarmId": "[resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', variables('catalogServicePlanName'))]",
-        "siteConfig": {
-          "use32BitWorkerProcess": "[or(equals(if(parameters('createOrUpdateCatalogServicePlan'), parameters('catalogServicePlanSkuName'), reference(resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', variables('catalogServicePlanName')), '2021-02-01', 'Full').sku.name), 'F1'), equals(if(parameters('createOrUpdateCatalogServicePlan'), parameters('catalogServicePlanSkuName'), reference(resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', variables('catalogServicePlanName')), '2021-02-01', 'Full').sku.name), 'D1'))]"
-        }
+        "siteConfig": "[union(
+          createObject('use32BitWorkerProcess', or(equals(if(parameters('createOrUpdateCatalogServicePlan'), parameters('catalogServicePlanSkuName'), reference(resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', variables('catalogServicePlanName')), '2021-02-01', 'Full').sku.name), 'F1'), equals(if(parameters('createOrUpdateCatalogServicePlan'), parameters('catalogServicePlanSkuName'), reference(resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', variables('catalogServicePlanName')), '2021-02-01', 'Full').sku.name), 'D1'))),
+          variables('catalogManagerSiteConfig')
+        )]"
       },
       "resources": [
         {
-          "name": "MSDeploy",
+          "name": "ZipDeploy",
           "type": "extensions",
-          "apiVersion": "2020-12-01",
+          "apiVersion": "2021-02-01",
           "dependsOn": [
             "[resourceId('Microsoft.Web/sites', parameters('catalogManagerServiceName'))]"
           ],
@@ -266,21 +303,20 @@
         {
           "name": "appsettings",
           "type": "config",
-          "apiVersion": "2020-12-01",
+          "apiVersion": "2021-02-01",
           "dependsOn": [
-            "[resourceId('Microsoft.Web/sites/extensions', parameters('catalogManagerServiceName'), 'MSDeploy')]",
+            "[resourceId('Microsoft.Web/sites/extensions', parameters('catalogManagerServiceName'), 'ZipDeploy')]",
             "[resourceId('Microsoft.Web/sites', parameters('catalogManagerServiceName'))]"
           ],
-          "properties": {
-            "InRule__Catalog__Uri": "[concat('https://', parameters('catalogServiceName') ,'.azurewebsites.net/service.svc/core')]",
-            "Serilog__MinimumLevel": "Information",
-            "Serilog__Using__0": "Serilog.Sinks.Async",
-            "Serilog__Using__1": "Serilog.Sinks.EventLog",
-            "Serilog__WriteTo__0__Name": "Async",
-            "Serilog__WriteTo__0__Args__Configure__0__Name": "EventLog",
-            "Serilog__WriteTo__0__Args__Configure__0__Args__Source": "Application",
-            "Serilog__WriteTo__0__Args__Configure__0__Args__LogName": "Application"
-          }
+          "properties": "[union(
+            variables('serilogSettings'),
+            createObject(
+              'InRule__Catalog__Uri',
+              concat('https://', parameters('catalogServiceName') ,'.azurewebsites.net/service.svc/core'),
+              'Serilog__MinimumLevel',
+              'Information'
+            )
+          )]"
         }
       ]
     },
@@ -288,7 +324,7 @@
       "name": "[parameters('catalogSqlServerName')]",
       "type": "Microsoft.Sql/servers",
       "location": "[parameters('location')]",
-      "apiVersion": "2021-05-01-preview",
+      "apiVersion": "2021-11-01",
       "properties": {
         "administratorLogin": "[parameters('catalogSqlServerUsername')]",
         "administratorLoginPassword": "[parameters('catalogSqlServerPassword')]"
@@ -298,7 +334,7 @@
           "name": "AllowAllWindowsAzureIps",
           "type": "firewallrules",
           "location": "[parameters('location')]",
-          "apiVersion": "2021-05-01-preview",
+          "apiVersion": "2021-11-01",
           "dependsOn": [
             "[resourceId('Microsoft.Sql/servers', parameters('catalogSqlServerName'))]"
           ],
@@ -311,7 +347,7 @@
           "name": "[parameters('catalogSqlDbName')]",
           "type": "databases",
           "location": "[parameters('location')]",
-          "apiVersion": "2021-05-01-preview",
+          "apiVersion": "2021-11-01",
           "dependsOn": [
             "[resourceId('Microsoft.Sql/servers', parameters('catalogSqlServerName'))]"
           ],
