@@ -148,6 +148,12 @@
       "metadata": {
         "description": "Operating system type for the App Service. Determines deployment method and logging configuration."
       }
+    },
+    "catalogLicenseKey": {
+      "type": "securestring",
+      "metadata": {
+        "description": "License key for the Catalog Service. If not set, the catalog will use the file-based license."
+      }
     }
   },
   "variables": {
@@ -264,7 +270,9 @@
               'InRuleLoggingOptions__Level',
               'Warn',
               'Serilog__MinimumLevel',
-              'Information'
+              'Information',
+              'inrule__license',
+              parameters('catalogLicenseKey')
             )
           )]"
         }
