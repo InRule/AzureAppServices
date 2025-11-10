@@ -34,6 +34,9 @@
     },
     "catalogServicePlanName": {
       "value": ""
+    },
+    "catalogLicenseKey": {
+      "value": ""
     }
   }
 }
