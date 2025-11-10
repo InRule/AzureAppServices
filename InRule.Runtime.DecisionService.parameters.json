@@ -28,6 +28,9 @@
     },
     "appInsightsConnectionString": {
       "value": ""
+    },
+    "executionLicenseKey": {
+      "value": ""
     }
   }
 }
