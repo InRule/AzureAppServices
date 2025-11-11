@@ -1,6 +1,13 @@
 {
   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.31.92.45157",
+      "templateHash": "13955327414101399480"
+    }
+  },
   "parameters": {
     "decisionServiceName": {
       "type": "string",
@@ -110,23 +117,47 @@
       "metadata": {
         "description": "Optional Application Insights connection string. The Decision Service will use this a log source if provided."
       }
+    },
+    "osType": {
+      "type": "string",
+      "defaultValue": "Windows",
+      "allowedValues": [
+        "Windows",
+        "Linux"
+      ],
+      "metadata": {
+        "description": "Operating system type for the App Service. Determines deployment method and logging configuration."
+      }
+    },
+    "executionLicenseKey": {
+      "type": "securestring",
+      "defaultValue": "",
+      "metadata": {
+        "description": "License key for the Decision Service. If not set, the service will use the file-based license."
+      }
     }
   },
   "variables": {
     "computedDecisionServicePlanName": "[if(empty(parameters('decisionServicePlanName')), format('{0}Plan', parameters('decisionServiceName')), parameters('decisionServicePlanName'))]",
-    "selfHostedAppSettings": {
+    "isLinux": "[equals(parameters('osType'), 'Linux')]",
+    "windowsSerilogSettings": {
       "serilog__using__1": "Serilog.Sinks.Async",
       "serilog__using__2": "Serilog.Sinks.EventLog",
       "serilog__writeTo__1__name": "Async",
       "serilog__writeTo__1__args__configure__0__name": "EventLog",
       "serilog__writeTo__1__args__configure__0__args__logName": "Application",
       "serilog__writeTo__1__args__configure__0__args__source": "Application"
-    }
+    },
+    "linuxSerilogSettings": {
+      "serilog__using__1": "Serilog.Sinks.Console",
+      "serilog__writeTo__1__name": "Console"
+    },
+    "selfHostedAppSettings": "[if(variables('isLinux'), variables('linuxSerilogSettings'), variables('windowsSerilogSettings'))]"
   },
   "resources": [
     {
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2025-04-01",
+      "apiVersion": "2022-09-01",
       "name": "DecisionServiceApp",
       "properties": {
         "expressionEvaluationOptions": {
@@ -175,6 +206,12 @@
           },
           "additionalAppSettings": {
             "value": "[variables('selfHostedAppSettings')]"
+          },
+          "osType": {
+            "value": "[parameters('osType')]"
+          },
+          "executionLicenseKey": {
+            "value": "[parameters('executionLicenseKey')]"
           }
         },
         "template": {
@@ -183,8 +220,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.38.33.27573",
-              "templateHash": "14686552358498480958"
+              "version": "0.31.92.45157",
+              "templateHash": "8128639515629938244"
             }
           },
           "parameters": {
@@ -289,9 +326,32 @@
               "metadata": {
                 "description": "Object containing additional app settings to be merged with the primary app settings"
               }
+            },
+            "osType": {
+              "type": "string",
+              "defaultValue": "Windows",
+              "allowedValues": [
+                "Windows",
+                "Linux"
+              ],
+              "metadata": {
+                "description": "Operating system type for the App Service. Determines deployment method and logging configuration."
+              }
+            },
+            "executionLicenseKey": {
+              "type": "securestring",
+              "defaultValue": "",
+              "metadata": {
+                "description": "License key for the Decision Service. If not set, the service will use the file-based license."
+              }
             }
           },
           "variables": {
+            "isLinux": "[equals(parameters('osType'), 'Linux')]",
+            "linuxSiteConfig": {
+              "linuxFxVersion": "DOTNETCORE|8.0",
+              "appCommandLine": "dotnet InRule.Runtime.DecisionService.dll"
+            },
             "primaryAppSettings": {
               "inrule__runtime__service__catalog__userName": "[parameters('catalogUser')]",
               "inrule__runtime__service__catalog__password": "[parameters('catalogPassword')]",
@@ -308,7 +368,8 @@
               "APPLICATIONINSIGHTS_CONNECTION_STRING": "[parameters('appInsightsConnectionString')]",
               "serilog__using__0": "Serilog.Sinks.ApplicationInsights",
               "serilog__writeTo__0__name": "ApplicationInsights",
-              "serilog__writeTo__0__args__telemetryConverter": "Serilog.Sinks.ApplicationInsights.TelemetryConverters.TraceTelemetryConverter, Serilog.Sinks.ApplicationInsights"
+              "serilog__writeTo__0__args__telemetryConverter": "Serilog.Sinks.ApplicationInsights.TelemetryConverters.TraceTelemetryConverter, Serilog.Sinks.ApplicationInsights",
+              "inrule__license": "[parameters('executionLicenseKey')]"
             }
           },
           "resources": [
@@ -319,12 +380,9 @@
               "location": "[resourceGroup().location]",
               "properties": {
                 "clientAffinityEnabled": false,
-                "serverFarmId": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('servicePlanResourceGroupName')), 'Microsoft.Resources/deployments', 'DecisionServiceAppServicePlan'), '2025-04-01').outputs.appServicePlanId.value]",
+                "serverFarmId": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('servicePlanResourceGroupName')), 'Microsoft.Resources/deployments', 'DecisionServiceAppServicePlan'), '2022-09-01').outputs.appServicePlanId.value]",
                 "httpsOnly": true,
-                "siteConfig": {
-                  "use32BitWorkerProcess": "[parameters('use32Bit')]",
-                  "healthCheckPath": "/api/status/alive"
-                }
+                "siteConfig": "[union(createObject('use32BitWorkerProcess', parameters('use32Bit'), 'healthCheckPath', '/api/status/alive'), if(variables('isLinux'), variables('linuxSiteConfig'), createObject()))]"
               },
               "dependsOn": [
                 "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('servicePlanResourceGroupName')), 'Microsoft.Resources/deployments', 'DecisionServiceAppServicePlan')]"
@@ -332,8 +390,8 @@
             },
             {
               "type": "Microsoft.Web/sites/extensions",
-              "apiVersion": "2020-12-01",
-              "name": "[format('{0}/{1}', parameters('decisionServiceName'), 'MSDeploy')]",
+              "apiVersion": "2021-02-01",
+              "name": "[format('{0}/{1}', parameters('decisionServiceName'), 'ZipDeploy')]",
               "properties": {
                 "packageUri": "[parameters('packageUri')]"
               },
@@ -343,18 +401,18 @@
             },
             {
               "type": "Microsoft.Web/sites/config",
-              "apiVersion": "2020-12-01",
+              "apiVersion": "2021-02-01",
               "name": "[format('{0}/{1}', parameters('decisionServiceName'), 'appsettings')]",
               "properties": "[union(variables('primaryAppSettings'), parameters('additionalAppSettings'))]",
               "dependsOn": [
                 "[resourceId('Microsoft.Web/sites', parameters('decisionServiceName'))]",
-                "[resourceId('Microsoft.Web/sites/extensions', parameters('decisionServiceName'), 'MSDeploy')]"
+                "[resourceId('Microsoft.Web/sites/extensions', parameters('decisionServiceName'), 'ZipDeploy')]"
               ]
             },
             {
               "condition": "[parameters('createOrUpdateDecisionServicePlan')]",
               "type": "Microsoft.Resources/deployments",
-              "apiVersion": "2025-04-01",
+              "apiVersion": "2022-09-01",
               "name": "DecisionServiceAppServicePlan",
               "resourceGroup": "[parameters('servicePlanResourceGroupName')]",
               "properties": {
@@ -371,6 +429,9 @@
                   },
                   "location": {
                     "value": "[resourceGroup().location]"
+                  },
+                  "osType": {
+                    "value": "[parameters('osType')]"
                   }
                 },
                 "template": {
@@ -379,8 +440,8 @@
                   "metadata": {
                     "_generator": {
                       "name": "bicep",
-                      "version": "0.38.33.27573",
-                      "templateHash": "17049001627898712448"
+                      "version": "0.31.92.45157",
+                      "templateHash": "16715721601235163342"
                     }
                   },
                   "parameters": {
@@ -412,14 +473,32 @@
                       "metadata": {
                         "description": "Describes plan's pricing tier and capacity. Check details at https://azure.microsoft.com/en-us/pricing/details/app-service/"
                       }
+                    },
+                    "osType": {
+                      "type": "string",
+                      "defaultValue": "Windows",
+                      "allowedValues": [
+                        "Windows",
+                        "Linux"
+                      ],
+                      "metadata": {
+                        "description": "Operating system type for the App Service. Determines deployment method and logging configuration."
+                      }
                     }
+                  },
+                  "variables": {
+                    "isLinux": "[equals(parameters('osType'), 'Linux')]"
                   },
                   "resources": [
                     {
                       "type": "Microsoft.Web/serverfarms",
-                      "apiVersion": "2020-12-01",
+                      "apiVersion": "2021-02-01",
                       "name": "[parameters('servicePlanName')]",
                       "location": "[parameters('location')]",
+                      "kind": "[if(variables('isLinux'), 'linux', 'app')]",
+                      "properties": {
+                        "reserved": "[variables('isLinux')]"
+                      },
                       "sku": {
                         "name": "[parameters('servicePlanSkuName')]"
                       }
