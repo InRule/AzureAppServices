@@ -17,8 +17,8 @@ Open the file with your text editor of choice and edit the parameters listed bel
 #### InRule.Catalog.Service.parameters.json
 | Parameter | Example Values | Description |
 | --------- | ------------- | ----------- |
-| catalogServiceName | 	yourcompanyname-inrule-environment-catalog | Provide a name for the Azure App Service that the catalog service will run on. |
-| catalogManagerServiceName | 	yourcompanyname-inrule-environment-catalogmgr | Provide a name for the Azure App Service that the catalog manager service will run on. |
+| catalogServiceName | yourcompanyname-inrule-environment-catalog | Provide a name for the Azure App Service that the catalog service will run on. |
+| catalogManagerServiceName | yourcompanyname-inrule-environment-catalogmgr | Provide a name for the Azure App Service that the catalog manager service will run on. |
 | catalogServicePlanSkuName | B1 | Describes catalog services plan's pricing tier and capacity. [Plan Details](https://azure.microsoft.com/en-us/pricing/details/app-service/)|
 | catalogSqlServerName | catalogsqldbservername | The server name for the Azure SQL server used to host the Catalog database(s). |
 | catalogSqlServerUsername | sqlDbServerUser | The server admin username for the Azure SQL server used to host the Catalog database(s). |

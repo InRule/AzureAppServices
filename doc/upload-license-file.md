@@ -1,5 +1,5 @@
 ## Uploading a License File
-In order for many InRule services function, you must upload the InRuleLicense.xml file provided to you by InRule to the web app. You have two ways to upload a license file, either using the Azure App Service Editor or via FTP.
+In order for many InRule services to function, you must upload the InRuleLicense.xml file provided to you by InRule to the web app. You have two ways to upload a license file, either using the Azure App Service Editor or via FTP.
 
 ### Upload Via Azure App Service Editor
 The simplest way to upload the license file is via the App Service Editor available on the Azure portal.
