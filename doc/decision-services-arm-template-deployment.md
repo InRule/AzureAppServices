@@ -4,7 +4,7 @@ In this section we will be deploying Decision Services. To make this process eas
 
 If you have not done so already, please read the [prerequisites](../README.md#prerequisites) before you get started.
 
-Current versions of the the Decision Services [ARM template](/InRule.Runtime.DecisionService.json) and [parameters file](/InRule.Runtime.DecisionService.parameters.json) can both be found in this repo. Specific versions of these files can be found in the `source.zip` [here](https://github.com/InRule/AzureAppServices/releases). Both files will be needed to continue with this deployment option. The steps that follow will show how to deploy using the Azure CLI, but the provided template can also be deployed through the [Azure portal](https://portal.azure.com/#create/Microsoft.Template).
+Current versions of the Decision Services [ARM template](/InRule.Runtime.DecisionService.json) and [parameters file](/InRule.Runtime.DecisionService.parameters.json) can both be found in this repo. Specific versions of these files can be found in the `source.zip` [here](https://github.com/InRule/AzureAppServices/releases). Both files will be needed to continue with this deployment option. The steps that follow will show how to deploy using the Azure CLI, but the provided template can also be deployed through the [Azure portal](https://portal.azure.com/#create/Microsoft.Template).
 
 # Update the template parameters
 
