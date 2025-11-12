@@ -5,9 +5,6 @@
     "appServiceName": {
       "value": ""
     },
-    "relayName": {
-      "value": ""
-    },
     "catalogUri": {
       "value": ""
     },
@@ -30,9 +27,15 @@
       "value": true
     },
     "inRuleVersion": {
-      "value": "5.8.1"
+      "value": "5.9.0"
     },
     "appInsightsConnectionString": {
+      "value": ""
+    },
+    "primaryApiKey": {
+      "value": ""
+    },
+    "secondaryApiKey": {
       "value": ""
     }
   }

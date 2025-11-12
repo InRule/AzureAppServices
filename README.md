@@ -19,7 +19,7 @@ Before you get started, you'll need to make sure you have the following:
 
 InRule’s catalog provides centralized rule management and administration to store, version, set permissions, check-in and check-out rules—all at a granular level. The Catalog Manager makes it easy to promote rules from one environment to another.
 
-The Catalog Manager is a stand-alone web application that provides an administrative interface to an Catalog repository. It is used to manage and migrate Rule Applications across an organization's various staging environments including production. It also provides an interface for managing users, roles, and permissions.
+The Catalog Manager is a stand-alone web application that provides an administrative interface to a Catalog repository. It is used to manage and migrate Rule Applications across an organization's various staging environments including production. It also provides an interface for managing users, roles, and permissions.
 
 
 #### Deploying via Azure Resource Manager Template:
@@ -37,7 +37,7 @@ There are two options for deploying Decision Services: deploying through the [Az
 
 * [ARM Template Deployment](doc/decision-services-arm-template-deployment.md)
 
-# Decision and Rule Execution
+#### Decision and Rule Execution
 For more information on executing decisions and rules, refer to the following documentation:
 * [Decision Services API Guide](https://docs.inrule.com/docs/introduction-to-decision-services)
 
@@ -49,7 +49,7 @@ For complete product information and deployment instructions, see the [InRule fo
 
 #### Deploying via Azure Resource Manager Template:
 
-* ARM template and parameters file are located in the [Dynamics](Dynamics/) folder.
+* The ARM template and parameters file are located in the [Dynamics](Dynamics/) folder.
 
 # Rule Execution with Salesforce
 
@@ -59,7 +59,7 @@ For complete product information and deployment instructions, see the [InRule fo
 
 #### Deploying via Azure Resource Manager Template:
 
-* ARM template and parameters file are located in the [Salesforce](Salesforce/) folder.
+* The ARM template and parameters file are located in the [Salesforce](Salesforce/) folder.
 
 # Log retrieval
 Once Web Apps have been deployed, their individual log files can be retrieved.
@@ -67,8 +67,10 @@ Once Web Apps have been deployed, their individual log files can be retrieved.
 * [Web App log retrieval](doc/webapp-log-retrieval.md)
 
 # Upgrade Considerations
-Be sure to backup the AppSettings file because it will be overwritten during an upgrade deployment.
+Be sure to backup the AppSettings file because it will be overwritten during an upgrade deployment. See [release notes](https://docs.inrule.com/docs/inrule-decisioning-version-590-release-notes) for more information.
 
 # Legacy irServer Rule Execution Service
 
 The classic irServer Rule Execution Service is flagged for retirement at the end of 2025. Please plan on transitioning your calling application to use either the new Decision API or the backward-compatible Rule Execution API.
+
+See the article [Rule Execution API vs. classic irServer](https://docs.inrule.com/docs/rule-execution-api#rule-execution-api-vs-classic-irserver) for more information.

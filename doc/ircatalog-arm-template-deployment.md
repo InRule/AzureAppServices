@@ -4,7 +4,7 @@ In this section we will be deploying the Catalog as well as the Catalog Manager.
 
 If you have not done so already, please read the [prerequisites](../README.md#prerequisites) before you get started.
 
-Get the template and parameters file from the `source.zip` [here](https://github.com/InRule/AzureAppServices/releases). Both will be needed to continue with this deployment option. The steps that follow will show how to deploy using the Azure CLI, but the provided template can also be deployed through the Azure portal.
+Current versions of the Catalog [ARM template](/InRule.Catalog.Service.json) and [parameters file](/InRule.Catalog.Service.parameters.json) can be found in this repo. Specific versions of these files can be found in the `source.zip` [here](https://github.com/InRule/AzureAppServices/releases). Both will be needed to continue with this deployment option. The steps that follow will show how to deploy using the Azure CLI, but the provided template can also be deployed through the Azure portal.
 
 # Update the template parameters
 
@@ -17,8 +17,8 @@ Open the file with your text editor of choice and edit the parameters listed bel
 #### InRule.Catalog.Service.parameters.json
 | Parameter | Example Values | Description |
 | --------- | ------------- | ----------- |
-| catalogServiceName | catalogAppService | Provide a name for the Azure App Service that the catalog service will run on. |
-| catalogManagerServiceName | catalogManagerAppService | Provide a name for the Azure App Service that the catalog manager service will run on. |
+| catalogServiceName | yourcompanyname-inrule-environment-catalog | Provide a name for the Azure App Service that the catalog service will run on. |
+| catalogManagerServiceName | yourcompanyname-inrule-environment-catalogmgr | Provide a name for the Azure App Service that the catalog manager service will run on. |
 | catalogServicePlanSkuName | B1 | Describes catalog services plan's pricing tier and capacity. [Plan Details](https://azure.microsoft.com/en-us/pricing/details/app-service/)|
 | catalogSqlServerName | catalogsqldbservername | The server name for the Azure SQL server used to host the Catalog database(s). |
 | catalogSqlServerUsername | sqlDbServerUser | The server admin username for the Azure SQL server used to host the Catalog database(s). |
@@ -68,19 +68,7 @@ You'll need to temporarily allow access to your local machine to deploy the sche
 After opening the firewall, you'll need to use the provided tool to setup the database. This step can be found in the Catalog web app deployment guide [Catalog Web App Deployment](ircatalog.md#deploy-the-ircatalog-database)
 
 ## Upload valid license file
-In order for Catalog Service to properly function, a valid license file must be uploaded to the web app. The simplest way to upload the license file is via FTP.
-
-First, retrieve the FTP deployment profile (url and credentials) with the [az webapp deployment list-publishing-profiles](https://docs.microsoft.com/en-us/cli/azure/webapp/deployment#az-webapp-deployment-list-publishing-profiles) command and put the values into a variable:
-```powershell
-# Example: az webapp deployment list-publishing-profiles --name contoso-catalog-prod-wa --resource-group inrule-prod-rg --query "[?contains(publishMethod, 'FTP')].{publishUrl:publishUrl,userName:userName,userPWD:userPWD}[0]" | ConvertFrom-Json -OutVariable creds | Out-Null
-az webapp deployment list-publishing-profiles --name WEB_APP_NAME --resource-group RESOURCE_GROUP_NAME --query "[?contains(publishMethod, 'FTP')].{publishUrl:publishUrl,userName:userName,userPWD:userPWD}[0]" | ConvertFrom-Json -OutVariable creds | Out-Null
-```
-
-Then, upload the license file using those retrieved values:
-```powershell
-# Example: $client = New-Object System.Net.WebClient;$client.Credentials = New-Object System.Net.NetworkCredential($creds.userName,$creds.userPWD);$uri = New-Object System.Uri($creds.publishUrl + "/InRuleLicense.xml");$client.UploadFile($uri, "$pwd\InRuleLicense.xml");
-$client = New-Object System.Net.WebClient;$client.Credentials = New-Object System.Net.NetworkCredential($creds.userName,$creds.userPWD);$uri = New-Object System.Uri($creds.publishUrl + "/InRuleLicense.xml");$client.UploadFile($uri, "LICENSE_FILE_ABSOLUTE_PATH")
-```
+In order for Catalog Service to properly function, a valid license file must be uploaded to the web app. For information on how to upload your license file please refer to our [license upload documentation](/doc/upload-license-file.md).
 
 ## Verify using irAuthor
 Using irAuthor you should now be able to connect to your catalog using the url [https://catalogServiceName.azurewebsites.net/service.svc](https://catalogServiceName.azurewebsites.net/service.svc).
