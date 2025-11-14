@@ -1,6 +1,14 @@
 {
   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "languageVersion": "2.0",
   "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.36.1.42791",
+      "templateHash": "13907406225472375793"
+    }
+  },
   "parameters": {
     "appServiceName": {
       "type": "string",
@@ -158,12 +166,30 @@
       "metadata": {
         "description": "Self-Hosted Only: Secondary API key to authenticate with the Salesforce API"
       }
+    },
+    "osType": {
+      "type": "string",
+      "defaultValue": "Windows",
+      "allowedValues": [
+        "Windows",
+        "Linux"
+      ],
+      "metadata": {
+        "description": "Operating system type for the App Service. Determines deployment method and logging configuration."
+      }
+    },
+    "executionLicenseKey": {
+      "type": "securestring",
+      "defaultValue": "",
+      "metadata": {
+        "description": "License key for the Salesforce integration. If not set, the service will use the file-based license."
+      }
     }
   },
-  "resources": [
-    {
+  "resources": {
+    "salesforce": {
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2025-04-01",
+      "apiVersion": "2022-09-01",
       "name": "salesforce",
       "properties": {
         "expressionEvaluationOptions": {
@@ -230,11 +256,25 @@
           },
           "secondaryApiKey": {
             "value": "[parameters('secondaryApiKey')]"
+          },
+          "osType": {
+            "value": "[parameters('osType')]"
+          },
+          "executionLicenseKey": {
+            "value": "[parameters('executionLicenseKey')]"
           }
         },
         "template": {
           "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "languageVersion": "2.0",
           "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.36.1.42791",
+              "templateHash": "1954983986612144040"
+            }
+          },
           "parameters": {
             "appServiceName": {
               "type": "string",
@@ -423,28 +463,29 @@
               "metadata": {
                 "description": "Self-Hosted Only: Secondary API key to authenticate with the Salesforce API"
               }
+            },
+            "osType": {
+              "type": "string",
+              "defaultValue": "Windows",
+              "allowedValues": [
+                "Windows",
+                "Linux"
+              ],
+              "metadata": {
+                "description": "Operating system type for the App Service. Determines deployment method and logging configuration."
+              }
+            },
+            "executionLicenseKey": {
+              "type": "securestring",
+              "defaultValue": "",
+              "metadata": {
+                "description": "License key for the Salesforce integration. If not set, the service will use the file-based license."
+              }
             }
           },
           "variables": {
-            "selfDeployAppSettings": {
-              "APPLICATIONINSIGHTS_CONNECTION_STRING": "[parameters('appInsightsConnectionString')]",
-              "inrule__sf__api__loginUrl": "[parameters('sfLoginUrl')]",
-              "inrule__sf__api__username": "[parameters('sfUsername')]",
-              "inrule__sf__api__password": "[parameters('sfPassword')]",
-              "inrule__sf__api__securityToken": "[parameters('sfSecurityToken')]",
-              "inrule__sf__api__consumerKey": "[parameters('sfConsumerKey')]",
-              "inrule__sf__api__consumerSecret": "[parameters('sfConsumerSecret')]",
-              "inrule__sf__api__authType": "usernamePassword",
-              "inrule__sf__catalog__label": "[parameters('ruleAppLabel')]",
-              "inrule__sf__catalog__user": "[parameters('catalogUser')]",
-              "inrule__sf__catalog__password": "[parameters('catalogPassword')]",
-              "inrule__sf__catalog__sso": "false",
-              "inrule__sf__catalog__uri": "[parameters('catalogUri')]",
-              "inrule__sf__catalog__ruleAppDirectory": "/home/site/wwwroot/RuleApps",
-              "inrule__sf__catalog__useInRuleCatalog": "true",
-              "inrule__logging__level": "Info",
-              "inrule__runtime__service__apiKey__primaryKey": "[parameters('primaryApiKey')]",
-              "inrule__runtime__service__apiKey__secondaryKey": "[parameters('secondaryApiKey')]",
+            "isLinux": "[equals(parameters('osType'), 'Linux')]",
+            "windowsSerilogSettings": {
               "serilog__using__0": "Serilog.Sinks.ApplicationInsights",
               "serilog__using__1": "Serilog.Sinks.Async",
               "serilog__using__2": "Serilog.Sinks.EventLog",
@@ -455,6 +496,14 @@
               "serilog__writeTo__1__args__configure__0__args__source": "Application",
               "serilog__writeTo__1__args__configure__0__args__logName": "Application"
             },
+            "linuxSerilogSettings": {
+              "serilog__using__0": "Serilog.Sinks.ApplicationInsights",
+              "serilog__using__1": "Serilog.Sinks.Console",
+              "serilog__writeTo__0__name": "ApplicationInsights",
+              "serilog__writeTo__0__args__telemetryConverter": "Serilog.Sinks.ApplicationInsights.TelemetryConverters.TraceTelemetryConverter, Serilog.Sinks.ApplicationInsights",
+              "serilog__writeTo__1__name": "Console"
+            },
+            "selfDeployAppSettings": "[union(if(variables('isLinux'), variables('linuxSerilogSettings'), variables('windowsSerilogSettings')), createObject('APPLICATIONINSIGHTS_CONNECTION_STRING', parameters('appInsightsConnectionString'), 'inrule__sf__api__loginUrl', parameters('sfLoginUrl'), 'inrule__sf__api__username', parameters('sfUsername'), 'inrule__sf__api__password', parameters('sfPassword'), 'inrule__sf__api__securityToken', parameters('sfSecurityToken'), 'inrule__sf__api__consumerKey', parameters('sfConsumerKey'), 'inrule__sf__api__consumerSecret', parameters('sfConsumerSecret'), 'inrule__sf__api__authType', 'usernamePassword', 'inrule__sf__catalog__label', parameters('ruleAppLabel'), 'inrule__sf__catalog__user', parameters('catalogUser'), 'inrule__sf__catalog__password', parameters('catalogPassword'), 'inrule__sf__catalog__sso', 'false', 'inrule__sf__catalog__uri', parameters('catalogUri'), 'inrule__sf__catalog__ruleAppDirectory', '/home/site/wwwroot/RuleApps', 'inrule__sf__catalog__useInRuleCatalog', 'true', 'inrule__logging__level', 'Info', 'inrule__runtime__service__apiKey__primaryKey', parameters('primaryApiKey'), 'inrule__runtime__service__apiKey__secondaryKey', parameters('secondaryApiKey'), 'inrule__license', parameters('executionLicenseKey')))]",
             "saasAppSettings": {
               "inrule__api__appconfigurationservice": "[parameters('appConfigurationServiceConnectionString')]",
               "inrule__api__appconfigurationservice__label": "[parameters('appConfigurationServiceLabel')]",
@@ -464,49 +513,62 @@
               "serilog__writeTo__1__args__endpointUrl": "[parameters('sumoLogicEndpointUrl')]",
               "serilog__writeTo__1__args__sourceHost": "[parameters('tenantAlias')]",
               "serilog__writeTo__1__args__sourceCategory": "[parameters('sumoLogicSourceCategory')]"
+            },
+            "linuxSiteConfig": {
+              "linuxFxVersion": "DOTNETCORE|8.0",
+              "appCommandLine": "dotnet InRule.Salesforce.Api.dll"
             }
           },
-          "resources": [
-            {
-              "type": "Microsoft.Web/sites",
+          "resources": {
+            "existingAppServicePlan": {
+              "condition": "[not(parameters('createOrUpdateAppServicePlan'))]",
+              "existing": true,
+              "type": "Microsoft.Web/serverfarms",
               "apiVersion": "2020-12-01",
+              "resourceGroup": "[parameters('servicePlanResourceGroupName')]",
+              "name": "[parameters('appServicePlanName')]"
+            },
+            "appService": {
+              "type": "Microsoft.Web/sites",
+              "apiVersion": "2021-02-01",
               "name": "[parameters('appServiceName')]",
               "location": "[parameters('location')]",
               "properties": {
-                "serverFarmId": "[if(parameters('createOrUpdateAppServicePlan'), reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('servicePlanResourceGroupName')), 'Microsoft.Resources/deployments', 'AppServicePlanTemplate'), '2025-04-01').outputs.appServicePlanId.value, extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('servicePlanResourceGroupName')), 'Microsoft.Web/serverfarms', parameters('appServicePlanName')))]",
-                "siteConfig": {
-                  "use32BitWorkerProcess": "[or(equals(if(parameters('createOrUpdateAppServicePlan'), reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('servicePlanResourceGroupName')), 'Microsoft.Resources/deployments', 'AppServicePlanTemplate'), '2025-04-01').outputs.appServicePlanSkuName.value, reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('servicePlanResourceGroupName')), 'Microsoft.Web/serverfarms', parameters('appServicePlanName')), '2020-12-01', 'full').sku.name), 'F1'), equals(if(parameters('createOrUpdateAppServicePlan'), reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('servicePlanResourceGroupName')), 'Microsoft.Resources/deployments', 'AppServicePlanTemplate'), '2025-04-01').outputs.appServicePlanSkuName.value, reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('servicePlanResourceGroupName')), 'Microsoft.Web/serverfarms', parameters('appServicePlanName')), '2020-12-01', 'full').sku.name), 'D1'))]"
-                }
+                "serverFarmId": "[if(parameters('createOrUpdateAppServicePlan'), reference('appServicePlan').outputs.appServicePlanId.value, extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('servicePlanResourceGroupName')), 'Microsoft.Web/serverfarms', parameters('appServicePlanName')))]",
+                "clientAffinityEnabled": false,
+                "httpsOnly": true,
+                "siteConfig": "[union(createObject('use32BitWorkerProcess', or(equals(if(parameters('createOrUpdateAppServicePlan'), reference('appServicePlan').outputs.appServicePlanSkuName.value, reference('existingAppServicePlan', '2020-12-01', 'full').sku.name), 'F1'), equals(if(parameters('createOrUpdateAppServicePlan'), reference('appServicePlan').outputs.appServicePlanSkuName.value, reference('existingAppServicePlan', '2020-12-01', 'full').sku.name), 'D1'))), if(variables('isLinux'), variables('linuxSiteConfig'), createObject()))]"
               },
               "dependsOn": [
-                "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('servicePlanResourceGroupName')), 'Microsoft.Resources/deployments', 'AppServicePlanTemplate')]"
+                "appServicePlan",
+                "existingAppServicePlan"
               ]
             },
-            {
+            "appServiceCodeDeploy": {
               "type": "Microsoft.Web/sites/extensions",
-              "apiVersion": "2020-12-01",
-              "name": "[format('{0}/{1}', parameters('appServiceName'), 'MSDeploy')]",
+              "apiVersion": "2021-02-01",
+              "name": "[format('{0}/{1}', parameters('appServiceName'), 'ZipDeploy')]",
               "properties": {
                 "packageUri": "[parameters('packageUri')]"
               },
               "dependsOn": [
-                "[resourceId('Microsoft.Web/sites', parameters('appServiceName'))]"
+                "appService"
               ]
             },
-            {
+            "appServiceAppSettings": {
               "type": "Microsoft.Web/sites/config",
-              "apiVersion": "2020-12-01",
+              "apiVersion": "2021-02-01",
               "name": "[format('{0}/{1}', parameters('appServiceName'), 'appsettings')]",
               "properties": "[if(empty(parameters('appConfigurationServiceConnectionString')), variables('selfDeployAppSettings'), variables('saasAppSettings'))]",
               "dependsOn": [
-                "[resourceId('Microsoft.Web/sites', parameters('appServiceName'))]",
-                "[resourceId('Microsoft.Web/sites/extensions', parameters('appServiceName'), 'MSDeploy')]"
+                "appService",
+                "appServiceCodeDeploy"
               ]
             },
-            {
+            "appServicePlan": {
               "condition": "[parameters('createOrUpdateAppServicePlan')]",
               "type": "Microsoft.Resources/deployments",
-              "apiVersion": "2025-04-01",
+              "apiVersion": "2022-09-01",
               "name": "AppServicePlanTemplate",
               "resourceGroup": "[parameters('servicePlanResourceGroupName')]",
               "properties": {
@@ -523,11 +585,21 @@
                   },
                   "appServicePlanSkuName": {
                     "value": "[parameters('appServicePlanSkuName')]"
+                  },
+                  "osType": {
+                    "value": "[parameters('osType')]"
                   }
                 },
                 "template": {
                   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
                   "contentVersion": "1.0.0.0",
+                  "metadata": {
+                    "_generator": {
+                      "name": "bicep",
+                      "version": "0.36.1.42791",
+                      "templateHash": "10120251730665001511"
+                    }
+                  },
                   "parameters": {
                     "appServicePlanName": {
                       "type": "string"
@@ -557,14 +629,32 @@
                       "metadata": {
                         "description": "Describes plan's pricing tier and capacity. Check details at https://azure.microsoft.com/en-us/pricing/details/app-service/"
                       }
+                    },
+                    "osType": {
+                      "type": "string",
+                      "defaultValue": "Windows",
+                      "allowedValues": [
+                        "Windows",
+                        "Linux"
+                      ],
+                      "metadata": {
+                        "description": "Operating system type for the App Service. Determines deployment method and logging configuration."
+                      }
                     }
+                  },
+                  "variables": {
+                    "isLinux": "[equals(parameters('osType'), 'Linux')]"
                   },
                   "resources": [
                     {
                       "type": "Microsoft.Web/serverfarms",
-                      "apiVersion": "2020-12-01",
+                      "apiVersion": "2021-02-01",
                       "name": "[parameters('appServicePlanName')]",
                       "location": "[parameters('location')]",
+                      "kind": "[if(variables('isLinux'), 'linux', 'app')]",
+                      "properties": {
+                        "reserved": "[variables('isLinux')]"
+                      },
                       "sku": {
                         "name": "[parameters('appServicePlanSkuName')]"
                       }
@@ -577,17 +667,17 @@
                     },
                     "appServicePlanSkuName": {
                       "type": "string",
-                      "value": "[reference(resourceId('Microsoft.Web/serverfarms', parameters('appServicePlanName')), '2020-12-01', 'full').sku.name]"
+                      "value": "[reference(resourceId('Microsoft.Web/serverfarms', parameters('appServicePlanName')), '2021-02-01', 'full').sku.name]"
                     }
                   }
                 }
               }
             }
-          ],
+          },
           "outputs": {
             "salesforceRuleExecutionServiceURL": {
               "type": "string",
-              "value": "[format('https://{0}', reference(resourceId('Microsoft.Web/sites', parameters('appServiceName')), '2020-12-01').defaultHostName)]"
+              "value": "[format('https://{0}', reference('appService').defaultHostName)]"
             },
             "appServicePublishingCredentials": {
               "type": "object",
@@ -597,9 +687,9 @@
         }
       }
     },
-    {
+    "partnerCenterTracker": {
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2025-04-01",
+      "apiVersion": "2022-09-01",
       "name": "pid-33e2dfaf-aab8-4fa0-94fb-3e0b7f491cbd",
       "properties": {
         "expressionEvaluationOptions": {
@@ -610,15 +700,22 @@
         "template": {
           "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
           "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.36.1.42791",
+              "templateHash": "1346970631410067646"
+            }
+          },
           "resources": []
         }
       }
     }
-  ],
+  },
   "outputs": {
     "appServicePublishingCredentials": {
       "type": "object",
-      "value": "[reference(resourceId('Microsoft.Resources/deployments', 'salesforce'), '2025-04-01').outputs.appServicePublishingCredentials.value]"
+      "value": "[reference('salesforce').outputs.appServicePublishingCredentials.value]"
     }
   }
 }
