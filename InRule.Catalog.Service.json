@@ -112,7 +112,7 @@
     },
     "managerPackageUri": {
       "type": "string",
-      "defaultValue": "[concat('https://github.com/InRule/AzureAppServices/releases/download/v', parameters('inRuleVersion'),'/InRule.Catalog.Manager.Web.zip')]",
+      "defaultValue": "[concat('https://github.com/InRule/AzureAppServices/releases/download/v', parameters('inRuleVersion'),'/InRule.Catalog.Manager.WebCore.zip')]",
       "metadata": {
         "description": "Download URI for the catalog manager package, default to calculated from the inRuleVersion parameter. Leave as default unless deploying a custom package"
       }
