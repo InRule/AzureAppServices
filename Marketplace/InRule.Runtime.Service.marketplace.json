@@ -173,7 +173,7 @@
     },
     "catalogManagerPackageUri": {
       "type": "string",
-      "defaultValue": "[concat('https://github.com/InRule/AzureAppServices/releases/download/v', parameters('inRuleVersion'),'/InRule.Catalog.Manager.Web.zip')]",
+      "defaultValue": "[concat('https://github.com/InRule/AzureAppServices/releases/download/v', parameters('inRuleVersion'),'/InRule.Catalog.Manager.WebCore.zip')]",
       "metadata": {
         "description": "Download URI for the catalog manager package, default to calculated from the inRuleVersion parameter. Leave as default unless deploying a custom package"
       }
@@ -227,7 +227,7 @@
     "packageAppPackageUri": "[uri(parameters('_artifactsLocation'), concat('artifacts/InRule.Runtime.Service.zip', parameters('_artifactsLocationSasToken')))]",
     "packageCatalogTemplateUri": "[uri(parameters('_artifactsLocation'), concat('nestedtemplates/InRule.Catalog.Service.json', parameters('_artifactsLocationSasToken')))]",
     "packageCatalogServiceUri": "[uri(parameters('_artifactsLocation'), concat('artifacts/InRule.Catalog.Service.zip', parameters('_artifactsLocationSasToken')))]",
-    "packageCatalogManagerServiceUri": "[uri(parameters('_artifactsLocation'), concat('artifacts/InRule.Catalog.Manager.Web.zip', parameters('_artifactsLocationSasToken')))]",
+    "packageCatalogManagerServiceUri": "[uri(parameters('_artifactsLocation'), concat('artifacts/InRule.Catalog.Manager.WebCore.zip', parameters('_artifactsLocationSasToken')))]",
     "appPackageUri": "[if(parameters('deployArtifactsFromPackage'), variables('packageAppPackageUri'), parameters('packageUri'))]",
     "catalogTemplateUri": "[if(parameters('deployArtifactsFromPackage'), variables('packageCatalogTemplateUri'), parameters('catalogTemplateUri'))]",
     "catalogServicePackageUri": "[if(parameters('deployArtifactsFromPackage'), variables('packageCatalogServiceUri'), parameters('catalogServicePackageUri'))]",
