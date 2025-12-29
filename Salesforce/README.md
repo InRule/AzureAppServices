@@ -36,6 +36,7 @@ Open the file with your text editor of choice and edit the parameters listed bel
 | `appInsightsConnectionString` | `InstrumentationKey=<key>;IngestionEndpoint=https://<region>.in.applicationinsights.azure.com/` | Connection string for Azure Application Insights integration. |
 | `primaryApiKey` | `<key>` | Primary API key used to authenticate with the Salesforce Rule Execution API. |
 | `secondaryApiKey` | `<key>` | Secondary API key used as a backup for the Salesforce Rule Execution API. |
+| `executionLicenseKey` | `data:application/xml;base64,<base64-encoded-license>` | (Optional) License as a data URI. If not set, the license file must be uploaded after deployment. See [license documentation](/doc/upload-license-file.md). |
 
 > **Tip:** Save a copy of this parameters file after deployment to reuse for future upgrades.
 
@@ -70,7 +71,7 @@ az deployment group create -g RESOURCE_GROUP_NAME --template-file .\InRule.Sales
 ```
 
 ## Upload valid license file
-In order for the Salesforce API to properly function, a valid license file must be uploaded to the web app. For information on how to upload your license file please refer to our [license upload documentation](/doc/upload-license-file.md).
+In order for the Salesforce API to properly function, a valid license file must be uploaded to the web app. Optionally, the license can be provided during ARM template deployment using the `executionLicenseKey` parameter. For information on how to configure your license please refer to our [license documentation](/doc/upload-license-file.md).
 
 ## Verify by getting status details
 As a final verification that the Salesforce Rule Execution Service is properly functioning, a REST call can be made to the status details endpoint.

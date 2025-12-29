@@ -6,7 +6,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.36.1.42791",
-      "templateHash": "13907406225472375793"
+      "templateHash": "385825203015149395"
     }
   },
   "parameters": {
@@ -99,7 +99,7 @@
     },
     "inRuleVersion": {
       "type": "string",
-      "defaultValue": "5.8.1",
+      "defaultValue": "5.9.0",
       "metadata": {
         "description": "Defines what version of the InRule Execution Service to deploy"
       }
@@ -157,14 +157,14 @@
       "type": "securestring",
       "defaultValue": "",
       "metadata": {
-        "description": "Self-Hosted Only: Primary API key to authenticate with the Salesforce API"
+        "description": "Primary API key to authenticate with the Salesforce API"
       }
     },
     "secondaryApiKey": {
       "type": "securestring",
       "defaultValue": "",
       "metadata": {
-        "description": "Self-Hosted Only: Secondary API key to authenticate with the Salesforce API"
+        "description": "Secondary API key to authenticate with the Salesforce API"
       }
     },
     "osType": {
@@ -186,6 +186,27 @@
       }
     }
   },
+  "variables": {
+    "serviceAppSettings": {
+      "inrule__sf__api__loginUrl": "[parameters('sfLoginUrl')]",
+      "inrule__sf__api__username": "[parameters('sfUsername')]",
+      "inrule__sf__api__password": "[parameters('sfPassword')]",
+      "inrule__sf__api__securityToken": "[parameters('sfSecurityToken')]",
+      "inrule__sf__api__consumerKey": "[parameters('sfConsumerKey')]",
+      "inrule__sf__api__consumerSecret": "[parameters('sfConsumerSecret')]",
+      "inrule__sf__api__authType": "usernamePassword",
+      "inrule__sf__catalog__label": "[parameters('ruleAppLabel')]",
+      "inrule__sf__catalog__user": "[parameters('catalogUser')]",
+      "inrule__sf__catalog__password": "[parameters('catalogPassword')]",
+      "inrule__sf__catalog__sso": "false",
+      "inrule__sf__catalog__uri": "[parameters('catalogUri')]",
+      "inrule__sf__catalog__ruleAppDirectory": "RuleApps",
+      "inrule__sf__catalog__useInRuleCatalog": "true",
+      "inrule__logging__level": "Info",
+      "inrule__runtime__service__apiKey__primaryKey": "[parameters('primaryApiKey')]",
+      "inrule__runtime__service__apiKey__secondaryKey": "[parameters('secondaryApiKey')]"
+    }
+  },
   "resources": {
     "salesforce": {
       "type": "Microsoft.Resources/deployments",
@@ -200,36 +221,6 @@
           "appServiceName": {
             "value": "[parameters('appServiceName')]"
           },
-          "sfLoginUrl": {
-            "value": "[parameters('sfLoginUrl')]"
-          },
-          "sfUsername": {
-            "value": "[parameters('sfUsername')]"
-          },
-          "sfPassword": {
-            "value": "[parameters('sfPassword')]"
-          },
-          "sfSecurityToken": {
-            "value": "[parameters('sfSecurityToken')]"
-          },
-          "sfConsumerKey": {
-            "value": "[parameters('sfConsumerKey')]"
-          },
-          "sfConsumerSecret": {
-            "value": "[parameters('sfConsumerSecret')]"
-          },
-          "catalogUri": {
-            "value": "[parameters('catalogUri')]"
-          },
-          "catalogUser": {
-            "value": "[parameters('catalogUser')]"
-          },
-          "catalogPassword": {
-            "value": "[parameters('catalogPassword')]"
-          },
-          "ruleAppLabel": {
-            "value": "[parameters('ruleAppLabel')]"
-          },
           "createOrUpdateAppServicePlan": {
             "value": "[parameters('createOrUpdateAppServicePlan')]"
           },
@@ -242,27 +233,25 @@
           "servicePlanResourceGroupName": {
             "value": "[parameters('servicePlanResourceGroupName')]"
           },
-          "appInsightsConnectionString": {
-            "value": "[parameters('appInsightsConnectionString')]"
-          },
           "packageUri": {
             "value": "[parameters('packageUri')]"
           },
           "location": {
             "value": "[parameters('location')]"
           },
-          "primaryApiKey": {
-            "value": "[parameters('primaryApiKey')]"
-          },
-          "secondaryApiKey": {
-            "value": "[parameters('secondaryApiKey')]"
-          },
           "osType": {
             "value": "[parameters('osType')]"
           },
+          "appInsightsConnectionString": {
+            "value": "[parameters('appInsightsConnectionString')]"
+          },
           "executionLicenseKey": {
             "value": "[parameters('executionLicenseKey')]"
-          }
+          },
+          "additionalAppSettings": {
+            "value": "[variables('serviceAppSettings')]"
+          },
+          "requestedSerilogSinks": "[if(equals(parameters('osType'), 'Linux'), createObject('value', createArray('console', 'appInsights')), createObject('value', createArray('console', 'appInsights', 'eventLog')))]"
         },
         "template": {
           "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
@@ -272,7 +261,22 @@
             "_generator": {
               "name": "bicep",
               "version": "0.36.1.42791",
-              "templateHash": "1954983986612144040"
+              "templateHash": "9944428229986373763"
+            }
+          },
+          "definitions": {
+            "serilogSinkTemplatesType": {
+              "type": "secureObject",
+              "properties": {},
+              "additionalProperties": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                },
+                "metadata": {
+                  "description": "Sink name mapped to an array of template objects. Use {idx} placeholder for index substitution."
+                }
+              }
             }
           },
           "parameters": {
@@ -280,76 +284,6 @@
               "type": "string",
               "metadata": {
                 "description": "Name of the App Service to deploy that the Rule Execution Service will be installed on"
-              }
-            },
-            "sfLoginUrl": {
-              "type": "string",
-              "defaultValue": "",
-              "metadata": {
-                "description": "Login URL for the Salesforce instance used with the integration framework, ex: 'https://login.salesforce.com/services/oauth2/token'"
-              }
-            },
-            "sfUsername": {
-              "type": "string",
-              "defaultValue": "",
-              "metadata": {
-                "description": "Login username to connect to your Salesforce Account"
-              }
-            },
-            "sfPassword": {
-              "type": "securestring",
-              "defaultValue": "",
-              "metadata": {
-                "description": "Login password to connect to your Salesforce Account"
-              }
-            },
-            "sfSecurityToken": {
-              "type": "securestring",
-              "defaultValue": "",
-              "metadata": {
-                "description": "API token for the Salesforce service account"
-              }
-            },
-            "sfConsumerKey": {
-              "type": "string",
-              "defaultValue": "",
-              "metadata": {
-                "description": "OAuth consumer key for the connected app"
-              }
-            },
-            "sfConsumerSecret": {
-              "type": "securestring",
-              "defaultValue": "",
-              "metadata": {
-                "description": "OAuth consumer secret for the connected app"
-              }
-            },
-            "catalogUri": {
-              "type": "string",
-              "defaultValue": "",
-              "metadata": {
-                "description": "URI for your InRule Rule Catalog service, should follow this format: https://{Context}/Service.svc/core, with {Context} being replaced with the base catalog service URI. If you are setting deployCatalogResources to true, leave this value blank."
-              }
-            },
-            "catalogUser": {
-              "type": "string",
-              "defaultValue": "",
-              "metadata": {
-                "description": "Login username to connect to your InRule Rule Catalog. If you are setting deployCatalogResources AND deployInitialCatalogDb to true, leave this value blank. The catalog will be set up with default username/password credentials of admin/password. It is suggested to change the password for this account once deployment is complete."
-              }
-            },
-            "catalogPassword": {
-              "type": "securestring",
-              "defaultValue": "",
-              "metadata": {
-                "description": "Login password to connect to your InRule Rule Catalog. If you are setting deployCatalogResources AND deployInitialCatalogDb to true, leave this value blank. The catalog will be set up with default username/password credentials of admin/password. It is suggested to change the password for this account once deployment is complete."
-              }
-            },
-            "ruleAppLabel": {
-              "type": "string",
-              "defaultValue": "",
-              "metadata": {
-                "description": "Optionally supply a default label used by the execution service to identify the ruleapp version to run. It is recommended to use a label such as \"LIVE\" to denote a production-ready rule application"
               }
             },
             "createOrUpdateAppServicePlan": {
@@ -394,53 +328,11 @@
                 "description": "Optional name of the resource group for the existing app service plan. If creating a new plan, leave as the default value"
               }
             },
-            "appInsightsConnectionString": {
-              "type": "string",
-              "defaultValue": "",
-              "metadata": {
-                "description": "Only override the default value here if you have an existing App Insights resource you'd like to use, AND you need to use a non-standard connection string. If you need to supply your own connection string, be sure to set that value here, as well as providing your instrumentation key in the appInsightsInstrumentationKey parameter. If you want this template to manage the App Insights resource for you, or only need to provide an instrumentation key, leave this value as the default and provide values for appInsightsResourceName or appInsightsInstrumentationKey instead"
-              }
-            },
-            "appConfigurationServiceConnectionString": {
-              "type": "string",
-              "defaultValue": "",
-              "metadata": {
-                "description": "SaaS Only: Provide a connection string for a azure app configuration resource to pull app configuration settings from."
-              }
-            },
-            "appConfigurationServiceLabel": {
-              "type": "string",
-              "defaultValue": "",
-              "metadata": {
-                "description": "SaaS Only: Provide a label for the group of app settings to pull from your azure app configuration resource"
-              }
-            },
             "packageUri": {
               "type": "string",
               "defaultValue": "",
               "metadata": {
-                "description": "Download URI for the Execution Service package. Calculated from the inRuleVersion parameter."
-              }
-            },
-            "sumoLogicEndpointUrl": {
-              "type": "securestring",
-              "defaultValue": "",
-              "metadata": {
-                "description": "SaaS Only: Sumo Logic endpoint URL for logging"
-              }
-            },
-            "sumoLogicSourceCategory": {
-              "type": "string",
-              "defaultValue": "",
-              "metadata": {
-                "description": "SaaS Only: Sumo Logic source category for log organization"
-              }
-            },
-            "tenantAlias": {
-              "type": "string",
-              "defaultValue": "",
-              "metadata": {
-                "description": "SaaS Only: Tenant alias for the deployment"
+                "description": "Download URI for the Execution Service package."
               }
             },
             "location": {
@@ -448,20 +340,6 @@
               "defaultValue": "[resourceGroup().location]",
               "metadata": {
                 "description": "Optional for resources. By default the location of the resource group will be used"
-              }
-            },
-            "primaryApiKey": {
-              "type": "securestring",
-              "defaultValue": "",
-              "metadata": {
-                "description": "Self-Hosted Only: Primary API key to authenticate with the Salesforce API"
-              }
-            },
-            "secondaryApiKey": {
-              "type": "securestring",
-              "defaultValue": "",
-              "metadata": {
-                "description": "Self-Hosted Only: Secondary API key to authenticate with the Salesforce API"
               }
             },
             "osType": {
@@ -475,49 +353,89 @@
                 "description": "Operating system type for the App Service. Determines deployment method and logging configuration."
               }
             },
+            "appInsightsConnectionString": {
+              "type": "string",
+              "defaultValue": "",
+              "metadata": {
+                "description": "Optional Application Insights connection string. The Salesforce integration will use this a log source if provided."
+              }
+            },
             "executionLicenseKey": {
               "type": "securestring",
               "defaultValue": "",
               "metadata": {
                 "description": "License key for the Salesforce integration. If not set, the service will use the file-based license."
               }
+            },
+            "additionalAppSettings": {
+              "type": "secureObject",
+              "defaultValue": {},
+              "metadata": {
+                "description": "Additional application settings to be configured on the App Service."
+              }
+            },
+            "requestedSerilogSinks": {
+              "type": "array",
+              "defaultValue": [
+                "console",
+                "appInsights"
+              ],
+              "metadata": {
+                "description": "List of Serilog sinks to enable. Order determines index assignment."
+              }
+            },
+            "additionalSerilogSinkTemplates": {
+              "$ref": "#/definitions/serilogSinkTemplatesType",
+              "defaultValue": {},
+              "metadata": {
+                "description": "Additional Serilog sink templates to merge with built-in templates."
+              }
             }
           },
           "variables": {
+            "copy": [
+              {
+                "name": "serilogIndexedTemplates",
+                "count": "[length(range(0, length(variables('serilogTemplatesFlattened'))))]",
+                "input": "[reduce(items(variables('serilogTemplatesFlattened')[range(0, length(variables('serilogTemplatesFlattened')))[copyIndex('serilogIndexedTemplates')]]), createObject(), lambda('acc', 'item', union(lambdaVariables('acc'), createObject(format('{0}', replace(lambdaVariables('item').key, '{idx}', string(range(0, length(variables('serilogTemplatesFlattened')))[copyIndex('serilogIndexedTemplates')]))), lambdaVariables('item').value))))]"
+              }
+            ],
             "isLinux": "[equals(parameters('osType'), 'Linux')]",
-            "windowsSerilogSettings": {
-              "serilog__using__0": "Serilog.Sinks.ApplicationInsights",
-              "serilog__using__1": "Serilog.Sinks.Async",
-              "serilog__using__2": "Serilog.Sinks.EventLog",
-              "serilog__writeTo__0__name": "ApplicationInsights",
-              "serilog__writeTo__0__args__telemetryConverter": "Serilog.Sinks.ApplicationInsights.TelemetryConverters.TraceTelemetryConverter, Serilog.Sinks.ApplicationInsights",
-              "serilog__writeTo__1__name": "Async",
-              "serilog__writeTo__1__args__configure__0__name": "EventLog",
-              "serilog__writeTo__1__args__configure__0__args__source": "Application",
-              "serilog__writeTo__1__args__configure__0__args__logName": "Application"
-            },
-            "linuxSerilogSettings": {
-              "serilog__using__0": "Serilog.Sinks.ApplicationInsights",
-              "serilog__using__1": "Serilog.Sinks.Console",
-              "serilog__writeTo__0__name": "ApplicationInsights",
-              "serilog__writeTo__0__args__telemetryConverter": "Serilog.Sinks.ApplicationInsights.TelemetryConverters.TraceTelemetryConverter, Serilog.Sinks.ApplicationInsights",
-              "serilog__writeTo__1__name": "Console"
-            },
-            "selfDeployAppSettings": "[union(if(variables('isLinux'), variables('linuxSerilogSettings'), variables('windowsSerilogSettings')), createObject('APPLICATIONINSIGHTS_CONNECTION_STRING', parameters('appInsightsConnectionString'), 'inrule__sf__api__loginUrl', parameters('sfLoginUrl'), 'inrule__sf__api__username', parameters('sfUsername'), 'inrule__sf__api__password', parameters('sfPassword'), 'inrule__sf__api__securityToken', parameters('sfSecurityToken'), 'inrule__sf__api__consumerKey', parameters('sfConsumerKey'), 'inrule__sf__api__consumerSecret', parameters('sfConsumerSecret'), 'inrule__sf__api__authType', 'usernamePassword', 'inrule__sf__catalog__label', parameters('ruleAppLabel'), 'inrule__sf__catalog__user', parameters('catalogUser'), 'inrule__sf__catalog__password', parameters('catalogPassword'), 'inrule__sf__catalog__sso', 'false', 'inrule__sf__catalog__uri', parameters('catalogUri'), 'inrule__sf__catalog__ruleAppDirectory', '/home/site/wwwroot/RuleApps', 'inrule__sf__catalog__useInRuleCatalog', 'true', 'inrule__logging__level', 'Info', 'inrule__runtime__service__apiKey__primaryKey', parameters('primaryApiKey'), 'inrule__runtime__service__apiKey__secondaryKey', parameters('secondaryApiKey'), 'inrule__license', parameters('executionLicenseKey')))]",
-            "saasAppSettings": {
-              "inrule__api__appconfigurationservice": "[parameters('appConfigurationServiceConnectionString')]",
-              "inrule__api__appconfigurationservice__label": "[parameters('appConfigurationServiceLabel')]",
-              "inrule__api__appconfigurationservice__commonlabel": "[parameters('tenantAlias')]",
-              "inrule__runtime__service__catalog__catalogserviceuri": "[parameters('catalogUri')]",
-              "serilog__writeTo__1__name": "BufferedSumoLogic",
-              "serilog__writeTo__1__args__endpointUrl": "[parameters('sumoLogicEndpointUrl')]",
-              "serilog__writeTo__1__args__sourceHost": "[parameters('tenantAlias')]",
-              "serilog__writeTo__1__args__sourceCategory": "[parameters('sumoLogicSourceCategory')]"
-            },
             "linuxSiteConfig": {
-              "linuxFxVersion": "DOTNETCORE|8.0",
-              "appCommandLine": "dotnet InRule.Salesforce.Api.dll"
-            }
+              "linuxFxVersion": "DOTNETCORE|8.0"
+            },
+            "osSpecificSiteConfig": "[if(variables('isLinux'), variables('linuxSiteConfig'), createObject())]",
+            "appSettings": "[union(variables('serilogSettings'), createObject('APPLICATIONINSIGHTS_CONNECTION_STRING', parameters('appInsightsConnectionString'), 'inrule__license', parameters('executionLicenseKey')), parameters('additionalAppSettings'))]",
+            "serilogSinkTemplates": {
+              "console": [
+                {
+                  "serilog__using__{idx}": "Serilog.Sinks.Console",
+                  "serilog__writeTo__{idx}__name": "Console"
+                }
+              ],
+              "appInsights": [
+                {
+                  "serilog__using__{idx}": "Serilog.Sinks.ApplicationInsights",
+                  "serilog__writeTo__{idx}__name": "ApplicationInsights",
+                  "serilog__writeTo__{idx}__args__telemetryConverter": "Serilog.Sinks.ApplicationInsights.TelemetryConverters.TraceTelemetryConverter, Serilog.Sinks.ApplicationInsights"
+                }
+              ],
+              "eventLog": [
+                {
+                  "serilog__using__{idx}": "Serilog.Sinks.Async",
+                  "serilog__writeTo__{idx}__name": "Async",
+                  "serilog__writeTo__{idx}__args__configure__0__name": "EventLog",
+                  "serilog__writeTo__{idx}__args__configure__0__args__source": "Application",
+                  "serilog__writeTo__{idx}__args__configure__0__args__logName": "Application"
+                },
+                {
+                  "serilog__using__{idx}": "Serilog.Sinks.EventLog"
+                }
+              ]
+            },
+            "mergedSerilogSinkTemplates": "[union(variables('serilogSinkTemplates'), parameters('additionalSerilogSinkTemplates'))]",
+            "serilogTemplatesFlattened": "[flatten(map(parameters('requestedSerilogSinks'), lambda('sinkName', variables('mergedSerilogSinkTemplates')[lambdaVariables('sinkName')])))]",
+            "serilogSettings": "[reduce(variables('serilogIndexedTemplates'), createObject(), lambda('acc', 'template', union(lambdaVariables('acc'), lambdaVariables('template'))))]"
           },
           "resources": {
             "existingAppServicePlan": {
@@ -537,7 +455,7 @@
                 "serverFarmId": "[if(parameters('createOrUpdateAppServicePlan'), reference('appServicePlan').outputs.appServicePlanId.value, extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('servicePlanResourceGroupName')), 'Microsoft.Web/serverfarms', parameters('appServicePlanName')))]",
                 "clientAffinityEnabled": false,
                 "httpsOnly": true,
-                "siteConfig": "[union(createObject('use32BitWorkerProcess', or(equals(if(parameters('createOrUpdateAppServicePlan'), reference('appServicePlan').outputs.appServicePlanSkuName.value, reference('existingAppServicePlan', '2020-12-01', 'full').sku.name), 'F1'), equals(if(parameters('createOrUpdateAppServicePlan'), reference('appServicePlan').outputs.appServicePlanSkuName.value, reference('existingAppServicePlan', '2020-12-01', 'full').sku.name), 'D1'))), if(variables('isLinux'), variables('linuxSiteConfig'), createObject()))]"
+                "siteConfig": "[union(createObject('alwaysOn', true(), 'use32BitWorkerProcess', or(equals(if(parameters('createOrUpdateAppServicePlan'), reference('appServicePlan').outputs.appServicePlanSkuName.value, reference('existingAppServicePlan', '2020-12-01', 'full').sku.name), 'F1'), equals(if(parameters('createOrUpdateAppServicePlan'), reference('appServicePlan').outputs.appServicePlanSkuName.value, reference('existingAppServicePlan', '2020-12-01', 'full').sku.name), 'D1'))), variables('osSpecificSiteConfig'))]"
               },
               "dependsOn": [
                 "appServicePlan",
@@ -545,6 +463,7 @@
               ]
             },
             "appServiceCodeDeploy": {
+              "condition": "[not(empty(parameters('packageUri')))]",
               "type": "Microsoft.Web/sites/extensions",
               "apiVersion": "2021-02-01",
               "name": "[format('{0}/{1}', parameters('appServiceName'), 'ZipDeploy')]",
@@ -552,17 +471,17 @@
                 "packageUri": "[parameters('packageUri')]"
               },
               "dependsOn": [
-                "appService"
+                "appService",
+                "appServiceAppSettings"
               ]
             },
             "appServiceAppSettings": {
               "type": "Microsoft.Web/sites/config",
               "apiVersion": "2021-02-01",
               "name": "[format('{0}/{1}', parameters('appServiceName'), 'appsettings')]",
-              "properties": "[if(empty(parameters('appConfigurationServiceConnectionString')), variables('selfDeployAppSettings'), variables('saasAppSettings'))]",
+              "properties": "[variables('appSettings')]",
               "dependsOn": [
-                "appService",
-                "appServiceCodeDeploy"
+                "appService"
               ]
             },
             "appServicePlan": {

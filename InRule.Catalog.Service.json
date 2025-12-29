@@ -98,7 +98,7 @@
     },
     "inRuleVersion": {
       "type": "string",
-      "defaultValue": "5.8.1",
+      "defaultValue": "5.9.0",
       "metadata": {
         "description": "Version of the catalog to deploy"
       }
@@ -151,6 +151,7 @@
     },
     "catalogLicenseKey": {
       "type": "securestring",
+      "defaultValue": "",
       "metadata": {
         "description": "License key for the Catalog Service. If not set, the catalog will use the file-based license."
       }
@@ -172,8 +173,7 @@
       "Serilog__WriteTo__0__Name": "Console"
     },
     "serilogSettings": "[if(variables('isLinux'), variables('linuxSerilogSettings'), variables('windowsSerilogSettings'))]",
-    "catalogServiceSiteConfig": "[if(variables('isLinux'), createObject('linuxFxVersion', 'DOTNETCORE|8.0', 'appCommandLine', 'dotnet InRule.Catalog.Service.dll'), createObject())]",
-    "catalogManagerSiteConfig": "[if(variables('isLinux'), createObject('linuxFxVersion', 'DOTNETCORE|8.0', 'appCommandLine', 'dotnet InRule.Catalog.Manager.WebCore.dll'), createObject())]"
+    "appServiceSiteConfig": "[if(variables('isLinux'), createObject('linuxFxVersion', 'DOTNETCORE|8.0'), createObject())]"
   },
   "resources": [
     {
@@ -234,27 +234,15 @@
         "serverFarmId": "[resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', variables('catalogServicePlanName'))]",
         "siteConfig": "[union(
           createObject('use32BitWorkerProcess', or(equals(if(parameters('createOrUpdateCatalogServicePlan'), parameters('catalogServicePlanSkuName'), reference(resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', variables('catalogServicePlanName')), '2021-02-01', 'Full').sku.name), 'F1'), equals(if(parameters('createOrUpdateCatalogServicePlan'), parameters('catalogServicePlanSkuName'), reference(resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', variables('catalogServicePlanName')), '2021-02-01', 'Full').sku.name), 'D1'))),
-          variables('catalogServiceSiteConfig')
+          variables('appServiceSiteConfig')
         )]"
       },
       "resources": [
-        {
-          "name": "ZipDeploy",
-          "type": "extensions",
-          "apiVersion": "2021-02-01",
-          "dependsOn": [
-            "[resourceId('Microsoft.Web/sites', parameters('catalogServiceName'))]"
-          ],
-          "properties": {
-            "packageUri": "[parameters('packageUri')]"
-          }
-        },
         {
           "name": "appsettings",
           "type": "config",
           "apiVersion": "2021-02-01",
           "dependsOn": [
-            "[resourceId('Microsoft.Web/sites/extensions', parameters('catalogServiceName'), 'ZipDeploy')]",
             "[resourceId('Microsoft.Web/sites', parameters('catalogServiceName'))]",
             "[resourceId('Microsoft.Sql/servers', parameters('catalogSqlServerName'))]"
           ],
@@ -275,6 +263,18 @@
               parameters('catalogLicenseKey')
             )
           )]"
+        },
+        {
+          "name": "ZipDeploy",
+          "type": "extensions",
+          "apiVersion": "2021-02-01",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/sites/config', parameters('catalogServiceName'), 'appsettings')]",
+            "[resourceId('Microsoft.Web/sites', parameters('catalogServiceName'))]"
+          ],
+          "properties": {
+            "packageUri": "[parameters('packageUri')]"
+          }
         }
       ]
     },
@@ -284,7 +284,8 @@
       "apiVersion": "2021-02-01",
       "location": "[parameters('location')]",
       "dependsOn": [
-        "[resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Resources/deployments', 'AppServicePlanTemplate')]"
+        "[resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Resources/deployments', 'AppServicePlanTemplate')]",
+        "[resourceId('Microsoft.Web/sites/extensions', parameters('catalogServiceName'), 'ZipDeploy')]"
       ],
       "tags": {
         "[concat('hidden-related:', resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', variables('catalogServicePlanName')))]": "Resource"
@@ -293,27 +294,15 @@
         "serverFarmId": "[resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', variables('catalogServicePlanName'))]",
         "siteConfig": "[union(
           createObject('use32BitWorkerProcess', or(equals(if(parameters('createOrUpdateCatalogServicePlan'), parameters('catalogServicePlanSkuName'), reference(resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', variables('catalogServicePlanName')), '2021-02-01', 'Full').sku.name), 'F1'), equals(if(parameters('createOrUpdateCatalogServicePlan'), parameters('catalogServicePlanSkuName'), reference(resourceId(parameters('servicePlanResourceGroupName'), 'Microsoft.Web/serverfarms', variables('catalogServicePlanName')), '2021-02-01', 'Full').sku.name), 'D1'))),
-          variables('catalogManagerSiteConfig')
+          variables('appServiceSiteConfig')
         )]"
       },
       "resources": [
-        {
-          "name": "ZipDeploy",
-          "type": "extensions",
-          "apiVersion": "2021-02-01",
-          "dependsOn": [
-            "[resourceId('Microsoft.Web/sites', parameters('catalogManagerServiceName'))]"
-          ],
-          "properties": {
-            "packageUri": "[parameters('managerPackageUri')]"
-          }
-        },
         {
           "name": "appsettings",
           "type": "config",
           "apiVersion": "2021-02-01",
           "dependsOn": [
-            "[resourceId('Microsoft.Web/sites/extensions', parameters('catalogManagerServiceName'), 'ZipDeploy')]",
             "[resourceId('Microsoft.Web/sites', parameters('catalogManagerServiceName'))]"
           ],
           "properties": "[union(
@@ -325,6 +314,18 @@
               'Information'
             )
           )]"
+        },
+        {
+          "name": "ZipDeploy",
+          "type": "extensions",
+          "apiVersion": "2021-02-01",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/sites/config', parameters('catalogManagerServiceName'), 'appsettings')]",
+            "[resourceId('Microsoft.Web/sites', parameters('catalogManagerServiceName'))]"
+          ],
+          "properties": {
+            "packageUri": "[parameters('managerPackageUri')]"
+          }
         }
       ]
     },

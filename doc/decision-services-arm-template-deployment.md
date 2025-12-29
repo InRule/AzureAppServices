@@ -17,12 +17,13 @@ Open the file with your text editor of choice and edit the parameters listed bel
 #### InRule.Runtime.DecisionService.parameters.json
 | Parameter | Example Values | Description |
 | --------- | -------------- | ----------- |
-| decisionServiceName | yourcompanyname-inrule-environment-decision | Provide a name for the Azure App Service that the decision service will run on. |
-| decisionServicePlanSkuName | B1 | Describes runtime services plan's pricing tier and capacity. [Plan Details](https://azure.microsoft.com/en-us/pricing/details/app-service/)|
-| catalogUri | https://{catalogAppService}/Service.svc | Provide the uri for the catalog service. |
-| inRuleVersion | 5.8.1 | Provide the inRule version you wish to deploy, default value is the latest inRule version. |
-| decisionServicePlanName | inruleDecisionServicePlan | The name for the app Service Plan.  Leave blank for the value to be derived as `decisionServiceName` + `Plan`|
-| apiKeyPrimary | "" | Provide an api key value that will be used to authenticate to Decision Services. |
+| `decisionServiceName` | `yourcompanyname-inrule-environment-decision` | Provide a name for the Azure App Service that the decision service will run on. |
+| `decisionServicePlanSkuName` | `B1` | Describes runtime services plan's pricing tier and capacity. [Plan Details](https://azure.microsoft.com/en-us/pricing/details/app-service/)|
+| `catalogUri` | `https://{catalogAppService}/Service.svc` | Provide the uri for the catalog service. |
+| `inRuleVersion` | `5.8.1` | Provide the inRule version you wish to deploy, default value is the latest inRule version. |
+| `decisionServicePlanName` | `inruleDecisionServicePlan` | The name for the app Service Plan. Leave blank for the value to be derived as `decisionServiceName` + `Plan`. |
+| `apiKeyPrimary` | `""` | Provide an api key value that will be used to authenticate to Decision Services. |
+| `executionLicenseKey` | `data:application/xml;base64,<base64-encoded-license>` | (Optional) License as a data URI. If not set, the license file must be uploaded after deployment. See [license documentation](/doc/upload-license-file.md). |
 
 __Save copy of the parameters after deployment to refer to and use for future upgrades__
 
@@ -57,7 +58,7 @@ az deployment group create -g RESOURCE_GROUP_NAME --template-file .\InRule.Runti
 ```
 
 ## Upload valid license file
-In order for Decision Services to properly function, a valid license file must be uploaded to the web app. For information on how to upload your license file please refer to our [license upload documentation](/doc/upload-license-file.md).
+In order for Decision Services to properly function, a valid license file must be uploaded to the web app. Optionally, the license can be provided during ARM template deployment using the `executionLicenseKey` parameter. For information on how to configure your license please refer to our [license documentation](/doc/upload-license-file.md).
 
 ## Verify by getting status details
 As a final verification that Decision Services is properly functioning, a REST call can be made to the status details endpoint.
