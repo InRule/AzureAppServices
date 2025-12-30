@@ -6,7 +6,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.36.1.42791",
-      "templateHash": "4132453065990135015"
+      "templateHash": "11670940248947061971"
     }
   },
   "parameters": {
@@ -87,14 +87,14 @@
       "type": "securestring",
       "defaultValue": "",
       "metadata": {
-        "description": "Self-Hosted Only: Primary API key for the execution service"
+        "description": "Primary API key for the execution service"
       }
     },
     "secondaryApiKey": {
       "type": "securestring",
       "defaultValue": "",
       "metadata": {
-        "description": "Self-Hosted Only: Secondary API key for the execution service"
+        "description": "Secondary API key for the execution service"
       }
     },
     "osType": {
@@ -131,7 +131,7 @@
         "P4"
       ],
       "metadata": {
-        "description": "Describes plan's pricing tier and capacity. Check details at https://azure.microsoft.com/en-us/pricing/details/app-service/. The included web job requires 'Always On' to be enabled to function properly, which is not supported on tiers below Basic."
+        "description": "Describes plan's pricing tier and capacity. Check details at https://azure.microsoft.com/en-us/pricing/details/app-service/. The service requires 'Always On' to be enabled to function properly, which is not supported on tiers below Basic."
       }
     },
     "servicePlanResourceGroupName": {
@@ -150,7 +150,20 @@
     }
   },
   "variables": {
-    "computedAppServicePlanName": "[if(empty(parameters('appServicePlanName')), format('{0}Plan', parameters('appServiceName')), parameters('appServicePlanName'))]"
+    "computedAppServicePlanName": "[if(empty(parameters('appServicePlanName')), format('{0}Plan', parameters('appServiceName')), parameters('appServicePlanName'))]",
+    "serviceAppSettings": {
+      "inrule__crm__catalog__label": "[parameters('ruleAppLabel')]",
+      "inrule__crm__catalog__user": "[parameters('catalogUser')]",
+      "inrule__crm__catalog__password": "[parameters('catalogPassword')]",
+      "inrule__crm__catalog__sso": "false",
+      "inrule__crm__catalog__uri": "[parameters('catalogUri')]",
+      "inrule__crm__catalog__ruleAppDirectory": "RuleApps",
+      "inrule__crm__catalog__useInRuleCatalog": "true",
+      "inrule__crm__DynamicsCRM": "[parameters('crmConnectionString')]",
+      "inrule__logging__level": "Info",
+      "inrule__runtime__service__apiKey__primaryKey": "[parameters('primaryApiKey')]",
+      "inrule__runtime__service__apiKey__secondaryKey": "[parameters('secondaryApiKey')]"
+    }
   },
   "resources": {
     "dynamics": {
@@ -163,26 +176,8 @@
         },
         "mode": "Incremental",
         "parameters": {
-          "ruleAppLabel": {
-            "value": "[parameters('ruleAppLabel')]"
-          },
-          "catalogUri": {
-            "value": "[parameters('catalogUri')]"
-          },
-          "catalogUser": {
-            "value": "[parameters('catalogUser')]"
-          },
-          "catalogPassword": {
-            "value": "[parameters('catalogPassword')]"
-          },
-          "appInsightsConnectionString": {
-            "value": "[parameters('appInsightsConnectionString')]"
-          },
           "appServiceName": {
             "value": "[parameters('appServiceName')]"
-          },
-          "crmConnectionString": {
-            "value": "[parameters('crmConnectionString')]"
           },
           "createOrUpdateAppServicePlan": {
             "value": "[parameters('createOrUpdateAppServicePlan')]"
@@ -202,18 +197,19 @@
           "packageUri": {
             "value": "[parameters('packageUri')]"
           },
-          "primaryApiKey": {
-            "value": "[parameters('primaryApiKey')]"
-          },
-          "secondaryApiKey": {
-            "value": "[parameters('secondaryApiKey')]"
-          },
           "osType": {
             "value": "[parameters('osType')]"
           },
+          "appInsightsConnectionString": {
+            "value": "[parameters('appInsightsConnectionString')]"
+          },
           "executionLicenseKey": {
             "value": "[parameters('executionLicenseKey')]"
-          }
+          },
+          "additionalAppSettings": {
+            "value": "[variables('serviceAppSettings')]"
+          },
+          "requestedSerilogSinks": "[if(equals(parameters('osType'), 'Linux'), createObject('value', createArray('console', 'appInsights')), createObject('value', createArray('console', 'appInsights', 'eventLog')))]"
         },
         "template": {
           "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
@@ -223,58 +219,29 @@
             "_generator": {
               "name": "bicep",
               "version": "0.36.1.42791",
-              "templateHash": "18081549056619884236"
+              "templateHash": "17061205017327898871"
+            }
+          },
+          "definitions": {
+            "serilogSinkTemplatesType": {
+              "type": "secureObject",
+              "properties": {},
+              "additionalProperties": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                },
+                "metadata": {
+                  "description": "Sink name mapped to an array of template objects. Use {idx} placeholder for index substitution."
+                }
+              }
             }
           },
           "parameters": {
-            "ruleAppLabel": {
-              "type": "string"
-            },
-            "catalogUser": {
-              "type": "string"
-            },
-            "catalogPassword": {
-              "type": "securestring"
-            },
-            "catalogUri": {
-              "type": "string"
-            },
-            "appInsightsConnectionString": {
-              "type": "string",
-              "defaultValue": ""
-            },
-            "appConfigurationServiceLabel": {
-              "type": "string",
-              "defaultValue": "",
-              "metadata": {
-                "description": "SaaS Only: Provide a label for the group of dynamics-related app settings to pull from your azure app configuration resource"
-              }
-            },
-            "appConfigurationServiceCommonLabel": {
-              "type": "string",
-              "defaultValue": "",
-              "metadata": {
-                "description": "SaaS Only: Provide a label for the group of app settings to pull from your azure app configuration resource"
-              }
-            },
-            "appConfigurationServiceConnectionString": {
-              "type": "string",
-              "defaultValue": "",
-              "metadata": {
-                "description": "SaaS Only: Provide a connection string for a azure app configuration resource to pull app configuration settings from."
-              }
-            },
             "appServiceName": {
               "type": "string",
               "metadata": {
                 "description": "Name of the App Service to deploy that the Rule Execution Service will be installed on"
-              }
-            },
-            "crmConnectionString": {
-              "type": "securestring",
-              "defaultValue": "",
-              "metadata": {
-                "description": "Connection string for the Dynamics CRM instance used with the integration framework. Refer to this link for more details and formatting: https://docs.microsoft.com/en-us/powerapps/developer/common-data-service/xrm-tooling/use-connection-strings-xrm-tooling-connect"
               }
             },
             "createOrUpdateAppServicePlan": {
@@ -300,7 +267,7 @@
                 "P4"
               ],
               "metadata": {
-                "description": "Describes plan's pricing tier and capacity. Check details at https://azure.microsoft.com/en-us/pricing/details/app-service/. The included web job requires 'Always On' to be enabled to function properly, which is not supported on tiers below Basic."
+                "description": "Describes plan's pricing tier and capacity. Check details at https://azure.microsoft.com/en-us/pricing/details/app-service/. The service requires 'Always On' to be enabled to function properly, which is not supported on tiers below Basic."
               }
             },
             "servicePlanResourceGroupName": {
@@ -324,41 +291,6 @@
                 "description": "Optional for resources. By default the location of the resource group will be used"
               }
             },
-            "sumoLogicEndpointUrl": {
-              "type": "securestring",
-              "defaultValue": "",
-              "metadata": {
-                "description": "SaaS Only: Sumo Logic endpoint URL for logging"
-              }
-            },
-            "sumoLogicSourceCategory": {
-              "type": "string",
-              "defaultValue": "",
-              "metadata": {
-                "description": "SaaS Only: Sumo Logic source category for log organization"
-              }
-            },
-            "tenantAlias": {
-              "type": "string",
-              "defaultValue": "",
-              "metadata": {
-                "description": "SaaS Only: Tenant alias for the deployment"
-              }
-            },
-            "primaryApiKey": {
-              "type": "securestring",
-              "defaultValue": "",
-              "metadata": {
-                "description": "Self-Hosted Only: Primary API key for the execution service"
-              }
-            },
-            "secondaryApiKey": {
-              "type": "securestring",
-              "defaultValue": "",
-              "metadata": {
-                "description": "Self-Hosted Only: Secondary API key for the execution service"
-              }
-            },
             "osType": {
               "type": "string",
               "defaultValue": "Windows",
@@ -370,6 +302,16 @@
                 "description": "Operating system type for the App Service. Determines deployment method and logging configuration."
               }
             },
+            "appServicePlanName": {
+              "type": "string"
+            },
+            "appInsightsConnectionString": {
+              "type": "string",
+              "defaultValue": "",
+              "metadata": {
+                "description": "Optional Application Insights connection string. The Dynamics integration will use this a log source if provided."
+              }
+            },
             "executionLicenseKey": {
               "type": "securestring",
               "defaultValue": "",
@@ -377,46 +319,74 @@
                 "description": "License key for the Dynamics CRM integration. If not set, the service will use the file-based license."
               }
             },
-            "appServicePlanName": {
-              "type": "string"
+            "additionalAppSettings": {
+              "type": "secureObject",
+              "metadata": {
+                "description": "Additional application settings to be configured on the App Service."
+              }
+            },
+            "requestedSerilogSinks": {
+              "type": "array",
+              "defaultValue": [
+                "console",
+                "appInsights"
+              ],
+              "metadata": {
+                "description": "List of Serilog sinks to enable. Order determines index assignment."
+              }
+            },
+            "additionalSerilogSinkTemplates": {
+              "$ref": "#/definitions/serilogSinkTemplatesType",
+              "defaultValue": {},
+              "metadata": {
+                "description": "Additional Serilog sink templates to merge with built-in templates."
+              }
             }
           },
           "variables": {
+            "copy": [
+              {
+                "name": "serilogIndexedTemplates",
+                "count": "[length(range(0, length(variables('serilogTemplatesFlattened'))))]",
+                "input": "[reduce(items(variables('serilogTemplatesFlattened')[range(0, length(variables('serilogTemplatesFlattened')))[copyIndex('serilogIndexedTemplates')]]), createObject(), lambda('acc', 'item', union(lambdaVariables('acc'), createObject(format('{0}', replace(lambdaVariables('item').key, '{idx}', string(range(0, length(variables('serilogTemplatesFlattened')))[copyIndex('serilogIndexedTemplates')]))), lambdaVariables('item').value))))]"
+              }
+            ],
             "isLinux": "[equals(parameters('osType'), 'Linux')]",
-            "windowsSerilogSettings": {
-              "serilog__using__0": "Serilog.Sinks.ApplicationInsights",
-              "serilog__using__1": "Serilog.Sinks.Async",
-              "serilog__using__2": "Serilog.Sinks.EventLog",
-              "serilog__writeTo__0__name": "ApplicationInsights",
-              "serilog__writeTo__0__args__telemetryConverter": "Serilog.Sinks.ApplicationInsights.TelemetryConverters.TraceTelemetryConverter, Serilog.Sinks.ApplicationInsights",
-              "serilog__writeTo__1__name": "Async",
-              "serilog__writeTo__1__args__configure__0__name": "EventLog",
-              "serilog__writeTo__1__args__configure__0__args__source": "Application",
-              "serilog__writeTo__1__args__configure__0__args__logName": "Application"
-            },
-            "linuxSerilogSettings": {
-              "serilog__using__0": "Serilog.Sinks.ApplicationInsights",
-              "serilog__using__1": "Serilog.Sinks.Console",
-              "serilog__writeTo__0__name": "ApplicationInsights",
-              "serilog__writeTo__0__args__telemetryConverter": "Serilog.Sinks.ApplicationInsights.TelemetryConverters.TraceTelemetryConverter, Serilog.Sinks.ApplicationInsights",
-              "serilog__writeTo__1__name": "Console"
-            },
-            "selfDeployAppSettings": "[union(if(variables('isLinux'), variables('linuxSerilogSettings'), variables('windowsSerilogSettings')), createObject('APPLICATIONINSIGHTS_CONNECTION_STRING', parameters('appInsightsConnectionString'), 'inrule__crm__catalog__label', parameters('ruleAppLabel'), 'inrule__crm__catalog__user', parameters('catalogUser'), 'inrule__crm__catalog__password', parameters('catalogPassword'), 'inrule__crm__catalog__sso', 'false', 'inrule__crm__catalog__uri', parameters('catalogUri'), 'inrule__crm__catalog__ruleAppDirectory', 'C:\\RuleApps', 'inrule__crm__catalog__useInRuleCatalog', 'true', 'inrule__crm__DynamicsCRM', parameters('crmConnectionString'), 'inrule__logging__level', 'Info', 'inrule__runtime__service__apiKey__primaryKey', parameters('primaryApiKey'), 'inrule__runtime__service__apiKey__secondaryKey', parameters('secondaryApiKey'), 'inrule__license', parameters('executionLicenseKey')))]",
-            "saasAppSettings": {
-              "inrule__api__appconfigurationservice": "[parameters('appConfigurationServiceConnectionString')]",
-              "inrule__api__appconfigurationservice__label": "[parameters('appConfigurationServiceLabel')]",
-              "inrule__api__appconfigurationservice__commonlabel": "[parameters('appConfigurationServiceCommonLabel')]",
-              "inrule__runtime__service__catalog__catalogserviceuri": "[parameters('catalogUri')]",
-              "serilog__writeTo__1__name": "BufferedSumoLogic",
-              "serilog__writeTo__1__args__endpointUrl": "[parameters('sumoLogicEndpointUrl')]",
-              "serilog__writeTo__1__args__sourceHost": "[parameters('tenantAlias')]",
-              "serilog__writeTo__1__args__sourceCategory": "[parameters('sumoLogicSourceCategory')]"
-            },
             "linuxSiteConfig": {
-              "linuxFxVersion": "DOTNETCORE|8.0",
-              "appCommandLine": "dotnet InRule.Crm.Api.dll"
+              "linuxFxVersion": "DOTNETCORE|8.0"
             },
-            "finalAppSettings": "[if(not(empty(parameters('appConfigurationServiceConnectionString'))), variables('saasAppSettings'), variables('selfDeployAppSettings'))]"
+            "osSpecificSiteConfig": "[if(variables('isLinux'), variables('linuxSiteConfig'), createObject())]",
+            "appSettings": "[union(variables('serilogSettings'), createObject('APPLICATIONINSIGHTS_CONNECTION_STRING', parameters('appInsightsConnectionString'), 'inrule__license', parameters('executionLicenseKey')), parameters('additionalAppSettings'))]",
+            "serilogSinkTemplates": {
+              "console": [
+                {
+                  "serilog__using__{idx}": "Serilog.Sinks.Console",
+                  "serilog__writeTo__{idx}__name": "Console"
+                }
+              ],
+              "appInsights": [
+                {
+                  "serilog__using__{idx}": "Serilog.Sinks.ApplicationInsights",
+                  "serilog__writeTo__{idx}__name": "ApplicationInsights",
+                  "serilog__writeTo__{idx}__args__telemetryConverter": "Serilog.Sinks.ApplicationInsights.TelemetryConverters.TraceTelemetryConverter, Serilog.Sinks.ApplicationInsights"
+                }
+              ],
+              "eventLog": [
+                {
+                  "serilog__using__{idx}": "Serilog.Sinks.Async",
+                  "serilog__writeTo__{idx}__name": "Async",
+                  "serilog__writeTo__{idx}__args__configure__0__name": "EventLog",
+                  "serilog__writeTo__{idx}__args__configure__0__args__source": "Application",
+                  "serilog__writeTo__{idx}__args__configure__0__args__logName": "Application"
+                },
+                {
+                  "serilog__using__{idx}": "Serilog.Sinks.EventLog"
+                }
+              ]
+            },
+            "mergedSerilogSinkTemplates": "[union(variables('serilogSinkTemplates'), parameters('additionalSerilogSinkTemplates'))]",
+            "serilogTemplatesFlattened": "[flatten(map(parameters('requestedSerilogSinks'), lambda('sinkName', variables('mergedSerilogSinkTemplates')[lambdaVariables('sinkName')])))]",
+            "serilogSettings": "[reduce(variables('serilogIndexedTemplates'), createObject(), lambda('acc', 'template', union(lambdaVariables('acc'), lambdaVariables('template'))))]"
           },
           "resources": {
             "existingAppServicePlan": {
@@ -436,13 +406,14 @@
                 "serverFarmId": "[if(parameters('createOrUpdateAppServicePlan'), reference('appServicePlan').outputs.appServicePlanId.value, extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('servicePlanResourceGroupName')), 'Microsoft.Web/serverfarms', parameters('appServicePlanName')))]",
                 "clientAffinityEnabled": false,
                 "httpsOnly": true,
-                "siteConfig": "[union(createObject('alwaysOn', true(), 'use32BitWorkerProcess', false()), if(variables('isLinux'), variables('linuxSiteConfig'), createObject()))]"
+                "siteConfig": "[union(createObject('alwaysOn', true(), 'use32BitWorkerProcess', false()), variables('osSpecificSiteConfig'))]"
               },
               "dependsOn": [
                 "appServicePlan"
               ]
             },
             "appServiceName_ZipDeploy": {
+              "condition": "[not(empty(parameters('packageUri')))]",
               "type": "Microsoft.Web/sites/extensions",
               "apiVersion": "2021-02-01",
               "name": "[format('{0}/{1}', parameters('appServiceName'), 'ZipDeploy')]",
@@ -450,17 +421,17 @@
                 "packageUri": "[parameters('packageUri')]"
               },
               "dependsOn": [
-                "appService"
+                "appService",
+                "appServiceName_appsettings"
               ]
             },
             "appServiceName_appsettings": {
               "type": "Microsoft.Web/sites/config",
               "apiVersion": "2021-02-01",
               "name": "[format('{0}/{1}', parameters('appServiceName'), 'appsettings')]",
-              "properties": "[variables('finalAppSettings')]",
+              "properties": "[variables('appSettings')]",
               "dependsOn": [
-                "appService",
-                "appServiceName_ZipDeploy"
+                "appService"
               ]
             },
             "partnerCenterTracker": {
@@ -519,7 +490,7 @@
                     "_generator": {
                       "name": "bicep",
                       "version": "0.36.1.42791",
-                      "templateHash": "1734886320374881671"
+                      "templateHash": "3107009767471189633"
                     }
                   },
                   "parameters": {
@@ -547,7 +518,7 @@
                         "P4"
                       ],
                       "metadata": {
-                        "description": "Describes plan's pricing tier and capacity. Check details at https://azure.microsoft.com/en-us/pricing/details/app-service/. The included web job requires 'Always On' to be enabled to function properly, which is not supported on tiers below Basic."
+                        "description": "Describes plan's pricing tier and capacity. Check details at https://azure.microsoft.com/en-us/pricing/details/app-service/. The service requires 'Always On' to be enabled to function properly, which is not supported on tiers below Basic."
                       }
                     },
                     "osType": {

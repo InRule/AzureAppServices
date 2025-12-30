@@ -52,6 +52,12 @@
     },
     "secondaryApiKey": {
       "value": ""
+    },
+    "osType": {
+      "value": "Windows"
+    },
+    "executionLicenseKey": {
+      "value": ""
     }
   }
 }

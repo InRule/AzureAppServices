@@ -1,5 +1,5 @@
-## Uploading a License File
-In order for many InRule services function, you must upload the InRuleLicense.xml file provided to you by InRule to the web app. You have two ways to upload a license file, either using the Azure App Service Editor or via FTP.
+## Configuring a License
+In order for many InRule services to function, you must provide the InRuleLicense.xml file provided to you by InRule. You can upload the license file to the web app or use an environment variable.
 
 ### Upload Via Azure App Service Editor
 The simplest way to upload the license file is via the App Service Editor available on the Azure portal.
@@ -27,3 +27,38 @@ Then, upload the license file using those retrieved values:
 # Example: $client = New-Object System.Net.WebClient;$client.Credentials = New-Object System.Net.NetworkCredential($creds.userName,$creds.userPWD);$uri = New-Object System.Uri($creds.publishUrl + "/InRuleLicense.xml");$client.UploadFile($uri, "$pwd\InRuleLicense.xml");
 $client = New-Object System.Net.WebClient;$client.Credentials = New-Object System.Net.NetworkCredential($creds.userName,$creds.userPWD);$uri = New-Object System.Uri($creds.publishUrl + "/InRuleLicense.xml");$client.UploadFile($uri, "LICENSE_FILE_ABSOLUTE_PATH")
 ```
+
+### Using an Environment Variable (Optional)
+
+The InRule SDK also supports reading a license from an environment variable. This allows you to configure the license during ARM template deployment without requiring a separate file upload step.
+
+First, use the provided PowerShell script to convert the license file to a data URI format:
+
+```powershell
+.\Convert-LicenseToDataUri.ps1 -LicenseFilePath "C:\path\to\InRuleLicense.xml"
+```
+
+The script will output a data URI in the format:
+```
+data:application/xml;base64,<base64-encoded-license>
+```
+
+When deploying via ARM templates, provide the data URI as the value for the license parameter:
+
+| Service | Parameter Name |
+| ------- | -------------- |
+| Catalog Service | `catalogLicenseKey` |
+| Decision Service | `executionLicenseKey` |
+| Dynamics API | `executionLicenseKey` |
+| Salesforce API | `executionLicenseKey` |
+
+Example in the parameters file:
+```json
+{
+  "catalogLicenseKey": {
+    "value": "<your-data-uri-here>"
+  }
+}
+```
+
+To set the environment variable after deployment, navigate to the App Service in the Azure portal, go to **Settings > Environment variables**, find the `inrule__license` setting, and paste the data URI output from the script as its value.

@@ -10,7 +10,7 @@ Before you get started, you'll need to make sure you have the following:
 
 * A Microsoft Azure Subscription. If you do not have an Azure subscription, create a [free account](https://azure.microsoft.com/en-us/free/) before you begin.
 
-* A valid InRule license file, named __`InRuleLicense.xml`__. If you do not have a valid InRule license file for InRule, please contact [Support](mailto:support@inrule.com?subject=InRule®%20for%20Microsoft%20Azure%20-%20App%20Service%20Web%20Apps).
+* A valid InRule license file, named __`InRuleLicense.xml`__. If you do not have a valid InRule license file for InRule, please contact [Support](mailto:support@inrule.com?subject=InRule®%20for%20Microsoft%20Azure%20-%20App%20Service%20Web%20Apps). See [license documentation](/doc/upload-license-file.md) for options on how to apply your license.
 
 * [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli) is installed.
 

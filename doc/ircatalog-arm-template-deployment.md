@@ -17,17 +17,18 @@ Open the file with your text editor of choice and edit the parameters listed bel
 #### InRule.Catalog.Service.parameters.json
 | Parameter | Example Values | Description |
 | --------- | ------------- | ----------- |
-| catalogServiceName | 	yourcompanyname-inrule-environment-catalog | Provide a name for the Azure App Service that the catalog service will run on. |
-| catalogManagerServiceName | 	yourcompanyname-inrule-environment-catalogmgr | Provide a name for the Azure App Service that the catalog manager service will run on. |
-| catalogServicePlanSkuName | B1 | Describes catalog services plan's pricing tier and capacity. [Plan Details](https://azure.microsoft.com/en-us/pricing/details/app-service/)|
-| catalogSqlServerName | catalogsqldbservername | The server name for the Azure SQL server used to host the Catalog database(s). |
-| catalogSqlServerUsername | sqlDbServerUser | The server admin username for the Azure SQL server used to host the Catalog database(s). |
-| catalogSqlServerPassword | sqlDbServerPassword | The server admin password for the Azure SQL server used to host the Catalog database(s). |
-| catalogSqlDbName | catalogSqlDbName | The name for the Catalog database. |
-| catalogSqlDbEdition | Basic | The Azure SQL database edition used for the Catalog database. Use Basic for less demanding workloads, Standard for most production workloads, and Premium for IO-intensive workloads. |
-| catalogSqlDbPerformanceLevel | Basic | The Azure SQL database performance level for the Catalog. These correspond to the specific Azure SQL database edition. |
-| inRuleVersion | 5.4.1 | Provide the inRule version you wish to deploy, default value is the latest inRule version. |
-| catalogServicePlanName | inruleCatalogAppServicePlan | The name for the app Service Plan.  Leave blank for the value to be derived as `catalogServiceName` + `Plan`|
+| `catalogServiceName` | `yourcompanyname-inrule-environment-catalog` | Provide a name for the Azure App Service that the catalog service will run on. |
+| `catalogManagerServiceName` | `yourcompanyname-inrule-environment-catalogmgr` | Provide a name for the Azure App Service that the catalog manager service will run on. |
+| `catalogServicePlanSkuName` | `B1` | Describes catalog services plan's pricing tier and capacity. [Plan Details](https://azure.microsoft.com/en-us/pricing/details/app-service/)|
+| `catalogSqlServerName` | `catalogsqldbservername` | The server name for the Azure SQL server used to host the Catalog database(s). |
+| `catalogSqlServerUsername` | `sqlDbServerUser` | The server admin username for the Azure SQL server used to host the Catalog database(s). |
+| `catalogSqlServerPassword` | `sqlDbServerPassword` | The server admin password for the Azure SQL server used to host the Catalog database(s). |
+| `catalogSqlDbName` | `catalogSqlDbName` | The name for the Catalog database. |
+| `catalogSqlDbEdition` | `Basic` | The Azure SQL database edition used for the Catalog database. Use Basic for less demanding workloads, Standard for most production workloads, and Premium for IO-intensive workloads. |
+| `catalogSqlDbPerformanceLevel` | `Basic` | The Azure SQL database performance level for the Catalog. These correspond to the specific Azure SQL database edition. |
+| `inRuleVersion` | `5.4.1` | Provide the inRule version you wish to deploy, default value is the latest inRule version. |
+| `catalogServicePlanName` | `inruleCatalogAppServicePlan` | The name for the app Service Plan. Leave blank for the value to be derived as `catalogServiceName` + `Plan`. |
+| `catalogLicenseKey` | `data:application/xml;base64,<base64-encoded-license>` | (Optional) License as a data URI. If not set, the license file must be uploaded after deployment. See [license documentation](/doc/upload-license-file.md). |
 
 __Save copy of the parameters after deployment to refer to and use for future upgrades__
 
@@ -68,7 +69,7 @@ You'll need to temporarily allow access to your local machine to deploy the sche
 After opening the firewall, you'll need to use the provided tool to setup the database. This step can be found in the Catalog web app deployment guide [Catalog Web App Deployment](ircatalog.md#deploy-the-ircatalog-database)
 
 ## Upload valid license file
-In order for Catalog Service to properly function, a valid license file must be uploaded to the web app. For information on how to upload your license file please refer to our [license upload documentation](/doc/upload-license-file.md).
+In order for Catalog Service to properly function, a valid license file must be uploaded to the web app. Optionally, the license can be provided during ARM template deployment using the `catalogLicenseKey` parameter. For information on how to configure your license please refer to our [license documentation](/doc/upload-license-file.md).
 
 ## Verify using irAuthor
 Using irAuthor you should now be able to connect to your catalog using the url [https://catalogServiceName.azurewebsites.net/service.svc](https://catalogServiceName.azurewebsites.net/service.svc).
