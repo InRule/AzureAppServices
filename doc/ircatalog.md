@@ -6,7 +6,7 @@ If you have not done so already, please read the [prerequisites](../README.md#pr
 
 # Database Deployment
 
-Catalog supports both Microsoft SQL Server (which includes Microsoft Azure SQL Databases) and Oracle Database.  This section explains how to provision a new Microsoft Azure SQL Database for Catalog. If you have an existing database, you may skip to the the [Web App Deployment](#web-app-deployment) section.
+Catalog supports Microsoft SQL Server (which includes Microsoft Azure SQL Databases). This section explains how to provision a new Microsoft Azure SQL Database for Catalog. If you have an existing database, you may skip to the the [Web App Deployment](#web-app-deployment) section.
 
 ## Sign in to Microsoft Azure
 First, [open a PowerShell prompt](https://docs.microsoft.com/en-us/powershell/scripting/setup/starting-windows-powershell) and use the Azure CLI to [sign in](https://docs.microsoft.com/en-us/cli/azure/authenticate-azure-cli) to your Microsoft Azure subscription:
