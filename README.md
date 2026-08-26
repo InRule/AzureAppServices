@@ -26,6 +26,10 @@ The Catalog Manager is a stand-alone web application that provides an administra
 
 * [ARM Template Deployment](doc/ircatalog-arm-template-deployment.md)
 
+#### Catalog database:
+
+* [Catalog Database Deployment](doc/ircatalog-database-deployment.md) - provisioning the Azure SQL resources, and installing or upgrading the Catalog database schema.
+
 
 # Decision Services
 
